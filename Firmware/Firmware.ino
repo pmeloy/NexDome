@@ -18,8 +18,8 @@
 
 Rotator rotator;
 const int HOME_PIN = 2;
-const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 2;
+const String verionName = "PDMNexDome V";
+const String versionNumber = "0.2";
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];
 long int localLong;
@@ -35,7 +35,6 @@ void loop()
 {
 	rotator.run();
 	checkForCommands();
-	//if (rotator.getSeekMode() != 0) rotator.doHomeOrCalibrate();
 	String test = "123";
 
 }
@@ -318,7 +317,7 @@ void ProcessSerialCommand()
 		sendString = "T " + String(rotator.getStepsPerRotation());
 		break;
 	case ('v'):
-		sendString = "VPDMNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
+		sendString = verionName + versionNumber;
 
 		//if (rotatorSteppershutterVersion[0] != 0) 
 		//{
