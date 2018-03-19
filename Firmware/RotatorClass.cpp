@@ -1,4 +1,4 @@
-#include "NexDomeRotator.h"
+#include "RotatorClass.h"
 #include <AccelStepper.h>
 //#include <EEPROM.h>
 
@@ -20,7 +20,7 @@ const int NEVER_HOMED = -1;
 const int HOMED = 0;
 const int ATHOME = 1;
 
-NexDomeRotator::NexDomeRotator()
+Rotator::Rotator()
 {
 	loadConfig();
 	_homePin = HOME_PIN;
@@ -37,7 +37,7 @@ NexDomeRotator::NexDomeRotator()
 	stepper.setAcceleration(2000);
 }
 
-void		NexDomeRotator::saveConfig()
+void		Rotator::saveConfig()
 {
 	RotatorConfiguration cfg;
 
@@ -60,7 +60,7 @@ void		NexDomeRotator::saveConfig()
 	EEPROM.put(_eepromLocation, cfg);
 
 }
-bool		NexDomeRotator::loadConfig()
+bool		Rotator::loadConfig()
 {
 	RotatorConfiguration cfg;
 	bool response = true;
@@ -97,7 +97,7 @@ bool		NexDomeRotator::loadConfig()
 	}
 	return response;
 }
-void		NexDomeRotator::setDefaults()
+void		Rotator::setDefaults()
 {
 	_stepMode = 8;
 	_maxSpeed = 5000;
@@ -111,14 +111,14 @@ void		NexDomeRotator::setDefaults()
 	_cutoffVolts = 11;
 
 }
-void		NexDomeRotator::wipeConfig()
+void		Rotator::wipeConfig()
 {
 	RotatorConfiguration cfg;
 	memset(&cfg, 0, sizeof(cfg));
 	EEPROM.put(_eepromLocation, cfg);
 }
 
-int			NexDomeRotator::getControllerVoltage()
+int			Rotator::getControllerVoltage()
 {
 	int volts;
 
@@ -128,16 +128,16 @@ int			NexDomeRotator::getControllerVoltage()
 	_controllerVolts = volts;
 	return volts;
 }
-void		NexDomeRotator::setLowVoltageCutoff(int lowVolts)
+void		Rotator::setLowVoltageCutoff(int lowVolts)
 {
 	_cutoffVolts = lowVolts;
 }
-int			NexDomeRotator::getLowVoltageCutoff()
+int			Rotator::getLowVoltageCutoff()
 {
 	return _cutoffVolts;
 }
 
-void		NexDomeRotator::buttonCheck()
+void		Rotator::buttonCheck()
 {
 	unsigned long int moveSize = 1000;
 	int PRESSED = 0;
@@ -153,85 +153,85 @@ void		NexDomeRotator::buttonCheck()
 		moveRelative(moveSize * _moveDirection);
 	}
 }
-bool		NexDomeRotator::isRaining()
+bool		Rotator::isRaining()
 {
 	return !digitalRead(_rainPin);
 }
 
-void		NexDomeRotator::enableMotor(bool newState)
+void		Rotator::enableMotor(bool newState)
 {
 	stepper.setEnablePin(newState);
 }
-float		NexDomeRotator::getMaxSpeed()
+float		Rotator::getMaxSpeed()
 {
 	return _maxSpeed;
 }
-void		NexDomeRotator::setMaxSpeed(float newSpeed)
+void		Rotator::setMaxSpeed(float newSpeed)
 {
 	_maxSpeed = newSpeed;
 	stepper.setMaxSpeed(newSpeed);
 	saveConfig();
 }
-float		NexDomeRotator::getAcceleration()
+float		Rotator::getAcceleration()
 {
 	return _acceleration;
 }
-void		NexDomeRotator::setAcceleration(float newAccel)
+void		Rotator::setAcceleration(float newAccel)
 {
 	_acceleration = newAccel;
 	stepper.setAcceleration(newAccel);
 	saveConfig();
 }
-bool		NexDomeRotator::getReversed()
+bool		Rotator::getReversed()
 {
 	return _reversed;
 }
-void		NexDomeRotator::setReversed(bool isReversed)
+void		Rotator::setReversed(bool isReversed)
 {
 	_reversed = isReversed;
 	stepper.setPinsInverted(isReversed, isReversed, isReversed);
 	saveConfig();
 }
-int			NexDomeRotator::getStepMode()
+int			Rotator::getStepMode()
 {
 	return _stepMode;
 }
-void		NexDomeRotator::setStepMode(int newMode)
+void		Rotator::setStepMode(int newMode)
 {
 	_stepMode = newMode;
 	String msg = "Change steps from " + String(_stepMode) + " to " + String(newMode);
 	saveConfig();
 }
-int			NexDomeRotator::getStepsToStop()
+int			Rotator::getStepsToStop()
 {
 	return _stepsToStop;
 }
-void		NexDomeRotator::setStepsToStop(int steps)
+void		Rotator::setStepsToStop(int steps)
 {
 	_stepsToStop = steps;
 	saveConfig();
 }
-long int	NexDomeRotator::getStepsPerRotation()
+long int	Rotator::getStepsPerRotation()
 {
 	return _stepsPerRotation;
 }
-void		NexDomeRotator::setStepsPerRotation(long int newCount)
+void		Rotator::setStepsPerRotation(long int newCount)
 {
 	_stepsPerDegree = (float)newCount/ 360.0;
 	_stepsPerRotation = newCount;
 	saveConfig();
 }
-int			NexDomeRotator::getHomeCenter()
+int			Rotator::getHomeCenter()
 {
 	return _homeCenter;
 }
-void		NexDomeRotator::setHomeCenter(int steps)
+void		Rotator::setHomeCenter(int steps)
 {
 
 	_homeCenter = steps;
 	saveConfig();
 }
-void		NexDomeRotator::startHoming(bool calibrating)
+void		Rotator::startHoming(bool calibrating)
 {
 	float diff;
 	long int distance;
@@ -253,7 +253,7 @@ void		NexDomeRotator::startHoming(bool calibrating)
 	distance = (_stepsPerRotation  * _moveDirection * 1.2);
 	moveRelative(distance);
 }
-void		NexDomeRotator::doHomeOrCalibrate()
+void		Rotator::doHomeOrCalibrate()
 {
 	// Check for home switch hit every 250ms
 	static long int nextCheck, homePositionStart, homePositionEnd, currentPosition;
@@ -318,7 +318,7 @@ void		NexDomeRotator::doHomeOrCalibrate()
 		}
 	}
 }
-void		NexDomeRotator::homeHit()
+void		Rotator::homeHit()
 {
 	long int decelerationSteps;
 	 _seekMode= SEEK_NONE;
@@ -337,7 +337,7 @@ void		NexDomeRotator::homeHit()
 	_doSync = true;
 	stop();
 }
-void		NexDomeRotator::syncPosition(float newAzimuth)
+void		Rotator::syncPosition(float newAzimuth)
 {
 	long int newPosition;
 
@@ -346,7 +346,7 @@ void		NexDomeRotator::syncPosition(float newAzimuth)
 	saveConfig();
 }
 
-long int	NexDomeRotator::getPosition()
+long int	Rotator::getPosition()
 {
 	/// Return change in steps relative to
 	/// last sync position
@@ -356,7 +356,7 @@ long int	NexDomeRotator::getPosition()
 	if (position < 0) position += _stepsPerRotation;
 	return position;
 }
-void		NexDomeRotator::setPosition(long int newPosition)
+void		Rotator::setPosition(long int newPosition)
 {
 	/// Set movement target by step position
 
@@ -376,7 +376,7 @@ void		NexDomeRotator::setPosition(long int newPosition)
 	stepper.moveTo(newPosition);
 	return;
 }
-void		NexDomeRotator::moveRelative(long int howFar)
+void		Rotator::moveRelative(long int howFar)
 {
 	// Use by Home and Calibrate
 	// Tells dome to rotate more than 360 degrees
@@ -386,12 +386,12 @@ void		NexDomeRotator::moveRelative(long int howFar)
 	if (howFar > 0) _moveDirection = 1;
 	stepper.move(howFar);
 }
-int			NexDomeRotator::getDirection()
+int			Rotator::getDirection()
 {
 	return _moveDirection;
 }
 
-float		NexDomeRotator::getAngularDistance(float fromAngle, float toAngle)
+float		Rotator::getAngularDistance(float fromAngle, float toAngle)
 {
 	float delta;
 	delta = toAngle - fromAngle;
@@ -401,7 +401,7 @@ float		NexDomeRotator::getAngularDistance(float fromAngle, float toAngle)
 	if (delta < -180) delta += 360;
 	return delta;
 }
-long int	NexDomeRotator::getPositionalDistance(long int fromPosition, long int toPosition)
+long int	Rotator::getPositionalDistance(long int fromPosition, long int toPosition)
 {
 	long int delta;
 	delta = toPosition - fromPosition;
@@ -413,14 +413,14 @@ long int	NexDomeRotator::getPositionalDistance(long int fromPosition, long int t
 
 }
 
-long int	NexDomeRotator::azimuthToPosition(float azimuth)
+long int	Rotator::azimuthToPosition(float azimuth)
 {
 	long int newPosition;
 
 	newPosition = (float)_stepsPerRotation / (float)360 * azimuth;
 	return newPosition;
 }
-void		NexDomeRotator::setAzimuth(float newHeading)
+void		Rotator::setAzimuth(float newHeading)
 {
 	// Set movement target by compass azimuth
 	float currentHeading,targetPosition;
@@ -437,7 +437,7 @@ void		NexDomeRotator::setAzimuth(float newHeading)
 	// targetPosition = targetPosition / 360.0 * (float)_stepsPerRotation;
 	//setPosition(targetPosition);
 }
-float		NexDomeRotator::getAzimuth()
+float		Rotator::getAzimuth()
 {
 	/* floating point math for get azimuth
 	*  prefer floats for accurately placing
@@ -457,16 +457,16 @@ float		NexDomeRotator::getAzimuth()
 
 	return azimuth;
 }
-void		NexDomeRotator::setHomeAzimuth(float newHome)
+void		Rotator::setHomeAzimuth(float newHome)
 {
 	_homeAzimuth = newHome;
 	saveConfig();
 }
-float		NexDomeRotator::getHomeAzimuth()
+float		Rotator::getHomeAzimuth()
 {
 	return _homeAzimuth;
 }
-void		NexDomeRotator::syncHome(float newAzimuth)
+void		Rotator::syncHome(float newAzimuth)
 {
 	float delta, currentAzimuth;
 
@@ -477,7 +477,7 @@ void		NexDomeRotator::syncHome(float newAzimuth)
 	_homeAzimuth = delta;
 	saveConfig();
 }
-int			NexDomeRotator::getHomeStatus() 
+int			Rotator::getHomeStatus() 
 {
 	int status=NEVER_HOMED;
 
@@ -486,17 +486,17 @@ int			NexDomeRotator::getHomeStatus()
 	return status;
 }
 
-void		NexDomeRotator::setParkAzimuth(float newPark)
+void		Rotator::setParkAzimuth(float newPark)
 {
 	_parkAzimuth = newPark;
 	saveConfig();
 }
-float		NexDomeRotator::getParkAzimuth()
+float		Rotator::getParkAzimuth()
 {
 	return _parkAzimuth;
 }
 
-void		NexDomeRotator::run()
+void		Rotator::run()
 {
 	bool stopped;
 	long int stepsFromZero;
@@ -536,7 +536,7 @@ void		NexDomeRotator::run()
 
 	}
 }
-void		NexDomeRotator::stop()
+void		Rotator::stop()
 {
 	// It takes approximately RunSpeed/3.95 steps to stop
 	// Use this to calculate a full step stopping position
@@ -554,15 +554,15 @@ void		NexDomeRotator::stop()
 	stepper.stop();
 }
 
-int			NexDomeRotator::getSeekMode()
+int			Rotator::getSeekMode()
 {
 	return _seekMode;
 }
-void		NexDomeRotator::setSeekMode(int mode)
+void		Rotator::setSeekMode(int mode)
 {
 	_seekMode = (Seeks)mode;
 }
-int			NexDomeRotator::isMoving()
+int			Rotator::isMoving()
 {
 	return stepper.isRunning();
 }

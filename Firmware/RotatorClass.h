@@ -1,7 +1,7 @@
-// NexDomeRotator.h version 0.01
+// Rotator.h version 0.01
 
-#ifndef _NEXDOMEROTATOR_h
-#define _NEXDOMEROTATOR_h
+#ifndef _ROTATORCLASS_h
+#define _ROTATORCLASS_h
 #include <EEPROM.h>
 //#include <AccelStepper.h>
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -24,7 +24,7 @@ enum Seeks
 	SEEK_COUNT
 };
 
-class NexDomeRotator
+class Rotator
 {
 
 protected:
@@ -99,7 +99,7 @@ protected:
 	void		homeHit();
 public:
 
-	NexDomeRotator();
+	Rotator();
 	bool		isRaining();
 	void		stop();
 	void		run();

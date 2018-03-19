@@ -11,6 +11,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 
 /*  Serial Commands
@@ -41,7 +42,7 @@ using System.Text.RegularExpressions;
  *  y   Get or Set reverse motion
  *  z   Home status
  */
- 
+
 namespace NexDomeRotatorConfigurator
 {
     public partial class frmMain : Form
@@ -118,6 +119,7 @@ namespace NexDomeRotatorConfigurator
         const string CMD_MOVERELATIVE = "[", CMD_MAXSPEED = "#", CMD_DIRECTION = "^", CMD_STEPMODE = "$", CMD_ACCEL = "*", CMD_CENTER = "|";
         const string CMD_STEPSSTOP = "!", CMD_GETSEEKMODE = "(", CMD_LOADEEPROM = "?", CMD_SAVEEEPROM = "/",CMD_VERSION = "v";
 
+        Version version = Assembly.GetEntryAssembly().GetName().Version;
         string serialBuffer = "";
         int changesMade = 0;
         int lastStepMode;
@@ -144,7 +146,7 @@ namespace NexDomeRotatorConfigurator
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-
+            this.Text = "NexDome Configurator v" + version;
             FillPortList();
             cbxPorts.DataSource = tList;
             cbxPorts.DisplayMember = "Description";

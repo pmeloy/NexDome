@@ -1,4 +1,4 @@
-#include "NexDomeRotator.h"
+#include "RotatorClass.h"
 #include <AccelStepper.h>
 /*
 	% - flags command as status request that adds a percent sign to the response. Used by Configurator only
@@ -16,10 +16,10 @@
 	W 1 - Wipe EEPROM (needs the 1 or it aborts)
 */
 
-NexDomeRotator rotator;
+Rotator rotator;
 const int HOME_PIN = 2;
 const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 1;
+const int VERSION_MINOR = 2;
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];
 long int localLong;
@@ -318,7 +318,7 @@ void ProcessSerialCommand()
 		sendString = "T " + String(rotator.getStepsPerRotation());
 		break;
 	case ('v'):
-		sendString = "VNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
+		sendString = "VPDMNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
 
 		//if (rotatorSteppershutterVersion[0] != 0) 
 		//{
