@@ -24,5 +24,8 @@ Configurator - Either compile from the source project yourself or grab the relea
 Authors:
 Pat Meloy
 
+Credits
+Grozzie for the source code I built upon https://github.com/grozzie2/NexDome
+
 License: GPL3
 
