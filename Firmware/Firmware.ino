@@ -18,7 +18,7 @@
 
 Rotator rotator;
 const int HOME_PIN = 2;
-const String verionName = "PDMNexDome V";
+const String verionName = "VNexDome V";
 const String versionNumber = "0.2";
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];

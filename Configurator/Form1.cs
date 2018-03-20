@@ -258,12 +258,17 @@ namespace NexDomeRotatorConfigurator
             else
             {
                 if (changesMade > 0) UnsavedChanges("Disconnecting");
-                ArduinoPort.Close();
-                btnConnect.Text = "Connect";
-                ReceiveTimer.Enabled = false;
-                StatusTimer.Enabled = false;
-                SetControlsConnectStatus(false);
+                Disconnect();
             }
+        }
+
+        private void Disconnect()
+        {
+            ArduinoPort.Close();
+            btnConnect.Text = "Connect";
+            ReceiveTimer.Enabled = false;
+            StatusTimer.Enabled = false;
+            SetControlsConnectStatus(false);
         }
         private void SetControlsConnectStatus(bool connected)
         {
@@ -552,6 +557,9 @@ namespace NexDomeRotatorConfigurator
             else
             {
                 AddTextToTerminal("Serial port not open. (" + command + ")");
+                Disconnect();
+                MessageBox.Show(ArduinoPort.PortName + " unexpectedly closed?",
+                            "Serial Port Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private bool IsFloat(string strValue)
