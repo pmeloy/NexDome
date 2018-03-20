@@ -121,12 +121,15 @@ void ProcessSerialCommand()
 		valueIndex = 2;
 		isStatus = true;
 	}
-	else
-	{
-		value = String(serialBuffer[1]);
-	}
+	//else
+	//{
+	//	value = String(serialBuffer[1]);
+	//}
 
 	switch (command) {
+	case('W'):
+		rotator.wipeConfig();
+		break;
 	case('*'):
 		if (serialBuffer[valueIndex] == ' ')
 		{

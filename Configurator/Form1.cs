@@ -226,7 +226,7 @@ namespace NexDomeRotatorConfigurator
                 try
                 {
                     ArduinoPort.Open();
-                    AddTextToTerminal("## " + comPort + "@" + baudRate + " opened.");
+                    AddTextToTerminal("## " + comPort + "@" + baudRate + " opened."); // Display in textbox
                 }
                 catch (Exception ex)
                 {
@@ -245,10 +245,13 @@ namespace NexDomeRotatorConfigurator
                         MessageBox.Show("Can't open " + comPort, ex.GetType().FullName,
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
+                    Disconnect(); // Just in case
                     return;
                 }
                 // Immediately ask for version information as proof of connect and to make sure
                 // it's one we can actually command
+                Debug.Print("Connected");
                 btnConnect.Text = "Disconnect";
                 SetControlsConnectStatus(true);
                 GetNexDomeSettings();
@@ -505,22 +508,24 @@ namespace NexDomeRotatorConfigurator
 
         private void receiveTimer_Tick(object sender, EventArgs e)
         {
+
             if (messageList.Count > 0)
             {
                 ParseSerialMessage();
+
             }
         }
         private void statusTime_Tick(object sender, EventArgs e)
         {
+
             if (ArduinoPort.IsOpen == true)
             {
-                ArduinoPort.WriteLine("%^");
-                ArduinoPort.WriteLine("%q");
-                ArduinoPort.WriteLine("%p");
-                ArduinoPort.WriteLine("%m");
-                ArduinoPort.WriteLine("%(");
-                ArduinoPort.WriteLine("%z");
-
+                SendCommand("^");
+                SendCommand("q");
+                SendCommand("p");
+                SendCommand("m");
+                SendCommand("(");
+                SendCommand("z");
             }
         }
 
@@ -551,7 +556,7 @@ namespace NexDomeRotatorConfigurator
                         MessageBox.Show(ArduinoPort.PortName + " error.", ex.GetType().FullName,
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
+                    Disconnect();
                 }
             }
             else

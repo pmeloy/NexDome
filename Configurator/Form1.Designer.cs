@@ -86,6 +86,7 @@
             this.btnParkDome = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.Movement = new System.Windows.Forms.GroupBox();
+            this.btnFullTurn = new System.Windows.Forms.Button();
             this.btnSync = new System.Windows.Forms.Button();
             this.btnSTOP = new System.Windows.Forms.Button();
             this.lblMultiStatus = new System.Windows.Forms.Label();
@@ -95,7 +96,6 @@
             this.chkReversed = new System.Windows.Forms.CheckBox();
             this.RotateTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnFullTurn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -403,7 +403,7 @@
             // 
             // StatusTimer
             // 
-            this.StatusTimer.Interval = 500;
+            this.StatusTimer.Interval = 1000;
             this.StatusTimer.Tick += new System.EventHandler(this.statusTime_Tick);
             // 
             // lblDisplayPos
@@ -723,6 +723,18 @@
             this.Movement.TabStop = false;
             this.Movement.Text = "Movement";
             // 
+            // btnFullTurn
+            // 
+            this.btnFullTurn.Location = new System.Drawing.Point(6, 159);
+            this.btnFullTurn.Name = "btnFullTurn";
+            this.btnFullTurn.Size = new System.Drawing.Size(66, 27);
+            this.btnFullTurn.TabIndex = 51;
+            this.btnFullTurn.Text = "Full Turn";
+            this.toolTip1.SetToolTip(this.btnFullTurn, "Number of steps required for a full rotation of the dome. At 8 microsteps that is" +
+        " somewhere around 440000.");
+            this.btnFullTurn.UseVisualStyleBackColor = true;
+            this.btnFullTurn.Click += new System.EventHandler(this.btnFullTurn_Click);
+            // 
             // btnSync
             // 
             this.btnSync.Location = new System.Drawing.Point(6, 49);
@@ -823,18 +835,6 @@
             this.RotateTimer.Enabled = true;
             this.RotateTimer.Interval = 250;
             this.RotateTimer.Tick += new System.EventHandler(this.Rotate_Timer_Tick);
-            // 
-            // btnFullTurn
-            // 
-            this.btnFullTurn.Location = new System.Drawing.Point(6, 159);
-            this.btnFullTurn.Name = "btnFullTurn";
-            this.btnFullTurn.Size = new System.Drawing.Size(66, 27);
-            this.btnFullTurn.TabIndex = 51;
-            this.btnFullTurn.Text = "Full Turn";
-            this.toolTip1.SetToolTip(this.btnFullTurn, "Number of steps required for a full rotation of the dome. At 8 microsteps that is" +
-        " somewhere around 440000.");
-            this.btnFullTurn.UseVisualStyleBackColor = true;
-            this.btnFullTurn.Click += new System.EventHandler(this.btnFullTurn_Click);
             // 
             // frmMain
             // 
