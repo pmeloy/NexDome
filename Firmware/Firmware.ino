@@ -195,7 +195,6 @@ void ProcessSerialCommand()
 			rotator.setSeekMode(SEEK_NONE);
 			rotator.moveRelative(localLong);
 		}
-		sendString = "[ " + String(localLong);
 		break;
 	case ('#'):
 		if (serialBuffer[valueIndex] == ' ')

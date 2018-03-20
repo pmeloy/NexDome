@@ -12,6 +12,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using Configurator;
 
 
 /*  Serial Commands
@@ -158,6 +159,8 @@ namespace NexDomeRotatorConfigurator
                 cbxBaudRates.Items.Add(b);
                 cbxBaudRates.SelectedIndex = cbxBaudRates.FindString("9600");
             }
+            cbxUpdateRate.SelectedIndex = Configurator.Properties.Settings.Default.updateSpeed;
+
             SetControlsConnectStatus(false);
         }
 
@@ -255,8 +258,8 @@ namespace NexDomeRotatorConfigurator
                 btnConnect.Text = "Disconnect";
                 SetControlsConnectStatus(true);
                 GetNexDomeSettings();
-                ReceiveTimer.Enabled = true;
-                StatusTimer.Enabled = true;
+                ParseTimer.Enabled = true;
+                UpdateTimer.Enabled = true;
             }
             else
             {
@@ -269,8 +272,8 @@ namespace NexDomeRotatorConfigurator
         {
             ArduinoPort.Close();
             btnConnect.Text = "Connect";
-            ReceiveTimer.Enabled = false;
-            StatusTimer.Enabled = false;
+            ParseTimer.Enabled = false;
+            UpdateTimer.Enabled = false;
             SetControlsConnectStatus(false);
         }
         private void SetControlsConnectStatus(bool connected)
@@ -303,6 +306,7 @@ namespace NexDomeRotatorConfigurator
             tbxCommand.Enabled = connected;
             btnCommand.Enabled = connected;
             tbxTerminal.Enabled = connected;
+            cbxUpdateRate.Enabled = connected;
             tbxHomeAzimuth.Text = "";
             tbxHomeAzimuth.Enabled = connected;
             btnHomeAzimuth.Enabled = connected;
@@ -360,6 +364,13 @@ namespace NexDomeRotatorConfigurator
             {
                 AddTextToTerminal("ERR: Invalid value");
             }
+        }
+
+        private void cbxUpdateRate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateTimer.Interval = Convert.ToInt32(cbxUpdateRate.Text);
+            Configurator.Properties.Settings.Default.updateSpeed = cbxUpdateRate.SelectedIndex;
+            Configurator.Properties.Settings.Default.Save();
         }
 
         public void ParseSerialMessage()
@@ -506,7 +517,7 @@ namespace NexDomeRotatorConfigurator
             AddTextToTerminal("<- Settings loaded from controller EEPROM.");
         }
 
-        private void receiveTimer_Tick(object sender, EventArgs e)
+        private void ParseTimer_Tick(object sender, EventArgs e)
         {
 
             if (messageList.Count > 0)
@@ -515,7 +526,7 @@ namespace NexDomeRotatorConfigurator
 
             }
         }
-        private void statusTime_Tick(object sender, EventArgs e)
+        private void UpdateTimer_Tick(object sender, EventArgs e)
         {
 
             if (ArduinoPort.IsOpen == true)
