@@ -57,8 +57,8 @@
             this.tbxCommand = new System.Windows.Forms.TextBox();
             this.btnCommand = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
-            this.ReceiveTimer = new System.Windows.Forms.Timer(this.components);
-            this.StatusTimer = new System.Windows.Forms.Timer(this.components);
+            this.ParseTimer = new System.Windows.Forms.Timer(this.components);
+            this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.lblDisplayPos = new System.Windows.Forms.Label();
             this.tbxHomeAzimuth = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -86,6 +86,7 @@
             this.btnParkDome = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.Movement = new System.Windows.Forms.GroupBox();
+            this.btnFullTurn = new System.Windows.Forms.Button();
             this.btnSync = new System.Windows.Forms.Button();
             this.btnSTOP = new System.Windows.Forms.Button();
             this.lblMultiStatus = new System.Windows.Forms.Label();
@@ -95,7 +96,8 @@
             this.chkReversed = new System.Windows.Forms.CheckBox();
             this.RotateTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnFullTurn = new System.Windows.Forms.Button();
+            this.cbxUpdateRate = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -234,7 +236,7 @@
             // btnRotateCCW
             // 
             this.btnRotateCCW.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRotateCCW.Location = new System.Drawing.Point(6, 77);
+            this.btnRotateCCW.Location = new System.Drawing.Point(5, 117);
             this.btnRotateCCW.Name = "btnRotateCCW";
             this.btnRotateCCW.Size = new System.Drawing.Size(66, 79);
             this.btnRotateCCW.TabIndex = 13;
@@ -247,7 +249,7 @@
             // btnRotateCW
             // 
             this.btnRotateCW.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRotateCW.Location = new System.Drawing.Point(150, 77);
+            this.btnRotateCW.Location = new System.Drawing.Point(149, 117);
             this.btnRotateCW.Name = "btnRotateCW";
             this.btnRotateCW.Size = new System.Drawing.Size(66, 77);
             this.btnRotateCW.TabIndex = 14;
@@ -259,7 +261,7 @@
             // 
             // btnGoToAz
             // 
-            this.btnGoToAz.Location = new System.Drawing.Point(150, 48);
+            this.btnGoToAz.Location = new System.Drawing.Point(149, 88);
             this.btnGoToAz.Name = "btnGoToAz";
             this.btnGoToAz.Size = new System.Drawing.Size(66, 27);
             this.btnGoToAz.TabIndex = 15;
@@ -270,7 +272,7 @@
             // 
             // btnGoToPos
             // 
-            this.btnGoToPos.Location = new System.Drawing.Point(150, 159);
+            this.btnGoToPos.Location = new System.Drawing.Point(149, 199);
             this.btnGoToPos.Name = "btnGoToPos";
             this.btnGoToPos.Size = new System.Drawing.Size(66, 27);
             this.btnGoToPos.TabIndex = 16;
@@ -282,7 +284,7 @@
             // tbxGotoAz
             // 
             this.tbxGotoAz.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxGotoAz.Location = new System.Drawing.Point(78, 48);
+            this.tbxGotoAz.Location = new System.Drawing.Point(77, 88);
             this.tbxGotoAz.Name = "tbxGotoAz";
             this.tbxGotoAz.Size = new System.Drawing.Size(66, 26);
             this.tbxGotoAz.TabIndex = 17;
@@ -292,7 +294,7 @@
             // tbxGotoPos
             // 
             this.tbxGotoPos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxGotoPos.Location = new System.Drawing.Point(78, 159);
+            this.tbxGotoPos.Location = new System.Drawing.Point(77, 199);
             this.tbxGotoPos.Name = "tbxGotoPos";
             this.tbxGotoPos.Size = new System.Drawing.Size(66, 26);
             this.tbxGotoPos.TabIndex = 18;
@@ -304,7 +306,7 @@
             this.lblDisplayAz.BackColor = System.Drawing.Color.White;
             this.lblDisplayAz.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblDisplayAz.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDisplayAz.Location = new System.Drawing.Point(78, 77);
+            this.lblDisplayAz.Location = new System.Drawing.Point(77, 117);
             this.lblDisplayAz.Name = "lblDisplayAz";
             this.lblDisplayAz.Size = new System.Drawing.Size(66, 26);
             this.lblDisplayAz.TabIndex = 19;
@@ -398,20 +400,20 @@
             // 
             // ReceiveTimer
             // 
-            this.ReceiveTimer.Enabled = true;
-            this.ReceiveTimer.Tick += new System.EventHandler(this.receiveTimer_Tick);
+            this.ParseTimer.Enabled = true;
+            this.ParseTimer.Tick += new System.EventHandler(this.ParseTimer_Tick);
             // 
             // StatusTimer
             // 
-            this.StatusTimer.Interval = 500;
-            this.StatusTimer.Tick += new System.EventHandler(this.statusTime_Tick);
+            this.UpdateTimer.Interval = 1000;
+            this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
             // 
             // lblDisplayPos
             // 
             this.lblDisplayPos.BackColor = System.Drawing.Color.White;
             this.lblDisplayPos.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblDisplayPos.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDisplayPos.Location = new System.Drawing.Point(78, 130);
+            this.lblDisplayPos.Location = new System.Drawing.Point(77, 170);
             this.lblDisplayPos.Name = "lblDisplayPos";
             this.lblDisplayPos.Size = new System.Drawing.Size(66, 26);
             this.lblDisplayPos.TabIndex = 29;
@@ -605,7 +607,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(7, 313);
+            this.label16.Location = new System.Drawing.Point(6, 353);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(62, 13);
             this.label16.TabIndex = 52;
@@ -616,7 +618,7 @@
             this.lblSeekMode.BackColor = System.Drawing.Color.White;
             this.lblSeekMode.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblSeekMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSeekMode.Location = new System.Drawing.Point(116, 309);
+            this.lblSeekMode.Location = new System.Drawing.Point(115, 349);
             this.lblSeekMode.Name = "lblSeekMode";
             this.lblSeekMode.Size = new System.Drawing.Size(100, 20);
             this.lblSeekMode.TabIndex = 50;
@@ -627,7 +629,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(7, 289);
+            this.label15.Location = new System.Drawing.Point(6, 329);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(68, 13);
             this.label15.TabIndex = 51;
@@ -638,7 +640,7 @@
             this.lblHomedState.BackColor = System.Drawing.Color.White;
             this.lblHomedState.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblHomedState.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHomedState.Location = new System.Drawing.Point(116, 285);
+            this.lblHomedState.Location = new System.Drawing.Point(115, 325);
             this.lblHomedState.Name = "lblHomedState";
             this.lblHomedState.Size = new System.Drawing.Size(100, 20);
             this.lblHomedState.TabIndex = 32;
@@ -648,7 +650,7 @@
             // 
             // btnDoCalibrate
             // 
-            this.btnDoCalibrate.Location = new System.Drawing.Point(151, 246);
+            this.btnDoCalibrate.Location = new System.Drawing.Point(150, 286);
             this.btnDoCalibrate.Name = "btnDoCalibrate";
             this.btnDoCalibrate.Size = new System.Drawing.Size(65, 23);
             this.btnDoCalibrate.TabIndex = 42;
@@ -659,7 +661,7 @@
             // 
             // btnDoHoming
             // 
-            this.btnDoHoming.Location = new System.Drawing.Point(6, 246);
+            this.btnDoHoming.Location = new System.Drawing.Point(5, 286);
             this.btnDoHoming.Name = "btnDoHoming";
             this.btnDoHoming.Size = new System.Drawing.Size(65, 23);
             this.btnDoHoming.TabIndex = 37;
@@ -670,7 +672,7 @@
             // 
             // btnParkDome
             // 
-            this.btnParkDome.Location = new System.Drawing.Point(75, 19);
+            this.btnParkDome.Location = new System.Drawing.Point(74, 59);
             this.btnParkDome.Name = "btnParkDome";
             this.btnParkDome.Size = new System.Drawing.Size(72, 23);
             this.btnParkDome.TabIndex = 38;
@@ -697,6 +699,8 @@
             // 
             // Movement
             // 
+            this.Movement.Controls.Add(this.label2);
+            this.Movement.Controls.Add(this.cbxUpdateRate);
             this.Movement.Controls.Add(this.btnFullTurn);
             this.Movement.Controls.Add(this.label16);
             this.Movement.Controls.Add(this.btnSync);
@@ -716,16 +720,28 @@
             this.Movement.Controls.Add(this.tbxGotoAz);
             this.Movement.Controls.Add(this.tbxGotoPos);
             this.Movement.Controls.Add(this.lblDisplayAz);
-            this.Movement.Location = new System.Drawing.Point(416, 84);
+            this.Movement.Location = new System.Drawing.Point(416, 28);
             this.Movement.Name = "Movement";
-            this.Movement.Size = new System.Drawing.Size(222, 341);
+            this.Movement.Size = new System.Drawing.Size(222, 377);
             this.Movement.TabIndex = 47;
             this.Movement.TabStop = false;
             this.Movement.Text = "Movement";
             // 
+            // btnFullTurn
+            // 
+            this.btnFullTurn.Location = new System.Drawing.Point(5, 199);
+            this.btnFullTurn.Name = "btnFullTurn";
+            this.btnFullTurn.Size = new System.Drawing.Size(66, 27);
+            this.btnFullTurn.TabIndex = 51;
+            this.btnFullTurn.Text = "Full Turn";
+            this.toolTip1.SetToolTip(this.btnFullTurn, "Number of steps required for a full rotation of the dome. At 8 microsteps that is" +
+        " somewhere around 440000.");
+            this.btnFullTurn.UseVisualStyleBackColor = true;
+            this.btnFullTurn.Click += new System.EventHandler(this.btnFullTurn_Click);
+            // 
             // btnSync
             // 
-            this.btnSync.Location = new System.Drawing.Point(6, 49);
+            this.btnSync.Location = new System.Drawing.Point(5, 89);
             this.btnSync.Name = "btnSync";
             this.btnSync.Size = new System.Drawing.Size(66, 27);
             this.btnSync.TabIndex = 39;
@@ -739,7 +755,7 @@
             // 
             this.btnSTOP.BackColor = System.Drawing.Color.Red;
             this.btnSTOP.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSTOP.Location = new System.Drawing.Point(57, 189);
+            this.btnSTOP.Location = new System.Drawing.Point(56, 229);
             this.btnSTOP.Name = "btnSTOP";
             this.btnSTOP.Size = new System.Drawing.Size(109, 51);
             this.btnSTOP.TabIndex = 31;
@@ -753,7 +769,7 @@
             this.lblMultiStatus.BackColor = System.Drawing.Color.White;
             this.lblMultiStatus.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblMultiStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMultiStatus.Location = new System.Drawing.Point(78, 101);
+            this.lblMultiStatus.Location = new System.Drawing.Point(77, 141);
             this.lblMultiStatus.Name = "lblMultiStatus";
             this.lblMultiStatus.Size = new System.Drawing.Size(66, 26);
             this.lblMultiStatus.TabIndex = 30;
@@ -824,17 +840,32 @@
             this.RotateTimer.Interval = 250;
             this.RotateTimer.Tick += new System.EventHandler(this.Rotate_Timer_Tick);
             // 
-            // btnFullTurn
+            // cbxUpdateRate
             // 
-            this.btnFullTurn.Location = new System.Drawing.Point(6, 159);
-            this.btnFullTurn.Name = "btnFullTurn";
-            this.btnFullTurn.Size = new System.Drawing.Size(66, 27);
-            this.btnFullTurn.TabIndex = 51;
-            this.btnFullTurn.Text = "Full Turn";
-            this.toolTip1.SetToolTip(this.btnFullTurn, "Number of steps required for a full rotation of the dome. At 8 microsteps that is" +
-        " somewhere around 440000.");
-            this.btnFullTurn.UseVisualStyleBackColor = true;
-            this.btnFullTurn.Click += new System.EventHandler(this.btnFullTurn_Click);
+            this.cbxUpdateRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxUpdateRate.FormattingEnabled = true;
+            this.cbxUpdateRate.Items.AddRange(new object[] {
+            "500",
+            "1000",
+            "2000",
+            "3000",
+            "4000",
+            "5000"});
+            this.cbxUpdateRate.Location = new System.Drawing.Point(149, 32);
+            this.cbxUpdateRate.Name = "cbxUpdateRate";
+            this.cbxUpdateRate.Size = new System.Drawing.Size(64, 21);
+            this.cbxUpdateRate.TabIndex = 51;
+            this.toolTip1.SetToolTip(this.cbxUpdateRate, "Set to match dip switch settings on NexDome controller.");
+            this.cbxUpdateRate.SelectedIndexChanged += new System.EventHandler(this.cbxUpdateRate_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(138, 13);
+            this.label2.TabIndex = 51;
+            this.label2.Text = "Update Rate in milliseconds";
             // 
             // frmMain
             // 
@@ -896,8 +927,8 @@
         private System.Windows.Forms.TextBox tbxCommand;
         private System.Windows.Forms.Button btnCommand;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Timer ReceiveTimer;
-        private System.Windows.Forms.Timer StatusTimer;
+        private System.Windows.Forms.Timer ParseTimer;
+        private System.Windows.Forms.Timer UpdateTimer;
         private System.Windows.Forms.Label lblDisplayPos;
         private System.Windows.Forms.TextBox tbxHomeAzimuth;
         private System.Windows.Forms.Label label7;
@@ -935,6 +966,8 @@
         private System.Windows.Forms.Timer RotateTimer;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnFullTurn;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox cbxUpdateRate;
     }
 }
 

@@ -12,6 +12,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using Configurator;
 
 
 /*  Serial Commands
@@ -158,6 +159,8 @@ namespace NexDomeRotatorConfigurator
                 cbxBaudRates.Items.Add(b);
                 cbxBaudRates.SelectedIndex = cbxBaudRates.FindString("9600");
             }
+            cbxUpdateRate.SelectedIndex = Configurator.Properties.Settings.Default.updateSpeed;
+
             SetControlsConnectStatus(false);
         }
 
@@ -226,7 +229,7 @@ namespace NexDomeRotatorConfigurator
                 try
                 {
                     ArduinoPort.Open();
-                    AddTextToTerminal("## " + comPort + "@" + baudRate + " opened.");
+                    AddTextToTerminal("## " + comPort + "@" + baudRate + " opened."); // Display in textbox
                 }
                 catch (Exception ex)
                 {
@@ -245,25 +248,33 @@ namespace NexDomeRotatorConfigurator
                         MessageBox.Show("Can't open " + comPort, ex.GetType().FullName,
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
+                    Disconnect(); // Just in case
                     return;
                 }
                 // Immediately ask for version information as proof of connect and to make sure
                 // it's one we can actually command
+                Debug.Print("Connected");
                 btnConnect.Text = "Disconnect";
                 SetControlsConnectStatus(true);
                 GetNexDomeSettings();
-                ReceiveTimer.Enabled = true;
-                StatusTimer.Enabled = true;
+                ParseTimer.Enabled = true;
+                UpdateTimer.Enabled = true;
             }
             else
             {
                 if (changesMade > 0) UnsavedChanges("Disconnecting");
-                ArduinoPort.Close();
-                btnConnect.Text = "Connect";
-                ReceiveTimer.Enabled = false;
-                StatusTimer.Enabled = false;
-                SetControlsConnectStatus(false);
+                Disconnect();
             }
+        }
+
+        private void Disconnect()
+        {
+            ArduinoPort.Close();
+            btnConnect.Text = "Connect";
+            ParseTimer.Enabled = false;
+            UpdateTimer.Enabled = false;
+            SetControlsConnectStatus(false);
         }
         private void SetControlsConnectStatus(bool connected)
         {
@@ -295,6 +306,7 @@ namespace NexDomeRotatorConfigurator
             tbxCommand.Enabled = connected;
             btnCommand.Enabled = connected;
             tbxTerminal.Enabled = connected;
+            cbxUpdateRate.Enabled = connected;
             tbxHomeAzimuth.Text = "";
             tbxHomeAzimuth.Enabled = connected;
             btnHomeAzimuth.Enabled = connected;
@@ -352,6 +364,13 @@ namespace NexDomeRotatorConfigurator
             {
                 AddTextToTerminal("ERR: Invalid value");
             }
+        }
+
+        private void cbxUpdateRate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateTimer.Interval = Convert.ToInt32(cbxUpdateRate.Text);
+            Configurator.Properties.Settings.Default.updateSpeed = cbxUpdateRate.SelectedIndex;
+            Configurator.Properties.Settings.Default.Save();
         }
 
         public void ParseSerialMessage()
@@ -498,24 +517,26 @@ namespace NexDomeRotatorConfigurator
             AddTextToTerminal("<- Settings loaded from controller EEPROM.");
         }
 
-        private void receiveTimer_Tick(object sender, EventArgs e)
+        private void ParseTimer_Tick(object sender, EventArgs e)
         {
+
             if (messageList.Count > 0)
             {
                 ParseSerialMessage();
+
             }
         }
-        private void statusTime_Tick(object sender, EventArgs e)
+        private void UpdateTimer_Tick(object sender, EventArgs e)
         {
+
             if (ArduinoPort.IsOpen == true)
             {
-                ArduinoPort.WriteLine("%^");
-                ArduinoPort.WriteLine("%q");
-                ArduinoPort.WriteLine("%p");
-                ArduinoPort.WriteLine("%m");
-                ArduinoPort.WriteLine("%(");
-                ArduinoPort.WriteLine("%z");
-
+                SendCommand("^");
+                SendCommand("q");
+                SendCommand("p");
+                SendCommand("m");
+                SendCommand("(");
+                SendCommand("z");
             }
         }
 
@@ -546,12 +567,15 @@ namespace NexDomeRotatorConfigurator
                         MessageBox.Show(ArduinoPort.PortName + " error.", ex.GetType().FullName,
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
+                    Disconnect();
                 }
             }
             else
             {
                 AddTextToTerminal("Serial port not open. (" + command + ")");
+                Disconnect();
+                MessageBox.Show(ArduinoPort.PortName + " unexpectedly closed?",
+                            "Serial Port Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private bool IsFloat(string strValue)

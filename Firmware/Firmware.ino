@@ -18,8 +18,8 @@
 
 Rotator rotator;
 const int HOME_PIN = 2;
-const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 2;
+const String verionName = "VNexDome V";
+const String versionNumber = "0.2";
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];
 long int localLong;
@@ -35,7 +35,6 @@ void loop()
 {
 	rotator.run();
 	checkForCommands();
-	//if (rotator.getSeekMode() != 0) rotator.doHomeOrCalibrate();
 	String test = "123";
 
 }
@@ -122,12 +121,15 @@ void ProcessSerialCommand()
 		valueIndex = 2;
 		isStatus = true;
 	}
-	else
-	{
-		value = String(serialBuffer[1]);
-	}
+	//else
+	//{
+	//	value = String(serialBuffer[1]);
+	//}
 
 	switch (command) {
+	case('W'):
+		rotator.wipeConfig();
+		break;
 	case('*'):
 		if (serialBuffer[valueIndex] == ' ')
 		{
@@ -193,7 +195,6 @@ void ProcessSerialCommand()
 			rotator.setSeekMode(SEEK_NONE);
 			rotator.moveRelative(localLong);
 		}
-		sendString = "[ " + String(localLong);
 		break;
 	case ('#'):
 		if (serialBuffer[valueIndex] == ' ')
@@ -318,7 +319,7 @@ void ProcessSerialCommand()
 		sendString = "T " + String(rotator.getStepsPerRotation());
 		break;
 	case ('v'):
-		sendString = "VPDMNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
+		sendString = verionName + versionNumber;
 
 		//if (rotatorSteppershutterVersion[0] != 0) 
 		//{
