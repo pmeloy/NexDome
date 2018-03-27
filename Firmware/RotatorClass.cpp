@@ -3,9 +3,9 @@
 //#include <EEPROM.h>
 
 // 
-// For version 0.1
+// For version 0.3
 // 
-
+#pragma region "Declarations"
 const int HOME_PIN = 2;					// Also used for Shutter open status
 const int STEPPER_ENABLE_PIN = 10;		// Digital Output
 const int STEPPER_DIRECTION_PIN = 11;	// Digital Output
@@ -19,6 +19,8 @@ AccelStepper stepper(AccelStepper::DRIVER, STEPPER_STEP_PIN, STEPPER_DIRECTION_P
 const int NEVER_HOMED = -1;
 const int HOMED = 0;
 const int ATHOME = 1;
+
+#pragma endregion
 
 Rotator::Rotator()
 {
@@ -37,12 +39,11 @@ Rotator::Rotator()
 	stepper.setAcceleration(2000);
 }
 
+#pragma region "Controller Related"
 void		Rotator::saveConfig()
 {
 	RotatorConfiguration cfg;
 
-	//  zero the structure so currently unused parts
-	//  dont end up loaded with random garbage
 	memset(&cfg, 0, sizeof(cfg));
 
 	cfg.signature = _signature;
@@ -51,7 +52,6 @@ void		Rotator::saveConfig()
 	cfg.acceleration = _acceleration;
 	cfg.stepsPerRotation = _stepsPerRotation;
 	cfg.homeCenter = _homeCenter;
-	cfg.stepsToStop = _stepsToStop;
 	cfg.reversed = _reversed;
 	cfg.homeAzimuth = _homeAzimuth;
 	cfg.parkAzimuth = _parkAzimuth;
@@ -72,6 +72,7 @@ bool		Rotator::loadConfig()
 	EEPROM.get(_eepromLocation, cfg);
 	if (cfg.signature != _signature)
 	{
+		setDefaults();
 		response = false;
 	}
 	else
@@ -81,20 +82,17 @@ bool		Rotator::loadConfig()
 		_acceleration = cfg.acceleration;
 		_stepsPerRotation = cfg.stepsPerRotation;
 		_homeCenter = cfg.homeCenter;
-		_stepsToStop = cfg.stepsToStop;
 		_reversed = cfg.reversed;
 		_homeAzimuth = cfg.homeAzimuth;
 		_parkAzimuth = cfg.parkAzimuth;
 		_cutoffVolts = cfg.cutoffVolts;
-
-
-		setStepMode(_stepMode);
-		setMaxSpeed(_maxSpeed);
-		setAcceleration(_acceleration);
-		setStepsPerRotation(_stepsPerRotation);
-		setStepsToStop(_stepsToStop);
-		setReversed(_reversed);
 	}
+
+	setStepMode(_stepMode);
+	setMaxSpeed(_maxSpeed);
+	setAcceleration(_acceleration);
+	setStepsPerRotation(_stepsPerRotation);
+	setReversed(_reversed);
 	return response;
 }
 void		Rotator::setDefaults()
@@ -136,7 +134,9 @@ int			Rotator::getLowVoltageCutoff()
 {
 	return _cutoffVolts;
 }
+#pragma endregion
 
+#pragma region "I/O"
 void		Rotator::buttonCheck()
 {
 	unsigned long int moveSize = 1000;
@@ -157,7 +157,9 @@ bool		Rotator::isRaining()
 {
 	return !digitalRead(_rainPin);
 }
+#pragma endregion
 
+#pragma region "Stepper Related"
 void		Rotator::enableMotor(bool newState)
 {
 	stepper.setEnablePin(newState);
@@ -199,16 +201,6 @@ int			Rotator::getStepMode()
 void		Rotator::setStepMode(int newMode)
 {
 	_stepMode = newMode;
-	String msg = "Change steps from " + String(_stepMode) + " to " + String(newMode);
-	saveConfig();
-}
-int			Rotator::getStepsToStop()
-{
-	return _stepsToStop;
-}
-void		Rotator::setStepsToStop(int steps)
-{
-	_stepsToStop = steps;
 	saveConfig();
 }
 long int	Rotator::getStepsPerRotation()
@@ -217,20 +209,13 @@ long int	Rotator::getStepsPerRotation()
 }
 void		Rotator::setStepsPerRotation(long int newCount)
 {
-	_stepsPerDegree = (float)newCount/ 360.0;
+	_stepsPerDegree = (float)newCount / 360.0;
 	_stepsPerRotation = newCount;
 	saveConfig();
 }
-int			Rotator::getHomeCenter()
-{
-	return _homeCenter;
-}
-void		Rotator::setHomeCenter(int steps)
-{
+#pragma endregion
 
-	_homeCenter = steps;
-	saveConfig();
-}
+#pragma region "Homing and Calibrating"
 void		Rotator::startHoming(bool calibrating)
 {
 	float diff;
@@ -242,11 +227,11 @@ void		Rotator::startHoming(bool calibrating)
 	if (diff < 1) _moveDirection = MOVE_NEGATIVE;
 	if (calibrating == false)
 	{
-		_seekMode = SEEK_HOME;
+		_seekMode = HOMING_HOME;
 	}
 	else
 	{
-		_seekMode = SEEK_START;
+		_seekMode = CALIBRATION_START;
 		stepper.setCurrentPosition(0);
 	}
 
@@ -256,7 +241,7 @@ void		Rotator::startHoming(bool calibrating)
 void		Rotator::doHomeOrCalibrate()
 {
 	// Check for home switch hit every 250ms
-	static long int nextCheck, homePositionStart, homePositionEnd, currentPosition;
+	static long int nextCheck, moveOffDelay, homePositionStart, homePositionEnd, currentPosition;
 	static bool lastSwitchState;
 
 	if (millis() > nextCheck)
@@ -272,70 +257,110 @@ void		Rotator::doHomeOrCalibrate()
 		}
 	}
 
-	if (_seekMode > SEEK_NONE)
+	if (_seekMode > HOMING_NONE)
 	{
 		switch (_seekMode)
 		{
-		case(SEEK_HOME):
+		case(HOMING_HOME):
 			if (_isAtHome == true)
 			{
 				homeHit();
-				_seekMode = SEEK_NONE;
+				_seekMode = HOMING_NONE;
 				stop();
 			}
 			break;
-		case(SEEK_START):
-			if (_isAtHome == true && lastSwitchState != _isAtHome)
+		case(CALIBRATION_START):
+			if (_isAtHome == true)
 			{
 				homePositionStart = stepper.currentPosition();
-				_seekMode = SEEK_MEASURE;
-				lastSwitchState = _isAtHome;
+				moveOffDelay = millis() + 5000; // 5 seconds to get off the home switch
+				_seekMode = CALIBRATION_MOVEOFF;
 			}
 			break;
-		case(SEEK_MEASURE):
-			if (_isAtHome == false && lastSwitchState != _isAtHome)
+		case(CALIBRATION_MOVEOFF):
+			if (millis() >= moveOffDelay)
 			{
-				homePositionEnd = stepper.currentPosition();
-				_seekMode = SEEK_COUNT;
-				lastSwitchState = _isAtHome;
-				_homeCenter = abs((homePositionEnd - homePositionStart) / 2);
-			}
-			break;
-		case(SEEK_COUNT):
-			if (_isAtHome == true && lastSwitchState != _isAtHome)
-			{
-				//stepsPerRotation = GetPosition() - homePositionStart;
-				_seekMode = SEEK_NONE;
+				_seekMode = CALIBRATION_MEASURE;
 				lastSwitchState = false;
-				//ConfigSave();
-				//HomeHit();
+			}
+			break;
+		case(CALIBRATION_MEASURE):
+			if (_isAtHome == true)
+			{
+				_seekMode = HOMING_NONE;
+				lastSwitchState = false;
 				currentPosition = stepper.currentPosition() - homePositionStart;
 				_stepsPerRotation = abs(currentPosition);
 				homeHit();
-
+				saveConfig();
 			}
-			break;
+			else
+				break;
 		}
 	}
 }
 void		Rotator::homeHit()
 {
 	long int decelerationSteps;
-	 _seekMode= SEEK_NONE;
+	_seekMode = HOMING_NONE;
 	_hasBeenHomed = true;
-	//if (_homeCenter > 0 && _homeCenter > _stepsToStop)
-	//{
-	//	decelerationSteps = _homeCenter;
-	//}
-	//else
-	//{
-	//	decelerationSteps = _stepsToStop;
-	//}
-	//decelerationSteps *= _moveDirection;
-	//setPosition(getPosition() + decelerationSteps);
-	
 	_doSync = true;
 	stop();
+}
+void		Rotator::setHomeAzimuth(float newHome)
+{
+	_homeAzimuth = newHome;
+	saveConfig();
+}
+float		Rotator::getHomeAzimuth()
+{
+	return _homeAzimuth;
+}
+void		Rotator::syncHome(float newAzimuth)
+{
+	float delta, currentAzimuth;
+
+	delta = getAngularDistance(getAzimuth(), newAzimuth);
+	delta = delta + _homeAzimuth;
+	if (delta < 0) delta = 360.0 + delta;
+	if (delta >= 360.0) delta -= 360.0;
+	_homeAzimuth = delta;
+	saveConfig();
+}
+int			Rotator::getHomeStatus()
+{
+	int status = NEVER_HOMED;
+
+	if (_hasBeenHomed == true) status = HOMED;
+	if (_isAtHome == true) status = ATHOME;
+	return status;
+}
+void		Rotator::setParkAzimuth(float newPark)
+{
+	_parkAzimuth = newPark;
+	saveConfig();
+}
+float		Rotator::getParkAzimuth()
+{
+	return _parkAzimuth;
+}
+int			Rotator::getSeekMode()
+{
+	return _seekMode;
+}
+void		Rotator::setSeekMode(int mode)
+{
+	_seekMode = (Seeks)mode;
+}
+#pragma endregion
+
+#pragma region "Positioning"
+long int	Rotator::azimuthToPosition(float azimuth)
+{
+	long int newPosition;
+
+	newPosition = (float)_stepsPerRotation / (float)360 * azimuth;
+	return newPosition;
 }
 void		Rotator::syncPosition(float newAzimuth)
 {
@@ -345,7 +370,6 @@ void		Rotator::syncPosition(float newAzimuth)
 	stepper.setCurrentPosition(newPosition);
 	saveConfig();
 }
-
 long int	Rotator::getPosition()
 {
 	/// Return change in steps relative to
@@ -390,7 +414,6 @@ int			Rotator::getDirection()
 {
 	return _moveDirection;
 }
-
 float		Rotator::getAngularDistance(float fromAngle, float toAngle)
 {
 	float delta;
@@ -407,23 +430,15 @@ long int	Rotator::getPositionalDistance(long int fromPosition, long int toPositi
 	delta = toPosition - fromPosition;
 	if (delta == 0) return 0; //  we are already there
 
-	if (delta > _stepsPerRotation/2) delta -= _stepsPerRotation;
-	if (delta < -_stepsPerRotation/2) delta += _stepsPerRotation;
+	if (delta > _stepsPerRotation / 2) delta -= _stepsPerRotation;
+	if (delta < -_stepsPerRotation / 2) delta += _stepsPerRotation;
 	return delta;
 
-}
-
-long int	Rotator::azimuthToPosition(float azimuth)
-{
-	long int newPosition;
-
-	newPosition = (float)_stepsPerRotation / (float)360 * azimuth;
-	return newPosition;
 }
 void		Rotator::setAzimuth(float newHeading)
 {
 	// Set movement target by compass azimuth
-	float currentHeading,targetPosition;
+	float currentHeading, targetPosition;
 	float delta;
 	float newdelta;
 	char stringBuffer[60];
@@ -446,10 +461,10 @@ float		Rotator::getAzimuth()
 	*  overhead
 	*/
 	float azimuth = 0;
-	long int currentPosition=0;
+	long int currentPosition = 0;
 
 	currentPosition = getPosition();
-	if (currentPosition !=0) azimuth = (float)getPosition() / (float)_stepsPerRotation * 360.0;
+	if (currentPosition != 0) azimuth = (float)getPosition() / (float)_stepsPerRotation * 360.0;
 	//  in case we need to do another step
 	//  do a run sequence now
 	while (azimuth < 0) azimuth += 360.0;
@@ -457,45 +472,9 @@ float		Rotator::getAzimuth()
 
 	return azimuth;
 }
-void		Rotator::setHomeAzimuth(float newHome)
-{
-	_homeAzimuth = newHome;
-	saveConfig();
-}
-float		Rotator::getHomeAzimuth()
-{
-	return _homeAzimuth;
-}
-void		Rotator::syncHome(float newAzimuth)
-{
-	float delta, currentAzimuth;
+#pragma endregion
 
-	delta = getAngularDistance(getAzimuth(), newAzimuth);
-	delta = delta + _homeAzimuth;
-	if (delta < 0) delta = 360.0 + delta;
-	if (delta >= 360.0) delta -= 360.0;
-	_homeAzimuth = delta;
-	saveConfig();
-}
-int			Rotator::getHomeStatus() 
-{
-	int status=NEVER_HOMED;
-
-	if (_hasBeenHomed == true) status = HOMED;
-	if (_isAtHome == true) status = ATHOME;
-	return status;
-}
-
-void		Rotator::setParkAzimuth(float newPark)
-{
-	_parkAzimuth = newPark;
-	saveConfig();
-}
-float		Rotator::getParkAzimuth()
-{
-	return _parkAzimuth;
-}
-
+#pragma region "Movement"
 void		Rotator::run()
 {
 	bool stopped;
@@ -511,7 +490,7 @@ void		Rotator::run()
 	if (stopped)
 	{
 		_moveDirection = MOVE_NONE;
-		_seekMode = SEEK_NONE;
+		_seekMode = HOMING_NONE;
 
 		enableMotor(false);
 
@@ -523,12 +502,12 @@ void		Rotator::run()
 		}
 		if (stepsFromZero > _stepsPerRotation)
 		{
-			while(stepsFromZero> _stepsPerRotation) stepsFromZero -= _stepsPerRotation;
+			while (stepsFromZero> _stepsPerRotation) stepsFromZero -= _stepsPerRotation;
 			stepper.setCurrentPosition(stepsFromZero);
 		}
 		if (_doSync == true)
 		{
-			
+
 			syncPosition(_homeAzimuth);
 			saveConfig();
 			_doSync = false;
@@ -546,23 +525,15 @@ void		Rotator::stop()
 
 	if (!stepper.run()) return;
 
-	_seekMode = SEEK_NONE;
+	_seekMode = HOMING_NONE;
 	//decelerationSteps = _stepsToStop * _moveDirection;
 	//currentPosition = getPosition();
 	//stopPosition = currentPosition + decelerationSteps;
 	//setPosition(stopPosition);
 	stepper.stop();
 }
-
-int			Rotator::getSeekMode()
-{
-	return _seekMode;
-}
-void		Rotator::setSeekMode(int mode)
-{
-	_seekMode = (Seeks)mode;
-}
 int			Rotator::isMoving()
 {
 	return stepper.isRunning();
 }
+#pragma endregion

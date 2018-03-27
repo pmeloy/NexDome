@@ -1,13 +1,13 @@
 // Rotator.h version 0.01
 
-#ifndef _ROTATORCLASS_h
-#define _ROTATORCLASS_h
+#ifndef _ROTATOR_h
+#define _ROTATOR_h
 #include <EEPROM.h>
 //#include <AccelStepper.h>
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+#include "arduino.h"
 #else
-	#include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 #define usb Serial
@@ -16,12 +16,11 @@
 
 enum Seeks
 {
-	SEEK_NONE,
-	SEEK_HOME,
-	SEEK_MOVEOFF,
-	SEEK_START,
-	SEEK_MEASURE,
-	SEEK_COUNT
+	HOMING_NONE, // Not homing or calibrating
+	HOMING_HOME, // Homing
+	CALIBRATION_START, // Calibrate finding home before calibrating
+	CALIBRATION_MOVEOFF, // Ignore home until we've moved off while measuring the dome.
+	CALIBRATION_MEASURE // Measuring dome until home hit again.
 };
 
 class Rotator
@@ -44,7 +43,7 @@ protected:
 		int			cutoffVolts;
 	} RotatorConfig;
 
-	const int		_signature = 8052;
+	const int		_signature = 8051;
 	const int		_eepromLocation = 10;
 	const long int	_STEPSFORROTATION = 55100;
 
@@ -69,9 +68,9 @@ protected:
 	int			_rainPin;
 
 	// Rotator properties
-	float		_homeAzimuth=0;
-	float		_parkAzimuth=0;
-	int			_homeCenter =0;
+	float		_homeAzimuth = 0;
+	float		_parkAzimuth = 0;
+	int			_homeCenter = 0;
 	RotatorConfig cfg;
 
 	// Rotator
@@ -132,7 +131,7 @@ public:
 	bool		getReversed();
 
 	void		setAzimuth(float);
-	
+
 	void		syncHome(float);
 	float		getAzimuth();
 	void		setHomeAzimuth(float);
@@ -143,10 +142,6 @@ public:
 
 	void		setParkAzimuth(float);
 	float		getParkAzimuth();
-	int			getStepsToStop();
-	void		setStepsToStop(int);
-	int			getHomeCenter();
-	void		setHomeCenter(int);
 	long int	azimuthToPosition(float);
 
 	int			getControllerVoltage();

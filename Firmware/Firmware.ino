@@ -1,25 +1,24 @@
 #include "RotatorClass.h"
 #include <AccelStepper.h>
 /*
-	% - flags command as status request that adds a percent sign to the response. Used by Configurator only
-	[ - Direct call to moveRelative (give positive or negative long int for how many steps and in what direction.
-	# - Get max speed or supply a float and set it
-	^ - Get the current direction of rotation -1 CCWm 1 CW, 0 none
-	$ - Get/Set stepping mode 1, 2, 4, 8, or 16 microsteps INT
-	* - Get/Set Acceleration FLOAT
-	| - Get/Set Home center. Half of the width of home switch magnetic field as a stopping point for home operation.
-	! - Get/Set Steps to Stop - how many steps to decelerate after a STOP command
-	\ - Get seek mode
-	C - Just a comment
-	? - Load Config from EEPROM or set to defaults if 1
-	/ - Save Config to EEPROM
-	W 1 - Wipe EEPROM (needs the 1 or it aborts)
+% - flags command as status request that adds a percent sign to the response. Used by Configurator only
+[ - Direct call to moveRelative (give positive or negative long int for how many steps and in what direction.
+# - Get max speed or supply a float and set it
+^ - Get the current direction of rotation -1 CCWm 1 CW, 0 none
+$ - Get/Set stepping mode 1, 2, 4, 8, or 16 microsteps INT
+* - Get/Set Acceleration FLOAT
+| - Get/Set Home center. Half of the width of home switch magnetic field as a stopping point for home operation.
+\ - Get seek mode
+C - Just a comment
+? - Load Config from EEPROM or set to defaults if 1
+/ - Save Config to EEPROM
+W 1 - Wipe EEPROM (needs the 1 or it aborts)
 */
 
 Rotator rotator;
 const int HOME_PIN = 2;
-const String verionName = "VNexDome V";
-const String versionNumber = "0.2";
+const int VERSION_MAJOR = 0;
+const int VERSION_MINOR = 1;
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];
 long int localLong;
@@ -35,13 +34,14 @@ void loop()
 {
 	rotator.run();
 	checkForCommands();
+	//if (rotator.getSeekMode() != 0) rotator.doHomeOrCalibrate();
 	String test = "123";
 
 }
 
 void checkForCommands()
 {
-	if (usb.available()) 
+	if (usb.available())
 	{
 		incomingSerial(usb.read());
 	}
@@ -109,8 +109,8 @@ void ProcessSerialCommand()
 	float localFloat;
 	char command;
 	String value;
-	int localInt, valueIndex=1;
-	String sendString="";
+	int localInt, valueIndex = 1;
+	String usbMessage = "";
 	bool isStatus = false;
 	long int localLong;
 	command = serialBuffer[0];
@@ -121,22 +121,19 @@ void ProcessSerialCommand()
 		valueIndex = 2;
 		isStatus = true;
 	}
-	//else
-	//{
-	//	value = String(serialBuffer[1]);
-	//}
+	else
+	{
+		value = String(serialBuffer[1]);
+	}
 
 	switch (command) {
-	case('W'):
-		rotator.wipeConfig();
-		break;
 	case('*'):
 		if (serialBuffer[valueIndex] == ' ')
 		{
 			localFloat = atof(&serialBuffer[valueIndex]);
 			rotator.setAcceleration(localFloat);
 		}
-		sendString = "* " + String(rotator.getAcceleration());
+		usbMessage = "* " + String(rotator.getAcceleration());
 
 		break;
 	case ('?'):
@@ -144,20 +141,20 @@ void ProcessSerialCommand()
 		{
 			localInt = atoi(&serialBuffer[valueIndex]);
 			if (localInt == 1) rotator.setDefaults();
-			sendString = "? 1";
+			usbMessage = "? 1";
 		}
 		else
 		{
 			rotator.loadConfig();
-			sendString = "? 0";
+			usbMessage = "? 0";
 		}
 		break;
 	case('/'):
 		rotator.saveConfig();
-		sendString = "/";
+		usbMessage = "/";
 		break;
 	case('('):
-		sendString = "(" + String(rotator.getSeekMode());
+		usbMessage = "(" + String(rotator.getSeekMode());
 		break;
 	case ('$'):
 		if (serialBuffer[valueIndex] == ' ')
@@ -165,36 +162,16 @@ void ProcessSerialCommand()
 			localInt = atoi(&serialBuffer[valueIndex]);
 			rotator.setStepMode(localInt);
 		}
-		sendString = "$ " + String(rotator.getStepMode());
+		usbMessage = "$ " + String(rotator.getStepMode());
 		break;
-	case('|'):
+	case ('['):
 		if (serialBuffer[valueIndex] == ' ')
 		{
-			localInt = atoi(&serialBuffer[valueIndex]);
-			if (localInt < 0)
-			{
-				sendString = "E";
-				break;
-			}
-			rotator.setHomeCenter(localInt);
-		}
-		sendString = "| " + String(rotator.getHomeCenter());
-		break;
-	case ('!'):
-			if (serialBuffer[valueIndex] == ' ')
-			{
-				localInt = atoi(&serialBuffer[valueIndex]);
-				rotator.setStepsToStop(localInt);
-			}
-			sendString = "! " + String(rotator.getStepsToStop());
-			break;
-	case ('['):
-		if (serialBuffer[valueIndex] == ' ') 
-		{
 			localLong = atol(&serialBuffer[valueIndex]);
-			rotator.setSeekMode(SEEK_NONE);
+			rotator.setSeekMode(HOMING_NONE);
 			rotator.moveRelative(localLong);
 		}
+		usbMessage = "[ " + String(localLong);
 		break;
 	case ('#'):
 		if (serialBuffer[valueIndex] == ' ')
@@ -202,46 +179,46 @@ void ProcessSerialCommand()
 			localFloat = atof(&serialBuffer[valueIndex]);
 			rotator.setMaxSpeed(localFloat);
 		}
-		sendString = "# " + String(rotator.getMaxSpeed());
+		usbMessage = "# " + String(rotator.getMaxSpeed());
 		break;
 	case('^'):
-		sendString = "^ " + String(rotator.getDirection());
+		usbMessage = "^ " + String(rotator.getDirection());
 		break;
 	case ('a'):
 		// Abort move, stop at full step location
-		usb.println("A");
+		usbMessage = "A";
 		wireless.println("a");
 		rotator.stop();
 		break;
 	case ('c'):
 		rotator.startHoming(true);
-		usb.println("C");
+		usbMessage = "C";
 		break;
 	case ('g'):
 		localFloat = atof(&serialBuffer[valueIndex]);
 		if ((localFloat >= 0.0) && (localFloat <= 360.0))
 		{
 			rotator.setAzimuth(localFloat);
-			usb.println("G");
+			usbMessage = "G";
 		}
 		else
 		{
-			usb.println("E");
+			usbMessage = "E";
 		}
 		break;
 	case ('h'):
 		rotator.startHoming(false);
-		usb.println("H");
+		usbMessage = "H";
 		break;
 	case ('i'):
-		sendString = "I " + String(rotator.getHomeAzimuth());
+		usbMessage = "I " + String(rotator.getHomeAzimuth());
 		break;
 	case ('j'):
 		if ((serialBuffer[valueIndex] != 0x0a) && (serialBuffer[valueIndex] != 0x0d)) {
 			localFloat = atof(&serialBuffer[valueIndex]);
 			if ((localFloat >= 0) && (localFloat < 360)) rotator.setHomeAzimuth(localFloat);
 		}
-		sendString = "I " + String(rotator.getHomeAzimuth());
+		usbMessage = "I " + String(rotator.getHomeAzimuth());
 		break;
 	case ('k'):
 		if (serialBuffer[valueIndex] == ' ') {
@@ -250,29 +227,28 @@ void ProcessSerialCommand()
 			wireless.print("b ");
 			wireless.println(newcutoff);
 		}
-		sendString = "K " + String(rotator.getControllerVoltage()) + " 0 " + String(rotator.getLowVoltageCutoff());
+		usbMessage = "K " + String(rotator.getControllerVoltage()) + " 0 " + String(rotator.getLowVoltageCutoff());
 		break;
 	case ('l'):
 		localFloat = atof(&serialBuffer[valueIndex]);
 		if ((localFloat >= 0) && (localFloat < 360))
 		{
 			rotator.setParkAzimuth(localFloat);
-			sendString = "N "+String(rotator.getParkAzimuth());
+			usbMessage = "N " + String(rotator.getParkAzimuth());
 		}
 		else
 		{
-			sendString = "E";
+			usbMessage = "E";
 		}
 		break;
 	case ('m'):
-		sendString = "M " + String(rotator.isMoving());
+		usbMessage = "M " + String(rotator.isMoving());
 		break;
 	case ('n'):
-		sendString = "N " + String(rotator.getParkAzimuth());
+		usbMessage = "N " + String(rotator.getParkAzimuth());
 		break;
 	case ('o'):
-		sendString = "O";
-		usb.println("0.00");
+		usbMessage = "O 0.00";
 		//rotatorStepperlastAzimuthError = rotatorStepperazimuthError;
 		break;
 	case ('p'):
@@ -281,22 +257,21 @@ void ProcessSerialCommand()
 			localLong = atol(&serialBuffer[valueIndex]);
 			if (localLong > 0 && localLong < rotator.getStepsPerRotation())
 			{
-				localLong = rotator.getPositionalDistance(rotator.getPosition(),localLong);
+				localLong = rotator.getPositionalDistance(rotator.getPosition(), localLong);
 				rotator.moveRelative(localLong);
 			}
 			else
 			{
-				sendString = "E";
-				if (isStatus) usb.println("CPosition must be between 0 and " + String(rotator.getStepsPerRotation() - 1));
+				usbMessage = "E";
 			}
 		}
 		else
 		{
-			sendString = "P " + String(rotator.getPosition());
+			usbMessage = "P " + String(rotator.getPosition());
 		}
 		break;
 	case ('q'):
-		sendString = "Q " + String(rotator.getAzimuth());
+		usbMessage = "Q " + String(rotator.getAzimuth());
 		break;
 	case ('s'):
 		localFloat = atof(&serialBuffer[valueIndex]);
@@ -304,11 +279,11 @@ void ProcessSerialCommand()
 		{
 			rotator.syncHome(localFloat);
 			rotator.syncPosition(localFloat);
-			sendString = "S " +	String(rotator.getAzimuth());
+			usbMessage = "S " + String(rotator.getAzimuth());
 		}
 		else
 		{
-			sendString ="E";
+			usbMessage = "E";
 		}
 		break;
 	case ('t'):
@@ -316,21 +291,21 @@ void ProcessSerialCommand()
 			localLong = atol(&serialBuffer[valueIndex]);
 			rotator.setStepsPerRotation(localLong);
 		}
-		sendString = "T " + String(rotator.getStepsPerRotation());
+		usbMessage = "T " + String(rotator.getStepsPerRotation());
 		break;
 	case ('v'):
-		sendString = verionName + versionNumber;
+		usbMessage = "VNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
 
 		//if (rotatorSteppershutterVersion[0] != 0) 
 		//{
 		//	usb.print(" NexShutter V ");
-		//	usb.println(rotatorSteppershutterVersion);
+		//	sendMessage =(rotatorSteppershutterVersion);
 		//}
 
 		break;
 	case('x'):
 		wireless.println("x");
-		sendString = "X";
+		usbMessage = "X";
 		break;
 	case ('y'):
 		if (serialBuffer[valueIndex] == ' ')
@@ -340,39 +315,39 @@ void ProcessSerialCommand()
 			if (localInt == 1) flag = true;
 			rotator.setReversed(flag);
 		}
-		sendString = "Y " + String(rotator.getReversed());
+		usbMessage = "Y " + String(rotator.getReversed());
 		break;
 	case ('z'):
-		sendString = "Z " + String(rotator.getHomeStatus());
+		usbMessage = "Z " + String(rotator.getHomeStatus());
 		break;
 		//
 		// Wireless or accessories which I don't have
 		//
 	case ('b'):
-		sendString ="B 0";
+		usbMessage = "B 0";
 		break;
 	case ('d'):
 		// If not raining, open shutter
 		if (rotator.isRaining() == true)
 		{
-			sendString = "E";
+			usbMessage = "E";
 		}
 		else
 		{
-			sendString ="D";
+			usbMessage = "D";
 			wireless.println("D");
 			//if (rotatorSteppershutterState != SHUTTER_STATE_NOT_CONNECTED) rotatorSteppershutterState = SHUTTER_STATE_OPENING;
 		}
 		break;
 	case ('e'):
 		// Close shutter
-		sendString = "D";
+		usbMessage = "D";
 		wireless.println("c");
 		//if (rotatorSteppershutterState != SHUTTER_STATE_NOT_CONNECTED) rotatorSteppershutterState = SHUTTER_STATE_CLOSING;
 		break;
 	case ('f'):
 		// Set shutter position
-		sendString = "F";
+		usbMessage = "F";
 		localFloat = atof(&serialBuffer[valueIndex]);
 		wireless.print("f ");
 		wireless.print(localFloat);
@@ -387,23 +362,23 @@ void ProcessSerialCommand()
 			wireless.println(newtimer);
 			// shutter.shutterHibernateTimer = newtimer;
 		}
-		sendString = "R 0";
+		usbMessage = "R 0";
 		break;
 	case('u'):
-		sendString = "U 0";// " + String(rotator.isRaining());
+		usbMessage = "U 0";// " + String(rotator.isRaining());
 		break;
 	case ('w'):
-		sendString ="W";
+		usbMessage = "W";
 		// configureWireless();
 		break;
 	}
 
-	if (sendString != "")
+	if (usbMessage != "")
 	{
 		//if (isStatus == true) usb.print("%");
-		usb.println(sendString);
+		usb.println(usbMessage);
 	}
-	
+
 
 }
 

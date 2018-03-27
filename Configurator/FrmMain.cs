@@ -48,7 +48,8 @@ namespace NexDomeRotatorConfigurator
 {
     public partial class frmMain : Form
     {
-        internal class ProcessConnection
+		#region "Com Port enumeration"
+		internal class ProcessConnection
         {
 
             public static ConnectionOptions ProcessConnectionOptions()
@@ -113,14 +114,19 @@ namespace NexDomeRotatorConfigurator
                 return comPortInfoList;
             }
         }
-        const string CMD_STOP = "a", CMD_GETSHUTTERPOS = "b", CMD_CALIBRATE = "c", CMD_OPENSHUTTER = "d", CMD_CLOSESHUTTER = "e", CMD_SETSHUTTERPOS = "f";
+		#endregion
+
+		#region "Constants"
+		const string CMD_STOP = "a", CMD_GETSHUTTERPOS = "b", CMD_CALIBRATE = "c", CMD_OPENSHUTTER = "d", CMD_CLOSESHUTTER = "e", CMD_SETSHUTTERPOS = "f";
         const string CMD_GOTOAZ = "g", CMD_HOME = "h", CMD_GETHOME = "i", CMD_SETHOME = "j", CMD_GETVOLTS = "k", CMD_SETPARK = "l", CMD_MOVESTATUS = "m";
         const string CMD_GETPARKAZ = "n", CMD_GETLASTERR = "o", CMD_POS = "p", CMD_GETAZ = "q", CMD_SHUTTERTIMER = "r", CMD_SYNC = "s", CMD_STEPSPERROT = "t";
         const string CMD_SHUTTRAINSTAT = "u", CMD_GETVERSION = "v", CMD_RESTARTWIRELESS = "w", CMD_WAKESHUTTER = "x", CMD_REVERSED = "y", CMD_HOMESTATUS = "z";
         const string CMD_MOVERELATIVE = "[", CMD_MAXSPEED = "#", CMD_DIRECTION = "^", CMD_STEPMODE = "$", CMD_ACCEL = "*", CMD_CENTER = "|";
-        const string CMD_STEPSSTOP = "!", CMD_GETSEEKMODE = "(", CMD_LOADEEPROM = "?", CMD_SAVEEEPROM = "/",CMD_VERSION = "v";
+        const string CMD_STEPSSTOP = "!", CMD_GETSEEKMODE = "(";
+		#endregion
 
-        Version version = Assembly.GetEntryAssembly().GetName().Version;
+		#region "Variables"
+		Version version = Assembly.GetEntryAssembly().GetName().Version;
         string serialBuffer = "";
         int changesMade = 0;
         int lastStepMode;
@@ -128,6 +134,8 @@ namespace NexDomeRotatorConfigurator
         bool cwButtonDown,ccwButtonDown;
         long rotateButtonSteps = 2000;
         long DIRECTION_POSITIVE = 1, DIRECTION_NEGATIVE = -1;
+		bool isCalibrating = false;
+		bool isOriginalFirmware = false;
 
         long stepsPerRotation;
         const int TYPE_FLOAT = 0;
@@ -135,12 +143,13 @@ namespace NexDomeRotatorConfigurator
         List<COMPortInfo> tList = new List<COMPortInfo>();
         List<string> messageList = new List<string>();
         String[] homeStates = new String[] { "Not homed", "Homed", "At Home" };
-        String[] seekStates = new String[] { "None", "Homing", "Move Off", "Find Home", "Measure Switch", "Measure Dome" };
+		String[] seekStates = new String[] { "None", "Homing", "Find Start", "Move off Start", "Measuring Dome" };
 
-        public static readonly List<string> SupportedBaudRates = new List<string>
+		public static readonly List<string> SupportedBaudRates = new List<string>
         {"300","600","1200","2400","4800","9600","19200","38400","57600","115200","230400","460800","921600"};
+		#endregion
 
-        public frmMain()
+		public frmMain()
         {
             InitializeComponent();
         }
@@ -159,12 +168,13 @@ namespace NexDomeRotatorConfigurator
                 cbxBaudRates.Items.Add(b);
                 cbxBaudRates.SelectedIndex = cbxBaudRates.FindString("9600");
             }
-            cbxUpdateRate.SelectedIndex = Configurator.Properties.Settings.Default.updateSpeed;
-
+            cbxUpdateRate.SelectedIndex = Configurator.Properties.Settings.Default.updateRate;
+			cbxButtonRate.SelectedIndex = Configurator.Properties.Settings.Default.buttonRate;
             SetControlsConnectStatus(false);
         }
 
-        private void FillPortList()
+		#region "Helper functions"
+		private void FillPortList()
         {
             foreach (COMPortInfo comPort in COMPortInfo.GetCOMPortsInfo())
             {
@@ -173,13 +183,17 @@ namespace NexDomeRotatorConfigurator
         }
         public void AddTextToTerminal(string addition)
         {
-            tbxTerminal.Text += addition + Environment.NewLine;
-            if (tbxTerminal.TextLength > 500)
+            int start = -1;
+            int count = 0;
+            while ((start = tbxTerminal.Text.IndexOf(Environment.NewLine, start + 1)) != -1)
+                count++;
+            if (count > 40)
             {
                 tbxTerminal.Text = RemoveFirstLines(tbxTerminal.Text, 5);
             }
-            tbxTerminal.SelectionStart = tbxTerminal.TextLength - 1;
-            tbxTerminal.SelectionLength = 0;
+            tbxTerminal.AppendText( addition + Environment.NewLine);
+            //tbxTerminal.SelectionStart = tbxTerminal.TextLength - 1;
+            //tbxTerminal.SelectionLength = 0;
         }
         private String IntToMillivolts(string mv)
         {
@@ -192,8 +206,66 @@ namespace NexDomeRotatorConfigurator
             var lines = Regex.Split(text, "\r\n|\r|\n").Skip(linesCount);
             return string.Join(Environment.NewLine, lines.ToArray());
         }
+		private bool IsFloat(string strValue)
+		{
+			float value;
+			string sRes = "";
+			bool res = false;
 
-        private void btnConnect_Click(object sender, EventArgs e)
+			if (strValue.Length > 0)
+			{
+				if (!float.TryParse(strValue, out value))
+				{
+					sRes = "Invalid value";
+				}
+				else
+				{
+					res = true;
+				}
+			}
+			else
+			{
+				sRes = "Empty value";
+
+			}
+			if (res == false)
+			{
+				AddTextToTerminal("ERR: " + sRes);
+			}
+			return res;
+		}
+		private bool IsLong(string strValue)
+		{
+			long value;
+			string sRes = "";
+			bool res = false;
+
+			if (strValue.Length > 0)
+			{
+				if (!long.TryParse(strValue, out value))
+				{
+					sRes = "Invalid value";
+				}
+				else
+				{
+					res = true;
+				}
+			}
+			else
+			{
+				sRes = "Empty value";
+
+			}
+			if (res == false)
+			{
+				AddTextToTerminal("ERR: " + sRes);
+			}
+			return res;
+		}
+		#endregion
+
+		#region "Connection"
+		private void btnConnect_Click(object sender, EventArgs e)
         {
             int baudRate;
             string comPort = "";
@@ -229,7 +301,12 @@ namespace NexDomeRotatorConfigurator
                 try
                 {
                     ArduinoPort.Open();
-                    AddTextToTerminal("## " + comPort + "@" + baudRate + " opened."); // Display in textbox
+                    AddTextToTerminal("-- " + comPort + "@" + baudRate + " opened."); // Display in textbox
+					btnConnect.Text = "Disconnect";
+					SetControlsConnectStatus(true);
+					ParseTimer.Enabled = true;
+					UpdateTimer.Enabled = true;
+					GetNexDomeSettings();
                 }
                 catch (Exception ex)
                 {
@@ -250,34 +327,70 @@ namespace NexDomeRotatorConfigurator
                     }
 
                     Disconnect(); // Just in case
-                    return;
+
                 }
                 // Immediately ask for version information as proof of connect and to make sure
                 // it's one we can actually command
-                Debug.Print("Connected");
-                btnConnect.Text = "Disconnect";
-                SetControlsConnectStatus(true);
-                GetNexDomeSettings();
-                ParseTimer.Enabled = true;
-                UpdateTimer.Enabled = true;
             }
             else
             {
-                if (changesMade > 0) UnsavedChanges("Disconnecting");
-                Disconnect();
-            }
-        }
-
+				Disconnect();
+			}
+		}
         private void Disconnect()
         {
-            ArduinoPort.Close();
-            btnConnect.Text = "Connect";
-            ParseTimer.Enabled = false;
-            UpdateTimer.Enabled = false;
-            SetControlsConnectStatus(false);
-        }
-        private void SetControlsConnectStatus(bool connected)
+            try
+            {
+                ArduinoPort.Close();
+            }
+            catch (Exception ex)
+            {
+                if (ex is IOException)
+                {
+                    MessageBox.Show(ArduinoPort.PortName + " doesn't exist",
+                        ex.GetType().FullName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(ArduinoPort.PortName + " error.", ex.GetType().FullName,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
+            }
+			btnConnect.Text = "Connect";
+			ParseTimer.Enabled = false;
+			UpdateTimer.Enabled = false;
+			ButtonTimer.Enabled = false;
+			SetControlsConnectStatus(false);
+
+		}
+		#endregion
+
+		#region "Deal with Firmware versions"
+		private void CheckVersion(string version)
+		{
+			string[] strings = version.Split('V');
+			if (strings.Length > 1)
+			{
+				string[] strings2 = strings[1].Split('.');
+				if (strings2.Length > 0)
+				{
+					if (strings2[0].Trim().Equals("1"))
+					{
+						AddTextToTerminal("Connected to original firmware, disabling some controls.");
+						isOriginalFirmware = true;
+						SetOrignalFirmware();
+					}
+				}
+			}
+			else
+			{
+				Debug.Print("Version doesn't have any Vs");
+			}
+		}
+		private void SetControlsConnectStatus(bool connected)
         {
+			// Controller Group
             lblControllerVersion.Text = "";
             lblControllerVersion.Enabled = connected;
             lblRotVolts.Text = "";
@@ -286,8 +399,7 @@ namespace NexDomeRotatorConfigurator
             lblShutVolts.Enabled = connected;
             lblCutVolts.Text = "";
             lblCutVolts.Enabled = connected;
-            cbxPorts.Enabled = !connected;
-            cbxBaudRates.Enabled = !connected;
+			// Settings Group
             if (connected == false) cbxStepMode.SelectedIndex = 0;
             cbxStepMode.Enabled = connected;
             btnStepMode.Enabled = connected;
@@ -302,24 +414,26 @@ namespace NexDomeRotatorConfigurator
             btnStepsPerRotation.Enabled = connected;
             chkReversed.Checked = connected;
             chkReversed.Enabled = connected;
-            tbxCommand.Text = "";
+			// Serial Group
+			cbxPorts.Enabled = !connected;
+			cbxBaudRates.Enabled = !connected;
+			tbxCommand.Text = "";
             tbxCommand.Enabled = connected;
             btnCommand.Enabled = connected;
             tbxTerminal.Enabled = connected;
-            cbxUpdateRate.Enabled = connected;
+			// Home and Park Group
             tbxHomeAzimuth.Text = "";
             tbxHomeAzimuth.Enabled = connected;
             btnHomeAzimuth.Enabled = connected;
             tbxParkAzimuth.Text = "";
             tbxParkAzimuth.Enabled = connected;
             btnParkAzimuth.Enabled = connected;
-            tbxHomeCenter.Text = "";
-            tbxHomeCenter.Enabled = connected;
-            btnHomeCenter.Enabled = connected;
             btnDoHoming.Enabled = connected;
             btnDoCalibrate.Enabled = connected;
-            btnParkDome.Enabled = connected;
-            btnSaveSettings.Enabled = connected;
+			// Movement Group
+			cbxUpdateRate.Enabled = connected;
+			cbxButtonRate.Enabled = connected;
+			btnParkDome.Enabled = connected;
             tbxGotoAz.Text = "";
             tbxGotoAz.Enabled = connected;
             btnGoToAz.Enabled = connected;
@@ -336,46 +450,109 @@ namespace NexDomeRotatorConfigurator
             lblHomedState.Enabled = connected;
             lblSeekMode.Enabled = connected;
         }
-        private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            string part = "";
-            int where = 0;
-            serialBuffer += ArduinoPort.ReadExisting();
-            while (serialBuffer.IndexOf("\r") != -1)
-            {
-                where = serialBuffer.IndexOf("\r");
-                part = serialBuffer.Substring(0, where);
-                serialBuffer = serialBuffer.Substring(where + 2);
-                messageList.Add(part);
-            }
-        }
+		private void SetOrignalFirmware()
+		{
+			lblControllerVersion.Text = "";
+			lblControllerVersion.Enabled = true;
+			lblRotVolts.Text = "";
+			lblRotVolts.Enabled = true;
+			lblShutVolts.Text = "";
+			lblShutVolts.Enabled = true;
+			lblCutVolts.Text = "";
+			lblCutVolts.Enabled = true;
+			// Settings Group
+			cbxStepMode.Enabled = false;
+			btnStepMode.Enabled = false;
+			tbxMaxSpeed.Text = "";
+			tbxMaxSpeed.Enabled = false;
+			btnMaxSpeed.Enabled = false;
+			tbxAcceleration.Text = "";
+			tbxAcceleration.Enabled = false;
+			btnAcceleration.Enabled = false;
+			tbxStepsPerRotation.Text = "";
+			tbxStepsPerRotation.Enabled = true;
+			btnStepsPerRotation.Enabled = false;
+			//chkReversed.Checked = true;
+			chkReversed.Enabled = true;
+			//Serial Group
+			cbxPorts.Enabled = !false;
+			cbxBaudRates.Enabled = !false;
+			tbxCommand.Text = "";
+			tbxCommand.Enabled = true;
+			btnCommand.Enabled = true;
+			tbxTerminal.Enabled = true;
+			// Home group
+			tbxHomeAzimuth.Text = "";
+			tbxHomeAzimuth.Enabled = true;
+			btnHomeAzimuth.Enabled = true;
+			tbxParkAzimuth.Text = "";
+			tbxParkAzimuth.Enabled = true;
+			btnParkAzimuth.Enabled = true;
+			// Motion group
+			cbxUpdateRate.Enabled = true;
+			cbxButtonRate.Enabled = false;
+			btnParkDome.Enabled = true;
+			btnSync.Enabled = true;
+			tbxGotoAz.Text = "";
+			tbxGotoAz.Enabled = true;
+			btnGoToAz.Enabled = true;
+			tbxGotoPos.Text = "";
+			tbxGotoPos.Enabled = false;
+			btnGoToPos.Enabled = false;
+			btnFullTurn.Enabled = false;
+			btnRotateCCW.Enabled = false;
+			btnRotateCW.Enabled = false;
+			lblDisplayAz.Text = "";
+			lblDisplayPos.Text = "";
+			lblMultiStatus.Text = "";
+			btnSTOP.Enabled = true;
+			btnDoHoming.Enabled = true;
+			btnDoCalibrate.Enabled = true;
+			lastStepMode = 0;
+			lblHomedState.Enabled = false;
+			lblSeekMode.Enabled = false;
+		}
+		#endregion
 
-        private void btnFullTurn_Click(object sender, EventArgs e)
-        {
-            long fullTurn;
+		#region "Serial"
+		private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
+		{
+			string part = "";
+			int where = 0;
+			try
+			{
+				serialBuffer += ArduinoPort.ReadExisting();
+			}
+			catch (Exception ex)
+			{
+				if (ex is IOException)
+				{
+					MessageBox.Show(ArduinoPort.PortName + " is not open.",
+						ex.GetType().FullName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+				else
+				{
+					MessageBox.Show(ArduinoPort.PortName + " unexpected error.", ex.GetType().FullName,
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            if (long.TryParse(tbxStepsPerRotation.Text, out fullTurn))
-            {
-                fullTurn -= 1;
-                Debug.Print(fullTurn.ToString());
-                SendCommand(CMD_MOVERELATIVE, fullTurn.ToString());
-            }
-            else
-            {
-                AddTextToTerminal("ERR: Invalid value");
-            }
-        }
+				}
+				btnConnect.Text = "Connect";
+				ParseTimer.Enabled = false;
+				UpdateTimer.Enabled = false;
+				SetControlsConnectStatus(false);
+			}
+			while (serialBuffer.IndexOf("\r") != -1)
+			{
+				where = serialBuffer.IndexOf("\r");
+				part = serialBuffer.Substring(0, where);
+				serialBuffer = serialBuffer.Substring(where + 2);
+				messageList.Add(part);
+			}
+		}
 
-        private void cbxUpdateRate_SelectedIndexChanged(object sender, EventArgs e)
+		public void ParseSerialMessage()
         {
-            UpdateTimer.Interval = Convert.ToInt32(cbxUpdateRate.Text);
-            Configurator.Properties.Settings.Default.updateSpeed = cbxUpdateRate.SelectedIndex;
-            Configurator.Properties.Settings.Default.Save();
-        }
-
-        public void ParseSerialMessage()
-        {
-            string message, cmd, value;
+            string localString, message, cmd, value;
             int localInt;
             while (messageList.Count > 0)
             {
@@ -397,20 +574,11 @@ namespace NexDomeRotatorConfigurator
 
                 switch (cmd)
                 {
-                    case "_":
-                        GetNexDomeSettings();
-                        break;
-                    case "/":
-                        AddTextToTerminal("<- Settings saved to controller EEPROM.");
-                        break;
                     case "-":
                         AddTextToTerminal(value);
                         break;
                     case "C":
-                        AddTextToTerminal("<- " + message.Substring(1));
-                        break;
-                    case "|":
-                        tbxHomeCenter.Text = value;
+                        AddTextToTerminal("<- Calibration Started" );
                         break;
                     case "*":
                         tbxAcceleration.Text = value;
@@ -443,9 +611,30 @@ namespace NexDomeRotatorConfigurator
                         }
                         break;
                     case "(":
-                        seekStatus = Convert.ToInt32(value);
-                        lblSeekMode.Text = seekStates[seekStatus];
-                        break;
+						localString = "ERR";
+						if (int.TryParse(value, out seekStatus))
+						{
+							if (seekStatus < seekStates.Count())
+							{
+								localString = seekStates[seekStatus];
+								if (seekStatus == seekStates.Length - 1) isCalibrating = true;
+								if (seekStatus == 0 && isCalibrating == true)
+								{
+									SendCommand("t");
+									isCalibrating = false;
+								}
+							}
+							else
+							{
+								AddTextToTerminal("ERR: Received seek status invalid.");
+							}
+							lblSeekMode.Text = localString;
+						}
+						else
+						{
+							AddTextToTerminal("ERR: Received seek status not an int");
+						}
+						break;
                     case "I":
                         tbxHomeAzimuth.Text = value;
                         break;
@@ -463,10 +652,21 @@ namespace NexDomeRotatorConfigurator
                         tbxParkAzimuth.Text = value;
                         break;
                     case "Q":
-                        lblDisplayAz.Text = value;
-                        break;
+						if (isOriginalFirmware == true)
+						{
+							string[] values = value.Split('\n');
+							value = values[0];
+						}
+						lblDisplayAz.Text = value;
+
+						break;
                     case "P":
-                        lblDisplayPos.Text = value;
+						if (isOriginalFirmware == true)
+						{
+							string[] values = value.Split('\n');
+							value = values[0];
+						}
+						lblDisplayPos.Text = value;
                         break;
                     case "S":
                         AddTextToTerminal("<- Synchonized to " + value + (char)176);
@@ -476,7 +676,8 @@ namespace NexDomeRotatorConfigurator
                         tbxStepsPerRotation.Text = value;
                         break;
                     case "V":
-                        Debug.Print("Version info");
+						CheckVersion(value);
+						Debug.Print("Version info");
                         lblControllerVersion.Text = value;
                         break;
                     case "Y":
@@ -498,12 +699,9 @@ namespace NexDomeRotatorConfigurator
                 }
             }
         }
-
         private void GetNexDomeSettings()
         {
-            AddTextToTerminal("-> Get controller settings.");
-
-            SendCommand(CMD_VERSION);
+            SendCommand(CMD_GETVERSION);
             SendCommand(CMD_GETHOME);
             SendCommand(CMD_GETPARKAZ);
             SendCommand(CMD_MAXSPEED);
@@ -514,32 +712,7 @@ namespace NexDomeRotatorConfigurator
             SendCommand(CMD_CENTER);
             SendCommand(CMD_HOMESTATUS);
             SendCommand(CMD_GETVOLTS);
-            AddTextToTerminal("<- Settings loaded from controller EEPROM.");
         }
-
-        private void ParseTimer_Tick(object sender, EventArgs e)
-        {
-
-            if (messageList.Count > 0)
-            {
-                ParseSerialMessage();
-
-            }
-        }
-        private void UpdateTimer_Tick(object sender, EventArgs e)
-        {
-
-            if (ArduinoPort.IsOpen == true)
-            {
-                SendCommand("^");
-                SendCommand("q");
-                SendCommand("p");
-                SendCommand("m");
-                SendCommand("(");
-                SendCommand("z");
-            }
-        }
-
         private void SendCommand(string command, string value = "")
         {
             if (ArduinoPort.IsOpen)
@@ -547,8 +720,7 @@ namespace NexDomeRotatorConfigurator
                 try
                 {
                     if (value.Length > 0) command += " " + value;
-                    command = "%" + command; // All commands from configurator have this first for extra feedback ASCOM can't handle.
-                    ArduinoPort.WriteLine(command);
+                     ArduinoPort.WriteLine(command);
                 }
                 catch (Exception ex)
                 {
@@ -566,6 +738,7 @@ namespace NexDomeRotatorConfigurator
                     {
                         MessageBox.Show(ArduinoPort.PortName + " error.", ex.GetType().FullName,
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                     }
                     Disconnect();
                 }
@@ -574,67 +747,12 @@ namespace NexDomeRotatorConfigurator
             {
                 AddTextToTerminal("Serial port not open. (" + command + ")");
                 Disconnect();
-                MessageBox.Show(ArduinoPort.PortName + " unexpectedly closed?",
-                            "Serial Port Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private bool IsFloat(string strValue)
-        {
-            float value;
-            string sRes = "";
-            bool res = false;
+		#endregion
 
-            if (strValue.Length > 0)
-            {
-                if (!float.TryParse(strValue, out value))
-                {
-                    sRes = "Invalid value";
-                }
-                else
-                {
-                    res = true;
-                }
-            }
-            else
-            {
-                sRes = "Empty value";
-
-            }
-            if (res == false)
-            {
-                AddTextToTerminal("ERR: " + sRes);
-            }
-            return res;
-        }
-        private bool IsLong(string strValue)
-        {
-            long value;
-            string sRes = "";
-            bool res = false;
-
-            if (strValue.Length > 0)
-            {
-                if (!long.TryParse(strValue, out value))
-                {
-                    sRes = "Invalid value";
-                }
-                else
-                {
-                    res = true;
-                }
-            }
-            else
-            {
-                sRes = "Empty value";
-
-            }
-            if (res == false)
-            {
-                AddTextToTerminal("ERR: " + sRes);
-            }
-            return res;
-        }
-        private void btnStepMode_Click(object sender, EventArgs e)
+		#region "Settings Controls"
+		private void btnStepMode_Click(object sender, EventArgs e)
         {
             int newSteps;
 
@@ -674,11 +792,6 @@ namespace NexDomeRotatorConfigurator
                 changesMade++;
 
             }
-        }
-        private void btnSTOP_Click(object sender, EventArgs e)
-        {
-            SendCommand(CMD_STOP);
-            AddTextToTerminal("-> Stop!");
         }
         private void chkReversed_Click(object sender, EventArgs e)
         {
@@ -727,31 +840,6 @@ namespace NexDomeRotatorConfigurator
                 changesMade++;
             }
         }
-        private void btnParkDome_Click(object sender, EventArgs e)
-        {
-            if (IsFloat(tbxParkAzimuth.Text))
-            {
-                SendCommand(CMD_GOTOAZ, tbxParkAzimuth.Text);
-            }
-        }
-        private void btnHomeCenter_Click(object sender, EventArgs e)
-        {
-            if (IsLong(tbxHomeCenter.Text))
-            {
-                SendCommand(CMD_CENTER, tbxHomeCenter.Text);
-                changesMade++;
-            }
-        }
-        private void btnDoHoming_Click(object sender, EventArgs e)
-        {
-            SendCommand("h");
-
-        }
-        private void btnDoCalibrate_Click(object sender, EventArgs e)
-        {
-            SendCommand(CMD_CALIBRATE);
-            changesMade++;
-        }
         private void btnSync_Click(object sender, EventArgs e)
         {
             if (IsFloat(tbxGotoAz.Text))
@@ -759,62 +847,102 @@ namespace NexDomeRotatorConfigurator
                 SendCommand(CMD_SYNC, tbxGotoAz.Text);
             }
         }
-        private void btnGoToAz_Click(object sender, EventArgs e)
-        {
-            if (IsFloat(tbxGotoAz.Text))
-            {
-                SendCommand(CMD_GOTOAZ, tbxGotoAz.Text);
-            }
-        }
-        private void RotateButton(long direction)
-        {
-            SendCommand(CMD_MOVERELATIVE, (direction * rotateButtonSteps).ToString());
-        }
-        private void btnRotateCW_MouseDown(object sender, MouseEventArgs e)
-        {
-            RotateButton(DIRECTION_POSITIVE);
-            cwButtonDown = true;
-        }
-        private void btnRotateCW_MouseUp(object sender, MouseEventArgs e)
-        {
-            cwButtonDown = false;
-        }
-        private void btnRotateCCW_MouseDown(object sender, MouseEventArgs e)
-        {
-            RotateButton(DIRECTION_NEGATIVE);
-            ccwButtonDown = true;
-        }
-        private void btnRotateCCW_MouseUp(object sender, MouseEventArgs e)
-        {
-            ccwButtonDown = false;
-        }
-        private void btnGoToPos_Click(object sender, EventArgs e)
-        {
-            if (IsLong(tbxGotoPos.Text))
-            {
-                SendCommand(CMD_POS, tbxGotoPos.Text);
-            }
-        }
-        private void UnsavedChanges(string reason)
-        {
-            DialogResult res = MessageBox.Show("You have unsaved changes, Save them now?", reason + "...", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-            if (res == DialogResult.Yes)
-            {
-                changesMade = 0;
-                SendCommand("/");
-            }
-        }
-        private void btnSaveSettings_Click(object sender, EventArgs e)
-        {
-            SendCommand("/");
-            changesMade = 0;
-            AddTextToTerminal("-> Save Your Settings");
-        }
-        private void btnLoadSettings_Click(object sender, EventArgs e)
-        {
-            GetNexDomeSettings();
-        }
-        private void Rotate_Timer_Tick(object sender, EventArgs e)
+		#endregion
+
+		#region "Movement Controls
+		private void btnDoHoming_Click(object sender, EventArgs e)
+		{
+			SendCommand("h");
+
+		}
+		private void btnDoCalibrate_Click(object sender, EventArgs e)
+		{
+			SendCommand(CMD_CALIBRATE);
+			changesMade++;
+		}
+		private void btnParkDome_Click(object sender, EventArgs e)
+		{
+			if (IsFloat(tbxParkAzimuth.Text))
+			{
+				SendCommand(CMD_GOTOAZ, tbxParkAzimuth.Text);
+			}
+		}
+		private void btnGoToAz_Click(object sender, EventArgs e)
+		{
+			if (IsFloat(tbxGotoAz.Text))
+			{
+				SendCommand(CMD_GOTOAZ, tbxGotoAz.Text);
+			}
+		}
+		private void btnGoToPos_Click(object sender, EventArgs e)
+		{
+			if (IsLong(tbxGotoPos.Text))
+			{
+				SendCommand(CMD_POS, tbxGotoPos.Text);
+			}
+		}
+		private void btnFullTurn_Click(object sender, EventArgs e)
+		{
+			long fullTurn;
+
+			if (long.TryParse(tbxStepsPerRotation.Text, out fullTurn))
+			{
+				fullTurn -= 1;
+				Debug.Print(fullTurn.ToString());
+				SendCommand(CMD_MOVERELATIVE, fullTurn.ToString());
+			}
+			else
+			{
+				AddTextToTerminal("ERR: Invalid value");
+			}
+		}
+		private void btnSTOP_Click(object sender, EventArgs e)
+		{
+			SendCommand(CMD_STOP);
+			AddTextToTerminal("-> Stop!");
+		}
+		private void RotateButton(long direction)
+		{
+			SendCommand(CMD_MOVERELATIVE, (direction * rotateButtonSteps).ToString());
+		}
+		private void btnRotateCW_MouseDown(object sender, MouseEventArgs e)
+		{
+			RotateButton(DIRECTION_POSITIVE);
+			cwButtonDown = true;
+		}
+		private void btnRotateCW_MouseUp(object sender, MouseEventArgs e)
+		{
+			cwButtonDown = false;
+		}
+		private void btnRotateCCW_MouseDown(object sender, MouseEventArgs e)
+		{
+			RotateButton(DIRECTION_NEGATIVE);
+			ccwButtonDown = true;
+		}
+		private void btnRotateCCW_MouseUp(object sender, MouseEventArgs e)
+		{
+			ccwButtonDown = false;
+		}
+
+		#endregion
+
+		#region "Timers"
+		private void ParseTimer_Tick(object sender, EventArgs e)
+		{
+
+			if (messageList.Count > 0)
+			{
+				ParseSerialMessage();
+
+			}
+		}
+		private void cbxButtonRate_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			ButtonTimer.Interval = Convert.ToInt32(cbxButtonRate.Text);
+			Configurator.Properties.Settings.Default.buttonRate = cbxButtonRate.SelectedIndex;
+			Configurator.Properties.Settings.Default.Save();
+		}
+		private void Button_Timer_Tick(object sender, EventArgs e)
         {
             if (cwButtonDown == true)
             {
@@ -825,10 +953,34 @@ namespace NexDomeRotatorConfigurator
                 RotateButton(DIRECTION_NEGATIVE);
             }
         }
+		private void cbxUpdateRate_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateTimer.Interval = Convert.ToInt32(cbxUpdateRate.Text);
+			Configurator.Properties.Settings.Default.updateRate = cbxUpdateRate.SelectedIndex;
+			Configurator.Properties.Settings.Default.Save();
+		}
+		private void UpdateTimer_Tick(object sender, EventArgs e)
+		{
+			if (ArduinoPort.IsOpen == true)
+			{
+				SendCommand(CMD_DIRECTION);
+				SendCommand(CMD_GETAZ);
+				SendCommand(CMD_POS);
+				SendCommand(CMD_MOVESTATUS);
+				SendCommand(CMD_GETSEEKMODE);
+				SendCommand(CMD_HOMESTATUS);
+				SendCommand(CMD_GETVOLTS);
+			}
+			else
+			{
+				AddTextToTerminal("ERR: Serial port closed unexpectedly.");
+			}
+		}
+		#endregion
 
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+		private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (changesMade > 0) UnsavedChanges("Exiting");
+
         }
     }
 }
