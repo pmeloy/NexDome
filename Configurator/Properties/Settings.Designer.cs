@@ -25,13 +25,25 @@ namespace Configurator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int updateSpeed {
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int updateRate {
             get {
-                return ((int)(this["updateSpeed"]));
+                return ((int)(this["updateRate"]));
             }
             set {
-                this["updateSpeed"] = value;
+                this["updateRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int buttonRate {
+            get {
+                return ((int)(this["buttonRate"]));
+            }
+            set {
+                this["buttonRate"] = value;
             }
         }
     }

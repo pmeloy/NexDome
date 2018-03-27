@@ -29,3 +29,11 @@ Grozzie for the source code I built upon https://github.com/grozzie2/NexDome
 
 License: GPL3
 
+NOTES:
+
+March 27, 2018
+The version format for this project will be 0.Major.Minor.Build
+To allow checking for original firmware (V1.1x) I've decided to never use the major version number. The first digit will always be zero and the real Major version number is in the second position.
+
+Configurator and Firmware must have the same Major and Minor versions to be compartible, build versions don't need to be the same.
+

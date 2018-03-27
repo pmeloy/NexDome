@@ -2,8 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Configurator.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="updateSpeed" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">5</Value>
+    <Setting Name="updateRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="buttonRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>
