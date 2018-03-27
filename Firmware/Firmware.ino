@@ -17,8 +17,10 @@ W 1 - Wipe EEPROM (needs the 1 or it aborts)
 
 Rotator rotator;
 const int HOME_PIN = 2;
-const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 1;
+const String VERSION_MAJOR = "0";
+const String VERSION_MINOR = "0";
+const String VERSION_BUILD = "1";
+
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];
 long int localLong;
@@ -294,7 +296,7 @@ void ProcessSerialCommand()
 		usbMessage = "T " + String(rotator.getStepsPerRotation());
 		break;
 	case ('v'):
-		usbMessage = "VNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
+		usbMessage = "VNexDome V " +VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
 
 		//if (rotatorSteppershutterVersion[0] != 0) 
 		//{
