@@ -173,13 +173,17 @@ namespace NexDomeRotatorConfigurator
         }
         public void AddTextToTerminal(string addition)
         {
-            tbxTerminal.Text += addition + Environment.NewLine;
-            if (tbxTerminal.TextLength > 500)
+            int start = -1;
+            int count = 0;
+            while ((start = tbxTerminal.Text.IndexOf(Environment.NewLine, start + 1)) != -1)
+                count++;
+            if (count > 40)
             {
                 tbxTerminal.Text = RemoveFirstLines(tbxTerminal.Text, 5);
             }
-            tbxTerminal.SelectionStart = tbxTerminal.TextLength - 1;
-            tbxTerminal.SelectionLength = 0;
+            tbxTerminal.AppendText( addition + Environment.NewLine);
+            //tbxTerminal.SelectionStart = tbxTerminal.TextLength - 1;
+            //tbxTerminal.SelectionLength = 0;
         }
         private String IntToMillivolts(string mv)
         {
@@ -270,11 +274,28 @@ namespace NexDomeRotatorConfigurator
 
         private void Disconnect()
         {
-            ArduinoPort.Close();
-            btnConnect.Text = "Connect";
-            ParseTimer.Enabled = false;
-            UpdateTimer.Enabled = false;
-            SetControlsConnectStatus(false);
+            try
+            {
+                ArduinoPort.Close();
+            }
+            catch (Exception ex)
+            {
+                if (ex is IOException)
+                {
+                    MessageBox.Show(ArduinoPort.PortName + " doesn't exist",
+                        ex.GetType().FullName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(ArduinoPort.PortName + " error.", ex.GetType().FullName,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
+                btnConnect.Text = "Connect";
+                ParseTimer.Enabled = false;
+                UpdateTimer.Enabled = false;
+                SetControlsConnectStatus(false);
+            }
         }
         private void SetControlsConnectStatus(bool connected)
         {
@@ -340,7 +361,28 @@ namespace NexDomeRotatorConfigurator
         {
             string part = "";
             int where = 0;
-            serialBuffer += ArduinoPort.ReadExisting();
+            try
+            {
+                serialBuffer += ArduinoPort.ReadExisting();
+            }
+            catch (Exception ex)
+            {
+                if (ex is IOException)
+                {
+                    MessageBox.Show(ArduinoPort.PortName + " is not open.",
+                        ex.GetType().FullName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(ArduinoPort.PortName + " unexpected error.", ex.GetType().FullName,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
+                btnConnect.Text = "Connect";
+                ParseTimer.Enabled = false;
+                UpdateTimer.Enabled = false;
+                SetControlsConnectStatus(false);
+            }
             while (serialBuffer.IndexOf("\r") != -1)
             {
                 where = serialBuffer.IndexOf("\r");
@@ -566,6 +608,7 @@ namespace NexDomeRotatorConfigurator
                     {
                         MessageBox.Show(ArduinoPort.PortName + " error.", ex.GetType().FullName,
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                     }
                     Disconnect();
                 }

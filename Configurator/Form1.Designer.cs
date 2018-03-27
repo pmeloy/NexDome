@@ -86,6 +86,8 @@
             this.btnParkDome = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.Movement = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbxUpdateRate = new System.Windows.Forms.ComboBox();
             this.btnFullTurn = new System.Windows.Forms.Button();
             this.btnSync = new System.Windows.Forms.Button();
             this.btnSTOP = new System.Windows.Forms.Button();
@@ -96,8 +98,6 @@
             this.chkReversed = new System.Windows.Forms.CheckBox();
             this.RotateTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.cbxUpdateRate = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -398,12 +398,13 @@
             this.label6.TabIndex = 27;
             this.label6.Text = "Manual command";
             // 
-            // ReceiveTimer
+            // ParseTimer
             // 
             this.ParseTimer.Enabled = true;
+            this.ParseTimer.Interval = 10;
             this.ParseTimer.Tick += new System.EventHandler(this.ParseTimer_Tick);
             // 
-            // StatusTimer
+            // UpdateTimer
             // 
             this.UpdateTimer.Interval = 1000;
             this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
@@ -727,6 +728,33 @@
             this.Movement.TabStop = false;
             this.Movement.Text = "Movement";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(138, 13);
+            this.label2.TabIndex = 51;
+            this.label2.Text = "Update Rate in milliseconds";
+            // 
+            // cbxUpdateRate
+            // 
+            this.cbxUpdateRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxUpdateRate.FormattingEnabled = true;
+            this.cbxUpdateRate.Items.AddRange(new object[] {
+            "500",
+            "1000",
+            "2000",
+            "3000",
+            "4000",
+            "5000"});
+            this.cbxUpdateRate.Location = new System.Drawing.Point(149, 32);
+            this.cbxUpdateRate.Name = "cbxUpdateRate";
+            this.cbxUpdateRate.Size = new System.Drawing.Size(64, 21);
+            this.cbxUpdateRate.TabIndex = 51;
+            this.toolTip1.SetToolTip(this.cbxUpdateRate, "Set to match dip switch settings on NexDome controller.");
+            this.cbxUpdateRate.SelectedIndexChanged += new System.EventHandler(this.cbxUpdateRate_SelectedIndexChanged);
+            // 
             // btnFullTurn
             // 
             this.btnFullTurn.Location = new System.Drawing.Point(5, 199);
@@ -839,33 +867,6 @@
             this.RotateTimer.Enabled = true;
             this.RotateTimer.Interval = 250;
             this.RotateTimer.Tick += new System.EventHandler(this.Rotate_Timer_Tick);
-            // 
-            // cbxUpdateRate
-            // 
-            this.cbxUpdateRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbxUpdateRate.FormattingEnabled = true;
-            this.cbxUpdateRate.Items.AddRange(new object[] {
-            "500",
-            "1000",
-            "2000",
-            "3000",
-            "4000",
-            "5000"});
-            this.cbxUpdateRate.Location = new System.Drawing.Point(149, 32);
-            this.cbxUpdateRate.Name = "cbxUpdateRate";
-            this.cbxUpdateRate.Size = new System.Drawing.Size(64, 21);
-            this.cbxUpdateRate.TabIndex = 51;
-            this.toolTip1.SetToolTip(this.cbxUpdateRate, "Set to match dip switch settings on NexDome controller.");
-            this.cbxUpdateRate.SelectedIndexChanged += new System.EventHandler(this.cbxUpdateRate_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 35);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(138, 13);
-            this.label2.TabIndex = 51;
-            this.label2.Text = "Update Rate in milliseconds";
             // 
             // frmMain
             // 
