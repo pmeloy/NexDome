@@ -19,9 +19,15 @@ Driver: Lots of patience, it'll be a while before I get started on that!
 ## Installing ##
 Firmware - You don't need Visual Studio for this, the Arduino IDE works perfectly fine.
 
-Three files are required: Firmware.ino, RotatorClass.h and RotatorClass.cpp the Arduino IDE will insist on putting the .ino in its own directory, just copy the other two into the same directory afterward. You will get errors if they are not in the same directory.
+### From Source ###
+Sorry but far too much to explain. If you don't know how to do this already then grab the binary release from the releases tab.
 
-Configurator - Either compile from the source project yourself or grab the release binary. As long as you have .net installed it should just run. Configurator doesn't use the registry or write any files so permissions shouldn't be a problem.
+### From Release Binary ###
+Unzip wherever you like.
+
+The files inside the firmware folder have to stay together. Load the .ino up into the Arduino IDE or Visual Studio with the Arduino add-in and send to the controller.
+
+Configurator.exe - just run it. It will write a settings file (the kind built into VStudio applications) so you may need write permissions on the folder. You could run it as administrator but that's just not a good idea for anything you download from the net!
 
 ## Authors ##
 Pat Meloy
