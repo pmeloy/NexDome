@@ -2,8 +2,8 @@ These are the commands sent to the controller by whatever you're using to contro
 
 Original Firmware Commands
 
- Cmd   | Description                       | Response |  Tested | Comment                       
----- | ----| ---- | ---- |
+ Cmd   | Description                       | Response | Tested | Comment                       
+------ | --------------------------------- | -------- | ------ |
  a     | Abort movement/Stop dome          | A        | Y |                                     
  b     | Get Shutter Position              | Bi       | N |                                     
  c     | Start calibration routine         | C or E   | Y | E if not at home position           
