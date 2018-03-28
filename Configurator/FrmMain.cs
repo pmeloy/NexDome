@@ -670,6 +670,7 @@ namespace NexDomeRotatorConfigurator
                         break;
                     case "S":
                         AddTextToTerminal("<- Synchonized to " + value + (char)176);
+						SendCommand("i");
                         break;
                     case "T":
                         stepsPerRotation = Convert.ToInt64(value);
@@ -692,7 +693,6 @@ namespace NexDomeRotatorConfigurator
                         }
                         break;
                     case "Z":
-                        //todo: Convert to words
                         localInt = Convert.ToInt32(value);
                         lblHomedState.Text = homeStates[localInt + 1];
                         break;

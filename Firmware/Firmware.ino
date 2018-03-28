@@ -1,5 +1,6 @@
 #include "RotatorClass.h"
 #include <AccelStepper.h>
+
 /*
 % - flags command as status request that adds a percent sign to the response. Used by Configurator only
 [ - Direct call to moveRelative (give positive or negative long int for how many steps and in what direction.
@@ -15,20 +16,69 @@ C - Just a comment
 W 1 - Wipe EEPROM (needs the 1 or it aborts)
 */
 
+#pragma region "Declarations and Variables"
 Rotator rotator;
+//Shutter shutter;
 const int HOME_PIN = 2;
 const int VERSION_MAJOR = 0;
 const int VERSION_MINOR = 1;
+long int localLong;
+#pragma endregion
+
+#pragma region "Serial Declarations and Variables"
+#define serialPort Serial
 const int SERIALBUFFERLENGTH = 20;
 char serialBuffer[SERIALBUFFERLENGTH];
-long int localLong;
+int serialBufferPointer = 0;
+#pragma endregion
+
+#pragma region "wirelessPort Declarations and Variables"
+#define wirelessPort Serial1
+
+const int SHUTTER_INTERRUPT_PIN = 3;
+const int SHUTTER_STATE_NOT_CONNECTED = 0;
+const int SHUTTER_STATE_OPEN = 1;
+const int SHUTTER_STATE_OPENING = 2;
+const int SHUTTER_STATE_CLOSED = 3;
+const int SHUTTER_STATE_CLOSING = 4;
+const int SHUTTER_STATE_UNKNOWN = 5;
+const int SHUTTER_VERSION_LENGTH = 5;
+
+char wirelessBuffer[SERIALBUFFERLENGTH];
+int wirelessBufferPointer = 0;
+bool foundShutter = false;
+unsigned long int LastShutterResponse = 0;
+unsigned long int LastShutterKeepAlive = 0;
+//  The shutter sleep period ss 15 seconds
+//  Lets query it on every second sleep cycle
+//  but send one second early to ensure we catch it
+//  when it wakes up
+#define SHUTTER_SLEEP_WAIT 29000
+//  When in alive mode, the timing for each cycle is one second
+//  Query slightly early so the query is waiting when it wakes up
+#define SHUTTER_AWAKE_WAIT 900
+int ShutterState = SHUTTER_STATE_NOT_CONNECTED;
+float ShutterPosition = 0;
+unsigned int ShutterQueryTime;
+char ShutterVersion[SHUTTER_VERSION_LENGTH];
+unsigned long int ShutterHibernateTimer = 0;
+int ShutterBatteryVolts = 0;
+int LowVoltCutoff = 0;
+bool doingWirelessConfig = false;
+int wirelessConfigState = 0;
+bool ShutterAlive = false;
+
+#pragma endregion
+
+#pragma region "Arduino Setup and Loop"
 void setup()
 {
-
-	usb.begin(9600);
-	wireless.begin(9600);
+	serialPort.begin(9600);
+	wirelessPort.begin(9600);
 	rotator.loadConfig();
-
+	pinMode(SHUTTER_INTERRUPT_PIN, INPUT_PULLUP);
+	ShutterQueryTime = SHUTTER_SLEEP_WAIT;
+	ConfigurewirelessPort();
 }
 void loop()
 {
@@ -36,28 +86,27 @@ void loop()
 	checkForCommands();
 	//if (rotator.getSeekMode() != 0) rotator.doHomeOrCalibrate();
 	String test = "123";
-
 }
-
 void checkForCommands()
 {
-	if (usb.available())
+	if (serialPort.available())
 	{
-		incomingSerial(usb.read());
+		incomingSerial(serialPort.read());
 	}
-	if (wireless.available())
+	if (wirelessPort.available())
 	{
 		char a;
-		a = wireless.read();
-		incomingWireless(a);
+		a = wirelessPort.read();
+		incomingWirelessChar(a);
 	}
 }
+#pragma endregion
+
+#pragma region "Serial handling";
+
 void incomingSerial(char a)
 {
-	static int serialBufferPointer;
-
 	if ((a == '\n') || (a == '\r')) {
-		//  dont process an empty line feed
 		if (serialBufferPointer > 0) {
 			ProcessSerialCommand();
 		}
@@ -69,192 +118,168 @@ void incomingSerial(char a)
 	serialBuffer[serialBufferPointer] = a;
 	serialBufferPointer++;
 	if (serialBufferPointer == SERIALBUFFERLENGTH) {
-		//  we are going to overflow the buffer
-		//  erase it and start over
 		memset(serialBuffer, 0, SERIALBUFFERLENGTH);
 		serialBufferPointer = 0;
 	}
-	else {
+	else 
+	{
 		serialBuffer[serialBufferPointer] = 0;
 	}
 	return;
 }
-void incomingWireless(char a)
-{
-	//Computer.print(a);
-	//if ((a == '\n') || (a == '\r')) {
-	//	return ProcessShutterData();
-	//}
-	////Computer.println((int)a);
-	//WirelessBuffer[WirelessPointer] = a;
-	//WirelessPointer++;
-	//if (WirelessPointer == MY_SERIAL_BUFFER_SIZE) {
-	//	memset(WirelessBuffer, 0, MY_SERIAL_BUFFER_SIZE);
-	//	WirelessPointer = 0;
-	//}
-	//else {
-	//	WirelessBuffer[WirelessPointer] = 0;
-	//}
-	//if (a < 0) {
-	//	Computer.println("Wireless Clearing garbage");
-	//	WirelessPointer = 0;
-	//	WirelessBuffer[0] = 0;
-	//}
-	////Computer.print(a);
-	//return;
-}
-
 void ProcessSerialCommand()
 {
 	float localFloat;
 	char command;
 	String value;
 	int localInt, valueIndex = 1;
-	String usbMessage = "";
+	String serialMessage = "";
 	bool isStatus = false;
 	long int localLong;
 	command = serialBuffer[0];
-
-	if (command == '%')
-	{
-		command = serialBuffer[1];
-		valueIndex = 2;
-		isStatus = true;
-	}
-	else
-	{
-		value = String(serialBuffer[1]);
-	}
+	value = String(serialBuffer);
+	value = value.substring(1);
+	value.trim();
 
 	switch (command) {
 	case('*'):
-		if (serialBuffer[valueIndex] == ' ')
-		{
-			localFloat = atof(&serialBuffer[valueIndex]);
-			rotator.setAcceleration(localFloat);
-		}
-		usbMessage = "* " + String(rotator.getAcceleration());
 
+		if (value.length() > 0)
+		{
+			localFloat = value.toFloat();
+			rotator.setAcceleration(value.toFloat());
+		}
+		serialMessage = "* " + String(rotator.getAcceleration());
 		break;
 	case ('?'):
-		if (serialBuffer[valueIndex] == ' ')
+		if (value.toInt() == 1)
 		{
-			localInt = atoi(&serialBuffer[valueIndex]);
-			if (localInt == 1) rotator.setDefaults();
-			usbMessage = "? 1";
+			rotator.setDefaults();
+			serialMessage = "? 1";
 		}
 		else
 		{
 			rotator.loadConfig();
-			usbMessage = "? 0";
+			serialMessage = "? 0";
 		}
 		break;
 	case('/'):
 		rotator.saveConfig();
-		usbMessage = "/";
+		serialMessage = "/";
 		break;
 	case('('):
-		usbMessage = "(" + String(rotator.getSeekMode());
+		serialMessage = "( " + String(rotator.getSeekMode());
 		break;
 	case ('$'):
-		if (serialBuffer[valueIndex] == ' ')
-		{
-			localInt = atoi(&serialBuffer[valueIndex]);
-			rotator.setStepMode(localInt);
-		}
-		usbMessage = "$ " + String(rotator.getStepMode());
+		localInt = value.toInt();
+		if (localInt > 0)	rotator.setStepMode(localInt);
+		serialMessage = "$ " + String(rotator.getStepMode());
 		break;
 	case ('['):
-		if (serialBuffer[valueIndex] == ' ')
+		if (value.length() > 0)
 		{
-			localLong = atol(&serialBuffer[valueIndex]);
+			localLong = value.toInt();
 			rotator.setSeekMode(HOMING_NONE);
 			rotator.moveRelative(localLong);
+			serialMessage = "[ " + String(localLong);
 		}
-		usbMessage = "[ " + String(localLong);
+		else
+		{
+			serialMessage = "E";
+		}
 		break;
 	case ('#'):
-		if (serialBuffer[valueIndex] == ' ')
-		{
-			localFloat = atof(&serialBuffer[valueIndex]);
-			rotator.setMaxSpeed(localFloat);
-		}
-		usbMessage = "# " + String(rotator.getMaxSpeed());
+		localFloat = value.toFloat();
+		if (localFloat > 0)	rotator.setMaxSpeed(localFloat);
+		serialMessage = "# " + String(rotator.getMaxSpeed());
 		break;
 	case('^'):
-		usbMessage = "^ " + String(rotator.getDirection());
+		serialMessage = "^ " + String(rotator.getDirection());
 		break;
 	case ('a'):
-		// Abort move, stop at full step location
-		usbMessage = "A";
-		wireless.println("a");
+		serialMessage = "A";
+		wirelessPort.println("a");
 		rotator.stop();
 		break;
 	case ('c'):
 		rotator.startHoming(true);
-		usbMessage = "C";
+		serialMessage = "C";
 		break;
 	case ('g'):
-		localFloat = atof(&serialBuffer[valueIndex]);
-		if ((localFloat >= 0.0) && (localFloat <= 360.0))
+		if (value.length() > 0)
 		{
-			rotator.setAzimuth(localFloat);
-			usbMessage = "G";
-		}
-		else
-		{
-			usbMessage = "E";
+			localFloat = value.toFloat();
+			if ((localFloat >= 0.0) && (localFloat <= 360.0))
+			{
+				rotator.setAzimuth(localFloat);
+				serialMessage = "G";
+			}
+			else
+			{
+				serialMessage = "E";
+			}
 		}
 		break;
 	case ('h'):
 		rotator.startHoming(false);
-		usbMessage = "H";
+		serialMessage = "H";
 		break;
 	case ('i'):
-		usbMessage = "I " + String(rotator.getHomeAzimuth());
+		serialMessage = "I " + String(rotator.getHomeAzimuth());
 		break;
 	case ('j'):
-		if ((serialBuffer[valueIndex] != 0x0a) && (serialBuffer[valueIndex] != 0x0d)) {
-			localFloat = atof(&serialBuffer[valueIndex]);
+		if (value.length() > 0)
+		{
+			localFloat = value.toFloat();
 			if ((localFloat >= 0) && (localFloat < 360)) rotator.setHomeAzimuth(localFloat);
 		}
-		usbMessage = "I " + String(rotator.getHomeAzimuth());
+		serialMessage = "I " + String(rotator.getHomeAzimuth());
 		break;
 	case ('k'):
-		if (serialBuffer[valueIndex] == ' ') {
-			int newcutoff;
-			newcutoff = atoi(&serialBuffer[valueIndex]);
-			wireless.print("b ");
-			wireless.println(newcutoff);
+		//todo: Implement this
+		// Set cuttoff voltage for shutter
+		localInt = value.toInt();
+		if (localInt > 0) {
+			wirelessPort.print("b ");
+			wirelessPort.println(localInt);
 		}
-		usbMessage = "K " + String(rotator.getControllerVoltage()) + " 0 " + String(rotator.getLowVoltageCutoff());
+		serialMessage = "K " + String(rotator.getControllerVoltage()) + " " + String(ShutterBatteryVolts)+ " " + String(rotator.getLowVoltageCutoff());
 		break;
 	case ('l'):
-		localFloat = atof(&serialBuffer[valueIndex]);
-		if ((localFloat >= 0) && (localFloat < 360))
+		// Set Park Azumith
+		if (value.length() > 0)
 		{
-			rotator.setParkAzimuth(localFloat);
-			usbMessage = "N " + String(rotator.getParkAzimuth());
+			localFloat = value.toFloat();
+			if ((localFloat >= 0) && (localFloat < 360))
+			{
+				rotator.setParkAzimuth(localFloat);
+				serialMessage = "N " + String(rotator.getParkAzimuth());
+			}
+			else
+			{
+				serialMessage = "E";
+			}
 		}
 		else
 		{
-			usbMessage = "E";
+			serialMessage = "E";
 		}
 		break;
 	case ('m'):
-		usbMessage = "M " + String(rotator.isMoving());
+		serialMessage = "M " + String(rotator.isMoving());
 		break;
 	case ('n'):
-		usbMessage = "N " + String(rotator.getParkAzimuth());
+		serialMessage = "N " + String(rotator.getParkAzimuth());
 		break;
 	case ('o'):
-		usbMessage = "O 0.00";
+		//todo: Implement azimuth error
+		serialMessage = "O 0.00";
 		//rotatorStepperlastAzimuthError = rotatorStepperazimuthError;
 		break;
 	case ('p'):
-		if (serialBuffer[valueIndex] == ' ')
+		if (value.length() > 0)
 		{
-			localLong = atol(&serialBuffer[valueIndex]);
+			localLong = value.toInt();
 			if (localLong > 0 && localLong < rotator.getStepsPerRotation())
 			{
 				localLong = rotator.getPositionalDistance(rotator.getPosition(), localLong);
@@ -262,125 +287,346 @@ void ProcessSerialCommand()
 			}
 			else
 			{
-				usbMessage = "E";
+				serialMessage = "E";
 			}
 		}
 		else
 		{
-			usbMessage = "P " + String(rotator.getPosition());
+			serialMessage = "P " + String(rotator.getPosition());
 		}
 		break;
 	case ('q'):
-		usbMessage = "Q " + String(rotator.getAzimuth());
+		serialMessage = "Q " + String(rotator.getAzimuth());
 		break;
 	case ('s'):
-		localFloat = atof(&serialBuffer[valueIndex]);
+		localFloat = value.toFloat();
 		if (localFloat >= 0 && localFloat < 360)
 		{
 			rotator.syncHome(localFloat);
 			rotator.syncPosition(localFloat);
-			usbMessage = "S " + String(rotator.getAzimuth());
+			serialMessage = "S " + String(rotator.getAzimuth());
 		}
 		else
 		{
-			usbMessage = "E";
+			serialMessage = "E";
 		}
 		break;
 	case ('t'):
-		if (serialBuffer[valueIndex] == ' ') {
-			localLong = atol(&serialBuffer[valueIndex]);
-			rotator.setStepsPerRotation(localLong);
-		}
-		usbMessage = "T " + String(rotator.getStepsPerRotation());
+		localLong = value.toInt();
+		if (localLong > 0) rotator.setStepsPerRotation(localLong);
+		serialMessage = "T " + String(rotator.getStepsPerRotation());
 		break;
 	case ('v'):
-		usbMessage = "VNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
+		serialMessage = "VNexDome V " + String(VERSION_MAJOR) + "." + String(VERSION_MINOR);
 
-		//if (rotatorSteppershutterVersion[0] != 0) 
-		//{
-		//	usb.print(" NexShutter V ");
-		//	sendMessage =(rotatorSteppershutterVersion);
-		//}
-
+		if (ShutterVersion[0] != 0) 
+		{
+			serialMessage +=" NexShutter V " + String(ShutterVersion);
+		}
 		break;
 	case('x'):
-		wireless.println("x");
-		usbMessage = "X";
+		wirelessPort.println("x");
+		serialMessage = "X";
 		break;
 	case ('y'):
-		if (serialBuffer[valueIndex] == ' ')
+		if (value.length() > 0)
 		{
-			bool flag = false;
-			localInt = atoi(&serialBuffer[valueIndex]);
-			if (localInt == 1) flag = true;
+			bool flag = (value.toInt() == 1);
 			rotator.setReversed(flag);
 		}
-		usbMessage = "Y " + String(rotator.getReversed());
+		serialMessage = "Y " + String(rotator.getReversed());
 		break;
 	case ('z'):
-		usbMessage = "Z " + String(rotator.getHomeStatus());
+		serialMessage = "Z " + String(rotator.getHomeStatus());
 		break;
 		//
-		// Wireless or accessories which I don't have
+		// wirelessPort or accessories which I don't have
 		//
 	case ('b'):
-		usbMessage = "B 0";
+		serialMessage = "B " + String(ShutterPosition);
 		break;
 	case ('d'):
 		// If not raining, open shutter
 		if (rotator.isRaining() == true)
 		{
-			usbMessage = "E";
+			serialMessage = "E";
 		}
 		else
 		{
-			usbMessage = "D";
-			wireless.println("D");
-			//if (rotatorSteppershutterState != SHUTTER_STATE_NOT_CONNECTED) rotatorSteppershutterState = SHUTTER_STATE_OPENING;
+			serialMessage = "D";
+			wirelessPort.println("o");
+			if (ShutterState != SHUTTER_STATE_NOT_CONNECTED) ShutterState = SHUTTER_STATE_OPENING;
 		}
 		break;
 	case ('e'):
 		// Close shutter
-		usbMessage = "D";
-		wireless.println("c");
-		//if (rotatorSteppershutterState != SHUTTER_STATE_NOT_CONNECTED) rotatorSteppershutterState = SHUTTER_STATE_CLOSING;
+		serialMessage = "D";
+		wirelessPort.println("c");
+		if (ShutterState != SHUTTER_STATE_NOT_CONNECTED) ShutterState = SHUTTER_STATE_CLOSING;
 		break;
 	case ('f'):
 		// Set shutter position
-		usbMessage = "F";
-		localFloat = atof(&serialBuffer[valueIndex]);
-		wireless.print("f ");
-		wireless.print(localFloat);
+		if (value.length() > 0)
+		{
+			serialMessage = "F";
+			localFloat = value.toFloat();
+			wirelessPort.print("f ");
+			wirelessPort.println(localFloat);
+		}
 		break;
 	case ('r'):
 		// Set shutter hibernate timer
-		if (serialBuffer[valueIndex] == ' ')
+		localLong = value.toInt();
+		if (localLong > 0)
 		{
-			unsigned long int newtimer;
-			newtimer = atol(&serialBuffer[valueIndex]);
-			wireless.print("h ");
-			wireless.println(newtimer);
+			wirelessPort.print("h ");
+			wirelessPort.println(localLong);
 			// shutter.shutterHibernateTimer = newtimer;
 		}
-		usbMessage = "R 0";
+		serialMessage = "R " + String(ShutterHibernateTimer);
 		break;
 	case('u'):
-		usbMessage = "U 0";// " + String(rotator.isRaining());
+		serialMessage = "U " + String(ShutterState);// " + String(rotator.isRaining());
 		break;
 	case ('w'):
-		usbMessage = "W";
-		// configureWireless();
+		serialMessage = "W";
+		ConfigurewirelessPort();
 		break;
 	}
 
-	if (usbMessage != "")
+	if (serialMessage != "")
 	{
-		//if (isStatus == true) usb.print("%");
-		usb.println(usbMessage);
+		serialPort.println(serialMessage);
+	}
+}
+
+#pragma endregion
+
+#pragma region "wirelessPort Handling"
+void ConfigurewirelessPort()
+{
+	//  do nothing for now
+	//return;
+	serialPort.println("Sending + to xbee");
+	delay(1100);
+	doingWirelessConfig = true;
+	wirelessConfigState = 0;
+	memset(wirelessBuffer, 0, SERIALBUFFERLENGTH);
+	wirelessBufferPointer = 0;
+	wirelessPort.print("+++");
+}
+void incomingWirelessChar(char a)
+{
+	if ((a == '\n') || (a == '\r')) {
+//		return ProcessShutterResponse();
+		return ProcessShutterResponse();
+	}
+	wirelessBuffer[wirelessBufferPointer] = a;
+	wirelessBufferPointer++;
+	if (wirelessBufferPointer == SERIALBUFFERLENGTH) {
+		memset(wirelessBuffer, 0, SERIALBUFFERLENGTH);
+		wirelessBufferPointer = 0;
+	}
+	else {
+		wirelessBuffer[wirelessBufferPointer] = 0;
+	}
+	if (a < 0) {
+		serialPort.println("wirelessPort Clearing garbage");
+		wirelessBufferPointer = 0;
+		wirelessBuffer[0] = 0;
+	}
+	return;
+}
+void ProcessShutterResponse()
+{
+	serialPort.println("Wireless Response: " + String(wirelessBuffer));
+	if (wirelessBuffer[0] == 'O') 
+	{
+		if (wirelessBuffer[1] == 'K') 
+		{
+			//  The xbee unit is ready for configuration
+			foundShutter = true;
+			if (doingWirelessConfig) 
+			{
+				serialPort.println("ConfigState = " + String(wirelessConfigState));
+				switch (wirelessConfigState) 
+				{
+				case 0:
+					//  We could do the whole setup in just one command
+					//  but it gives back the same number of OK responses
+					//  So we have to parse out every OK anyways, may as well just
+					//  do one setting per OK return
+					//wirelessPort.println("ATID5555,CE1,PL0,SM4,SP5DC,ST100,CN");
+					wirelessPort.println("ATID5555");
+					serialPort.println("Setting wirelessPort id");
+					break;
+
+				case 1:
+					wirelessPort.println("ATCE1");
+					serialPort.println("Setting cordinator");
+					break;
+
+				case 2:
+					wirelessPort.println("ATPL0");
+					serialPort.println("Setting Power");
+					break;
+
+				case 3:
+					wirelessPort.println("ATSM4");
+					//wirelessPort.println("ATSM0");
+					serialPort.println("Setting sleep mode");
+					break;
+
+				case 4:
+					//  set sleep period, this is the co-ordinator
+					//  so it defines how long we will hold a message
+					//  for the endpoint
+					wirelessPort.println("ATSP5DC");
+					serialPort.println("Setting sleep period");
+					break;
+
+				case 5:
+					wirelessPort.println("ATST100");
+					serialPort.println("Setting sleep wait time");
+					break;
+
+				case 6:
+					wirelessPort.println("ATCN");
+					serialPort.println("Exit command mode");
+					break;
+
+				default:
+					//  Finished configuring, now see if the shutter is alive
+					wirelessPort.println("s");
+					serialPort.println("wirelessPort config finished");
+					doingWirelessConfig = false;
+					break;
+				}
+				wirelessConfigState++;
+			}
+			//serialPort.println("Clear wirelessPort buffer");
+			memset(wirelessBuffer, 0, SERIALBUFFERLENGTH);
+			wirelessBufferPointer = 0;
+			return;
+		}
+	}
+	// update our timer for the keep alive routines
+	if (!ShutterAlive) 
+	{
+		serialPort.println("Shutter is asleep!");
+		if (wirelessBuffer[0] == 'S') 
+		{
+			serialPort.println(wirelessBuffer);
+			serialPort.println("Shutter woke up");
+			ShutterAlive = true;
+		}
+	}
+	if (ShutterAlive) {
+		if (wirelessBuffer[0] == 'S') 
+		{
+			long int newShutterState;
+			LastShutterResponse = millis();
+			LastShutterKeepAlive = millis();  //  mark this time for our keepalive routines as well
+											  //  the first character in the response is the shutter state
+											  //ShutterQueryTime=SHUTTER_SLEEP_WAIT;
+			if (wirelessBuffer[2] == '0')
+			{
+				ShutterQueryTime = SHUTTER_AWAKE_WAIT;
+			}
+			else 
+			{
+				ShutterQueryTime = SHUTTER_SLEEP_WAIT;
+			}
+			switch (wirelessBuffer[1]) 
+			{
+			case 'C':
+				newShutterState = SHUTTER_STATE_CLOSED;
+				break;
+			case 'O':
+				newShutterState = SHUTTER_STATE_OPEN;
+				break;
+			case 'P':
+				newShutterState = SHUTTER_STATE_OPENING;
+				ShutterQueryTime = SHUTTER_AWAKE_WAIT;
+				break;
+			case 'D':
+				newShutterState = SHUTTER_STATE_CLOSING;
+				ShutterQueryTime = SHUTTER_AWAKE_WAIT;
+				break;
+			default:
+				newShutterState = SHUTTER_STATE_UNKNOWN;
+				break;
+				//default:
+				//  ShutterState=SHUTTER_STATE_NOT_CONNECTED;
+				//  break;
+			}
+			if (newShutterState != ShutterState) 
+			{
+				ShutterState = newShutterState;
+				serialPort.print("Shutter State ");
+				serialPort.println(ShutterState);
+			}
+			// shutter has responded with a status
+			// lets ask it for a position
+			if ((ShutterState != SHUTTER_STATE_OPENING) && (ShutterState != SHUTTER_STATE_CLOSING))wirelessPort.println("p");
+		}
+		if (wirelessBuffer[0] == 'P') 
+		{
+			ShutterPosition = atof(&wirelessBuffer[1]);
+			//serialPort.println("Shutter Position ");
+			//serialPort.println(q);
+			//  We got a position
+			//  lets ask for battery voltage
+			wirelessPort.println("b");
+		}
+		if (wirelessBuffer[0] == 'B') 
+		{
+			char *ptr;
+			ShutterBatteryVolts = atoi(&wirelessBuffer[1]);
+			//  now find the low voltage cutoff if it exists
+			ptr = &wirelessBuffer[2];
+			while ((ptr[0] != 0) && (ptr[0] != ' ') && (ptr[0] != 0x0a) && (ptr[0] != 0x0d)) ptr++;
+			if (ptr[0] == ' ') 
+			{
+				LowVoltCutoff = atoi(&ptr[0]);
+			}
+			if (ShutterHibernateTimer == 0) 
+			{
+				wirelessPort.println("h");
+			}
+			if (ShutterVersion[0] == 0) 
+			{
+				//  if we dont have a version for the shutter
+				//  fetch it now
+				//serialPort.println("Fetch Shutter Version");
+				wirelessPort.println("v");
+			}
+		}
+		if (wirelessBuffer[0] == 'V') 
+		{
+			//serialPort.print("Shutter Version ");
+			//serialPort.println(wirelessBuffer);
+			memcpy(ShutterVersion, &wirelessBuffer[12], 4);
+			//serialPort.println(ShutterVersion);
+		}
+		if (wirelessBuffer[0] == 'H') 
+		{
+			if (wirelessBuffer[1] == ' ') 
+			{
+				ShutterHibernateTimer = atol(&wirelessBuffer[1]);
+			}
+		}
 	}
 
+	// clear the buffer now that it's processed
+	memset(wirelessBuffer, 0, SERIALBUFFERLENGTH);
+	wirelessBufferPointer = 0;
+
+	return;
 
 }
+
+#pragma endregion
 
 
 

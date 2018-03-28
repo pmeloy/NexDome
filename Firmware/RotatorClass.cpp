@@ -1,3 +1,4 @@
+#pragma once
 #include "RotatorClass.h"
 #include <AccelStepper.h>
 //#include <EEPROM.h>
