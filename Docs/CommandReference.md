@@ -1,5 +1,7 @@
 These are the commands sent to the controller by whatever you're using to control it. They can just be typed in manually from the Arduino IDE or Configurator serial area as well.
 
+_Italics_ means optional.
+
 Original Firmware Commands
 
  Cmd   | Description                       | Response | Tested | Comment                       
@@ -12,21 +14,21 @@ e     | Close shutter                     | D        | Y |
 f float | Set shutter position              | F        | Y | 0 to 100%? Verify this              
 g float   | Goto supplied azimuth             | G or E   | Y | 0.00 to 359.99 degrees, E=invalid   
  h     | Home the dome                     | H        | Y |                                     
- i     | Get home azimuth                  | I f      | Y |                                     
- j float   | Set home azimuth                  | I f      | Y | 0.00 to 359.99 degrees              
-k <int> | Get battery voltages, set cutoff  | K int int int   | P | Main, Shutter, Low voltage cutout   
-l float   | Set park azimuth                  | N f      | Y | 0.00359.99 degrees                  
+ i     | Get home azimuth                  | I float      | Y |                                     
+ j float   | Set home azimuth                  | I float      | Y | 0.00 to 359.99 degrees              
+k _int_ | Get battery voltages, set cutoff  | K int int int   | P | Main, Shutter, Low voltage cutout   
+l float   | Set park azimuth                  | N float      | Y | 0.00359.99 degrees                  
  m     | Motion status                     | M int       | Y | 0-3                                 
- n     | Get park azimuth                  | N f      | Y |                                     
- o     | Get last heading error            | O f      | Y |                                     
- p     | Get stepper position              | P l      | Y |                                     
- q     | Get current azimuth               | Q f      | Y |                                     
-r <long> | Get or Set shutter sleep time     | R l      | Y |                                     
- s float   | Sync to supplied azimuth          | S f or E | Y | 0.00359.99 degrees, E if invalid    
- t     | Get steps per rotation            | T l      | Y |                                     
+ n     | Get park azimuth                  | N float      | Y |                                     
+ o     | Get last heading error            | O float      | Y |                                     
+ p     | Get stepper position              | P long      | Y |                                     
+ q     | Get current azimuth               | Q float      | Y |                                     
+r _long_ | Get or Set shutter sleep time     | R long      | Y |                                     
+ s float   | Sync to supplied azimuth          | S float or E | Y | 0.00359.99 degrees, E if invalid    
+ t     | Get steps per rotation            | T long      | Y |                                     
  u     | Get shutter status                | U int     | N | Rain status removed for now         
- v     | Get firmware version              | V s      | Y | Major Minor                         
+ v     | Get firmware version              | V string      | Y | Major Minor                         
  w     | Restart wireless                  | W        | N |                                     
- y <int> | Get or set reversed motion status | Y        | Y | 0 normal, 1 reversed                
+ y _int_ | Get or set reversed motion status | Y        | Y | 0 normal, 1 reversed                
  x     | Wake shutter                      | X        | N |                                     
- z     | Home status                       | Z i      | Y | 1 not homed,0 not at home,1 at home 
+ z     | Home status                       | Z int      | Y | 1 not homed,0 not at home,1 at home 
