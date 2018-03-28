@@ -1,6 +1,4 @@
-#Serial Commands
-----------
-
-Command|Description|Response|Comment
------|----|----|
-a|Stop|A|Stop using calculated deceleration
+First Header | Second Header
+------------ | -------------
+Content from cell 1 | Content from cell 2
+Content in the first column | Content in the second column
