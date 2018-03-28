@@ -29,8 +29,8 @@ First thing to do is select your Leonardo in the Com port selector. The actual n
  - Move dome back so home switch is not active
  - Click Calibrate and wait while it does it's work. Note, it only turns 1.2x the current Steps per Rotation value so don't start 180 degrees away from the home switch.
  - When that is complete mark or otherwise identify the exact position of the dome then click "Full turn". The dome will rotate exactly one less step than the amount specified in Steps per Rotation. If the dome ends up right back at your mark, you're done. It should be pretty close but probably not perfect.
- - If the dome has not rotated far enough, enter a new position into the textbox beside the "Go to Pos" button and then click to move the dome. Experiment until the dome is exactly at your mark then click "Save Settings"
- - The position value wraps around to zero (or max -1) so if you move left the dome a bit shy of your mark, you'll have to wrap the number in your head e.g. If it's at 440799 then you'll have to enter 5 or 100 or whatever works. If you're at 5 and need to go counterclockwise you'll use something like 440699.
+ - If the dome has not rotated far enough, enter a new position into the textbox beside the "Go to Pos" button and then click to move the dome. Experiment until the dome is exactly at your mark then enter a new value in the StepsPerRotation box then enter "/" (without quotes) in the serial text box and click send to save that new value.
+ - The position value wraps back to zero once it hits the value of StepsPerRotation.
  
 ![Configurator calibration](/Docs/img/Calibrate.png)
 
