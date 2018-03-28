@@ -1,17 +1,13 @@
-// Rotator.h version 0.01
-
-#ifndef _ROTATOR_h
-#define _ROTATOR_h
+#pragma once
 #include <EEPROM.h>
-//#include <AccelStepper.h>
+
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "arduino.h"
 #else
 #include "WProgram.h"
 #endif
 
-#define usb Serial
-#define wireless Serial1
+
 #define VOLTAGE_MONITOR_PIN A0
 
 enum Seeks
@@ -149,5 +145,4 @@ public:
 	int			getLowVoltageCutoff();
 };
 
-#endif
 
