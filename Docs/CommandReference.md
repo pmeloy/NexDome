@@ -33,21 +33,20 @@ y _int_  | Get or set reversed motion status | Y             | Y      | 0 normal
 x        | Wake shutter                      | X             | N      |                                     
 z        | Home status                       | Z int         | Y      | 1 not homed,0 not at home,1 at home 
 
-+------------------------------------------------------------------------------------------------+
-| New Firmware Commands. All commands from Configurator have % prepended                         |
-+------------------------------------------------------------------------------------------------+
-| Char   Description                        Response      Tested  Comment                        |
-+-------+-----------------------------------+----------+---+-------------------------------------+
-| %     | From Configurator                 | none     | Y |                                     |
-| [ l   | Relative move by step count       |          | Y | How many steps +/-, from position   |
-| # <f> | Get/Set maximum speed             |          | Y | Only set at startup for now         |
-| ^     | Get motor direction               | ^i       | Y | -1 negative, 1 positive             |
-| $ <i> | Get/Set number of microsteps      | $i       | Y | Must match dip switch settings!!    |
-| * <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      |
-| | <l> | Get/Set home center               | l        | Y | Deprecated                          |
-| ! <l> | Get/Set Steps to stop             | ! l      | Y | Deprecated                          |
-| \     | Get seek mode                     | \i       | Y | See seekmodes                       |
-| C     | Comment from firmware             |          | Y |                                     |
-| ?     | Load config from EEPROM           | ?        | Y | May be deprecated                   |
-| /     | Save config to EEPROM             | /        | Y | May be deprecated                   |
-+-------+-----------------------------------+---------------+---+--------------------------------+
+New Firmware Commands
+
+ Cmd     | Description                       | Response      | Tested | Comment                       
+-------- | --------------------------------- | ------------- | ------ |-----
+%     | From Configurator                 | none     | Y |                                     |
+[ l   | Relative move by step count       |          | Y | How many steps +/-, from position   |
+# <f> | Get/Set maximum speed             |          | Y | Only set at startup for now         |
+^     | Get motor direction               | ^i       | Y | -1 negative, 1 positive             |
+$ <i> | Get/Set number of microsteps      | $i       | Y | Must match dip switch settings!!    |
+* <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      |
+| <l> | Get/Set home center               | l        | Y | Deprecated                          |
+! <l> | Get/Set Steps to stop             | ! l      | Y | Deprecated                          |
+\     | Get seek mode                     | \i       | Y | See seekmodes                       |
+C     | Comment from firmware             |          | Y |                                     |
+?     | Load config from EEPROM           | ?        | Y | May be deprecated                   |
+/     | Save config to EEPROM             | /        | Y | May be deprecated                   |
+
