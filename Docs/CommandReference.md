@@ -47,6 +47,7 @@ $ _int_    | Get/Set number of microsteps    | $ int         | Y      | Must mat
 /          | Save config to EEPROM           | /             | Y      | 
 
 Shutter Commands over wireless. Not gospel, just figuring these out now.
+
 Cmd       | Description                     | Response      | Tested | Comment                       
 ---------- | ------------------------------- | ------------- | ------ |-----
 a     | Abort movement/Stop shutter       | ?        |  N  |                               
@@ -58,5 +59,5 @@ r _long_ | Get/set shutter hibernate timer   | ?        |  N  | millseconds? Cla
 o     | Open shutter                      | ?        |  N  |                                   
 v     | Get firmware versions             | ?        |  N  | Verions Major/Minor               
 w     | restart wireless                  | ?        |  N  |                                   
-x     | Wake shutter                      | ?        |  N  |                                   
+x     | Wake shutter                      | ?        |  N  |
 
