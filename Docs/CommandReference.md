@@ -35,17 +35,14 @@ z        | Home status                       | Z int         | Y      | 1 not ho
 
 New Firmware Commands
 
- Cmd     | Description                       | Response      | Tested | Comment                       
--------- | --------------------------------- | ------------- | ------ |-----
-\[ l   | Relative move by step count       |          | Y | How many steps +/-, from position 
-\# <f> | Get/Set maximum speed             |          | Y | Only set at startup for now        
-^     | Get motor direction               | ^i       | Y | -1 negative, 1 positive            
-$ <i> | Get/Set number of microsteps      | $i       | Y | Must match dip switch settings!!    
-\* <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      
-\| <l> | Get/Set home center               | l        | Y | Deprecated                          
-! <l> | Get/Set Steps to stop             | ! l      | Y | Deprecated                          
-\     | Get seek mode                     | \i       | Y | See seekmodes                       
-C     | Comment from firmware             |          | Y |                                     
-?     | Load config from EEPROM           | ?        | Y | May be deprecated                   
-/     | Save config to EEPROM             | /        | Y | May be deprecated                   
+ Cmd       | Description                     | Response      | Tested | Comment                       
+---------- | ------------------------------- | ------------- | ------ |-----
+\[ long    | Relative move by step count     |               | Y      | How many steps +/-, from position 
+\# _float_ | Get/Set maximum speed           |               | Y      | Only set at startup for now        
+^          | Get motor direction             | ^ int         | Y      | -1 negative, 1 positive            
+$ _int_    | Get/Set number of microsteps    | $ int         | Y      | Must match dip switch settings!!    
+\* _float_ | Get/Set acceleration            | * float       | Y      | Around 8k good at 8 microsteps      
+\          | Get seek mode                   | \ int         | Y      | See seekmodes                       
+?          | Load config from EEPROM         | ?             | Y      | May be deprecated                   
+/          | Save config to EEPROM           | /             | Y      | May be deprecated                   
 
