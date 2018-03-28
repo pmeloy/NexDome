@@ -10,7 +10,7 @@ a        | Abort movement/Stop dome          | A             | Y      |
 b        | Get Shutter Position              | B int         | N      |
 c        | Start calibration routine         | C or E        | Y      | E if not at home position           
 d        | Open shutter                      | D or E        | N      | E means rain sensor has aborted     
-e        | Close shutter                     | D             | Y      |
+e        | Close shutter                     | D             | N      |
 f float  | Set shutter position              | F             | N      | 0 to 100%? Verify this              
 g float  | Goto supplied azimuth             | G or E        | Y      | 0.00 to 359.99 degrees, E=invalid   
 h        | Home the dome                     | H             | Y      |                                     
@@ -23,12 +23,12 @@ n        | Get park azimuth                  | N float       | Y      |
 o        | Get last heading error            | O float       | Y      |                                     
 p        | Get stepper position              | P long        | Y      |                                     
 q        | Get current azimuth               | Q float       | Y      |                                     
-r _long_ | Get or Set shutter sleep time     | R long        | Y      |                                     
+r _long_ | Get or Set shutter sleep time     | R long        | N      |                                     
 s float  | Sync to supplied azimuth          | S float or E  | Y      | 0.00359.99 degrees, E if invalid    
 t        | Get steps per rotation            | T long        | Y      |                                     
 u        | Get shutter status                | U int         | N      | Rain status removed for now         
-v        | Get firmware version              | V string      | Y      | Major Minor                         
-w        | Restart wireless                  | W             | N      |                                     
+v        | Get firmware version              | V string      | P      | Major Minor _Shutter_
+w        | Restart wireless                  | W             | Y      |                                     
 y _int_  | Get or set reversed motion status | Y             | Y      | 0 normal, 1 reversed                
 x        | Wake shutter                      | X             | N      |                                     
 z        | Home status                       | Z int         | Y      | 1 not homed,0 not at home,1 at home 
