@@ -23,8 +23,9 @@ The best part is being able to fine tune the steps per rotation to exactly match
  
  #### Near Future ####
  - [x] Add buttons for relative moves
- - [x] Remove the "measure home" process. It seemed like a good idea when the dome was slow and bouncing backward but really unnecessary with the performance improvements and ability to tune the steps per rotation.
- - [ ] Add Shutter control if I ever figure out how.
+ - [x] Remove the "measure home" process. It seemed like a good idea when the dome was slow and bouncing.
+ - [ ] Make STOP button change colours when dome is stopped or moving.
+ - [ ] Add Shutter control.
  - [ ] Redo communications as I develop the firmware.
  
  #### Futher down the pipe ####
