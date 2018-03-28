@@ -407,7 +407,7 @@ void ConfigurewirelessPort()
 {
 	//  do nothing for now
 	//return;
-	serialPort.println("Sending + to xbee");
+	//serialPort.println("Sending + to xbee");
 	delay(1100);
 	doingWirelessConfig = true;
 	wirelessConfigState = 0;
@@ -418,7 +418,6 @@ void ConfigurewirelessPort()
 void incomingWirelessChar(char a)
 {
 	if ((a == '\n') || (a == '\r')) {
-//		return ProcessShutterResponse();
 		return ProcessShutterResponse();
 	}
 	wirelessBuffer[wirelessBufferPointer] = a;
@@ -439,7 +438,7 @@ void incomingWirelessChar(char a)
 }
 void ProcessShutterResponse()
 {
-	serialPort.println("Wireless Response: " + String(wirelessBuffer));
+	//serialPort.println("Wireless Response: " + String(wirelessBuffer));
 	if (wirelessBuffer[0] == 'O') 
 	{
 		if (wirelessBuffer[1] == 'K') 
@@ -448,7 +447,7 @@ void ProcessShutterResponse()
 			foundShutter = true;
 			if (doingWirelessConfig) 
 			{
-				serialPort.println("ConfigState = " + String(wirelessConfigState));
+				//serialPort.println("ConfigState = " + String(wirelessConfigState));
 				switch (wirelessConfigState) 
 				{
 				case 0:
@@ -458,23 +457,23 @@ void ProcessShutterResponse()
 					//  do one setting per OK return
 					//wirelessPort.println("ATID5555,CE1,PL0,SM4,SP5DC,ST100,CN");
 					wirelessPort.println("ATID5555");
-					serialPort.println("Setting wirelessPort id");
+					//serialPort.println("Setting wirelessPort id");
 					break;
 
 				case 1:
 					wirelessPort.println("ATCE1");
-					serialPort.println("Setting cordinator");
+					//serialPort.println("Setting cordinator");
 					break;
 
 				case 2:
 					wirelessPort.println("ATPL0");
-					serialPort.println("Setting Power");
+					//serialPort.println("Setting Power");
 					break;
 
 				case 3:
 					wirelessPort.println("ATSM4");
 					//wirelessPort.println("ATSM0");
-					serialPort.println("Setting sleep mode");
+					//serialPort.println("Setting sleep mode");
 					break;
 
 				case 4:
@@ -482,23 +481,23 @@ void ProcessShutterResponse()
 					//  so it defines how long we will hold a message
 					//  for the endpoint
 					wirelessPort.println("ATSP5DC");
-					serialPort.println("Setting sleep period");
+					//serialPort.println("Setting sleep period");
 					break;
 
 				case 5:
 					wirelessPort.println("ATST100");
-					serialPort.println("Setting sleep wait time");
+					//serialPort.println("Setting sleep wait time");
 					break;
 
 				case 6:
 					wirelessPort.println("ATCN");
-					serialPort.println("Exit command mode");
+					//serialPort.println("Exit command mode");
 					break;
 
 				default:
 					//  Finished configuring, now see if the shutter is alive
 					wirelessPort.println("s");
-					serialPort.println("wirelessPort config finished");
+					//serialPort.println("wirelessPort config finished");
 					doingWirelessConfig = false;
 					break;
 				}
@@ -513,7 +512,7 @@ void ProcessShutterResponse()
 	// update our timer for the keep alive routines
 	if (!ShutterAlive) 
 	{
-		serialPort.println("Shutter is asleep!");
+		//serialPort.println("Shutter is asleep!");
 		if (wirelessBuffer[0] == 'S') 
 		{
 			serialPort.println(wirelessBuffer);
