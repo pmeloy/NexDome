@@ -38,7 +38,7 @@ New Firmware Commands
  Cmd       | Description                     | Response      | Tested | Comment                       
 ---------- | ------------------------------- | ------------- | ------ |-----
 \[ long    | Relative move by step count     |               | Y      | How many steps +/-, from position 
-\# _float_ | Get/Set maximum speed           |               | Y      | Only set at startup for now        
+\# _float_ | Get/Set maximum speed           |               | Y      | Great for tweaking rotator calibration.
 ^          | Get motor direction             | ^ int         | Y      | -1 negative, 1 positive            
 $ _int_    | Get/Set number of microsteps    | $ int         | Y      | Must match dip switch settings!!    
 \* _float_ | Get/Set acceleration            | * float       | Y      | Around 8k good at 8 microsteps      
