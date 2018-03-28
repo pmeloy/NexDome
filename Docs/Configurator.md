@@ -21,11 +21,11 @@ The best part is being able to fine tune the steps per rotation to exactly match
  - If the dome has not rotated far enough, enter a new position into the textbox beside the "Go to Pos" button and then click to move the dome. Experiment until the dome is exactly at your mark then click "Save Settings"
  - The position value wraps around to zero (or max -1) so if you move left the dome a bit shy of your mark, you'll have to wrap the number in your head e.g. If it's at 440799 then you'll have to enter 5 or 100 or whatever works. If you're at 5 and need to go counterclockwise you'll use something like 440699.
  
- ## Near Future ##
+ #### Near Future ####
  - [x] Add buttons for relative moves
  - [x] Remove the "measure home" process. It seemed like a good idea when the dome was slow and bouncing backward but really unnecessary with the performance improvements and ability to tune the steps per rotation.
- -[ ] Add Shutter control if I ever figure out how.
- - [ ]Redo communications as I develop the firmware.
+ - [ ] Add Shutter control if I ever figure out how.
+ - [ ] Redo communications as I develop the firmware.
  
  #### Futher down the pipe ####
  - Don't know!
