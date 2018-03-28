@@ -703,7 +703,6 @@ namespace NexDomeRotatorConfigurator
                         }
                         break;
                     case "Z":
-                        //todo: Convert to words
                         localInt = Convert.ToInt32(value);
                         lblHomedState.Text = homeStates[localInt + 1];
                         break;
