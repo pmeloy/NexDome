@@ -41,8 +41,8 @@ New Firmware Commands
 \# <f> | Get/Set maximum speed             |          | Y | Only set at startup for now        
 ^     | Get motor direction               | ^i       | Y | -1 negative, 1 positive            
 $ <i> | Get/Set number of microsteps      | $i       | Y | Must match dip switch settings!!    
-* <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      
-| <l> | Get/Set home center               | l        | Y | Deprecated                          
+\* <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      
+\| <l> | Get/Set home center               | l        | Y | Deprecated                          
 ! <l> | Get/Set Steps to stop             | ! l      | Y | Deprecated                          
 \     | Get seek mode                     | \i       | Y | See seekmodes                       
 C     | Comment from firmware             |          | Y |                                     
