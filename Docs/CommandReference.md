@@ -43,6 +43,6 @@ New Firmware Commands
 $ _int_    | Get/Set number of microsteps    | $ int         | Y      | Must match dip switch settings!!    
 \* _float_ | Get/Set acceleration            | * float       | Y      | Around 8k good at 8 microsteps      
 \          | Get seek mode                   | \ int         | Y      | See seekmodes                       
-?          | Load config from EEPROM         | ?             | Y      | May be deprecated                   
-/          | Save config to EEPROM           | /             | Y      | May be deprecated                   
+? _int_    | Load config or defaults         | ?             | Y      | If 1 supplied, reset to defaults
+/          | Save config to EEPROM           | /             | Y      | 
 
