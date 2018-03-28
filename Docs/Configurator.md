@@ -1,8 +1,10 @@
-Configurator is a Windows based utility for configuring the NexDome Rotator controller.
+# PDM Dome Configurator #
 
-This is the new shiny thing when it comes to the NexDome software. Many of the settings that were invisible, never mind editable, can now be seen and easily changed and tested.
+### A Windows based utility for configuring the NexDome Rotator controller ###
 
-Examples of what can be changed:
+This is the new shiny thing when it comes to the NexDome software. Many of the settings that were invisible, never mind editable, can now be seen and easily changed and tested. I also find it very usefull to actually be able to see all the values changing as the dome operates. I have a much better sense for what is going on (and going wrong).
+
+### Examples of what can be changed ###
 - Step mode (must match the dip switch settings!)
 - Maximum speed
 - Acceleration
@@ -13,7 +15,7 @@ Examples of what can be changed:
 It also includes a simple terminal program so you can send serial commands manually if so desired.
 
 The best part is being able to fine tune the steps per rotation to exactly match your dome. A quicky tutorial!
-## Calibration Process ##
+### Calibration Process ###
  - Home the dome
  - Move dome back so home switch is not active
  - Click Calibrate and wait while it does it's work. Note, it only turns 1.2x the current Steps per Rotation value so don't start 180 degrees away from the home switch.
