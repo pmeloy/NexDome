@@ -33,7 +33,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
     <ApplicationRevision>0</ApplicationRevision>
+<<<<<<< HEAD
     <ApplicationVersion>0.0.1.14</ApplicationVersion>
+=======
+    <ApplicationVersion>0.0.1.2</ApplicationVersion>
+>>>>>>> f1a78f4c4ce8c50f607d3ccdff4e9be34d21c257
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>

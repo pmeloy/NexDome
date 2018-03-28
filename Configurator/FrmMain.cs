@@ -127,7 +127,6 @@ namespace NexDomeRotatorConfigurator
 
 		#region "Variables"
 		Version version = Assembly.GetEntryAssembly().GetName().Version;
-		const int verMaj = 0, verMin = 1, verBuild = 2, verRevision = 3;
         string serialBuffer = "";
         int changesMade = 0;
         int lastStepMode;
@@ -368,47 +367,27 @@ namespace NexDomeRotatorConfigurator
 		#endregion
 
 		#region "Deal with Firmware versions"
-		private void CheckVersion(string versionString)
+		private void CheckVersion(string version)
 		{
-			bool incompatible = false;
-			string msg ="";
-
-			Debug.Print("My Version:" + version.ToString() + " Firmware: " + versionString );
-
-			string[] strings = versionString.Split('V');
+			string[] strings = version.Split('V');
 			if (strings.Length > 1)
 			{
-				Debug.Print("versionString = {0} Strings1 ={1}",versionString, strings[1]);
-				Version firmware = new Version(strings[1]);
-				Debug.Print("Parse version = " + firmware.ToString());
-				if (firmware.Major == 1)
+				string[] strings2 = strings[1].Split('.');
+				if (strings2.Length > 0)
 				{
-					isOriginalFirmware = true;
-					SetOrignalFirmware();
-				}
-				else
-				{
-					if (firmware.Minor != version.Minor || firmware.Build != version.Build)
+					if (strings2[0].Trim().Equals("1"))
 					{
-						incompatible = true;
+						AddTextToTerminal("Connected to original firmware, disabling some controls.");
+						isOriginalFirmware = true;
+						SetOrignalFirmware();
 					}
 				}
-			
 			}
 			else
 			{
-
-				incompatible = true;
-			}
-			if (incompatible == true)
-			{
-				Disconnect();
-				msg = "Configurator V" + version.Major.ToString() + "." + version.Minor.ToString() + "." + version.Build.ToString();
-				msg += " is not compatible with " + versionString;
-				MessageBox.Show(msg, "Incompatible firmware");
+				Debug.Print("Version doesn't have any Vs");
 			}
 		}
-
 		private void SetControlsConnectStatus(bool connected)
         {
 			// Controller Group
@@ -582,6 +561,15 @@ namespace NexDomeRotatorConfigurator
 
                 if (message == null) return;
                 cmd = message.Substring(0, 1);
+                if (cmd == "%")
+                {
+                    message = message.Substring(1);
+                }
+                else
+                {
+                    Debug.Print(message);
+                }
+                cmd = message.Substring(0, 1);
                 value = message.Substring(1).Trim();
 
                 switch (cmd)
@@ -682,6 +670,7 @@ namespace NexDomeRotatorConfigurator
                         break;
                     case "S":
                         AddTextToTerminal("<- Synchonized to " + value + (char)176);
+						SendCommand("i");
                         break;
                     case "T":
                         stepsPerRotation = Convert.ToInt64(value);
@@ -689,6 +678,7 @@ namespace NexDomeRotatorConfigurator
                         break;
                     case "V":
 						CheckVersion(value);
+						Debug.Print("Version info");
                         lblControllerVersion.Text = value;
                         break;
                     case "Y":
