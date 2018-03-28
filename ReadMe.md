@@ -9,7 +9,7 @@ The aim of this project is to provide three pieces of software that are required
 - ASCOM driver - Haven't start on this yet and may just improve the existing Visual Basic one rather than re-invent the wheel.
 
 ## Prerequisites ##
-Firmware - Either Arduino IDE or Visual Studio with Visual Micro's Arduino add-on 
+Firmware - Either Arduino IDE or Visual Studio with Visual Micro's Arduino add-on. 
 (http://www.visualmicro.com/page/Arduino-Visual-Studio-Downloads.aspx).
 
 Configurator - Visual Studio 2015+ with C#
