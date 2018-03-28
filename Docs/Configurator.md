@@ -32,6 +32,8 @@ First thing to do is select your Leonardo in the Com port selector. The actual n
  - If the dome has not rotated far enough, enter a new position into the textbox beside the "Go to Pos" button and then click to move the dome. Experiment until the dome is exactly at your mark then click "Save Settings"
  - The position value wraps around to zero (or max -1) so if you move left the dome a bit shy of your mark, you'll have to wrap the number in your head e.g. If it's at 440799 then you'll have to enter 5 or 100 or whatever works. If you're at 5 and need to go counterclockwise you'll use something like 440699.
  
+![Configurator calibration](/Docs/img/Calibrate.bmp)
+
  #### Near Future ####
  - [x] Add buttons for relative moves
  - [x] Remove the "measure home" process. It seemed like a good idea when the dome was slow and bouncing.
