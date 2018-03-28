@@ -18,10 +18,10 @@ Driver: Lots of patience, it'll be a while before I get started on that!
 
 ## Installing ##
 
-- From Source
+#### From Source ####
 Sorry but far too much to explain. If you don't know how to do this already then grab the binary release from the releases tab.
 
-- From Release Binary
+#### From Release Binary ####
 Unzip wherever you like.
 
 The files inside the firmware folder have to stay together. Load the .ino up into the Arduino IDE or Visual Studio with the Arduino add-in and send to the controller.
