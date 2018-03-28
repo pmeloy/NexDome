@@ -21,6 +21,7 @@ The best part is being able to fine tune the steps per rotation to exactly match
 With your controller connected to the computer, start Configurator. In the lower left of the window is the serial communications section that includes the connection information, a textbox for entering commands into, and an area where messages are shown.
 
 First thing to do is select your Leonardo in the Com port selector. The actual name Leonardo should appear in the text, if not, you probably have USB issues of some sort. Once that is selected, make sure the baud rate is set to 9600 then click the connect button.
+
 ![Configurator before connecting](/Docs/img/CFNotConnected.bmp)
 
 ### Calibration Process ###
