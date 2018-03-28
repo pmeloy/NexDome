@@ -37,16 +37,15 @@ New Firmware Commands
 
  Cmd     | Description                       | Response      | Tested | Comment                       
 -------- | --------------------------------- | ------------- | ------ |-----
-%     | From Configurator                 | none     | Y |                                     |
-[ l   | Relative move by step count       |          | Y | How many steps +/-, from position   |
-# <f> | Get/Set maximum speed             |          | Y | Only set at startup for now         |
-^     | Get motor direction               | ^i       | Y | -1 negative, 1 positive             |
-$ <i> | Get/Set number of microsteps      | $i       | Y | Must match dip switch settings!!    |
-* <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      |
-| <l> | Get/Set home center               | l        | Y | Deprecated                          |
-! <l> | Get/Set Steps to stop             | ! l      | Y | Deprecated                          |
-\     | Get seek mode                     | \i       | Y | See seekmodes                       |
-C     | Comment from firmware             |          | Y |                                     |
-?     | Load config from EEPROM           | ?        | Y | May be deprecated                   |
-/     | Save config to EEPROM             | /        | Y | May be deprecated                   |
+\[ l   | Relative move by step count       |          | Y | How many steps +/-, from position 
+\# <f> | Get/Set maximum speed             |          | Y | Only set at startup for now        
+^     | Get motor direction               | ^i       | Y | -1 negative, 1 positive            
+$ <i> | Get/Set number of microsteps      | $i       | Y | Must match dip switch settings!!    
+* <f> | Get/Set acceleration              | * f      | Y | Around 8k good at 8 microsteps      
+| <l> | Get/Set home center               | l        | Y | Deprecated                          
+! <l> | Get/Set Steps to stop             | ! l      | Y | Deprecated                          
+\     | Get seek mode                     | \i       | Y | See seekmodes                       
+C     | Comment from firmware             |          | Y |                                     
+?     | Load config from EEPROM           | ?        | Y | May be deprecated                   
+/     | Save config to EEPROM             | /        | Y | May be deprecated                   
 
