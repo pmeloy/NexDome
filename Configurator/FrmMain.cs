@@ -920,7 +920,7 @@ namespace NexDomeRotatorConfigurator
 				if (whichButtonIsDown == NO_BUTTON)
 				{
 					whichButtonIsDown = CCW_BUTTON;
-					SendCommand("[ " + stepsPerRotation.ToString());
+					SendCommand("[ " + (1 - stepsPerRotation).ToString());
 				}
 
 		}

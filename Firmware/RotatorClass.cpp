@@ -140,20 +140,27 @@ int			Rotator::getLowVoltageCutoff()
 #pragma region "I/O"
 void		Rotator::buttonCheck()
 {
-	unsigned long int moveSize = 1000;
 	int PRESSED = 0;
+	static int whichButtonPressed = 0, lastButtonPressed=0;
 
-	if (digitalRead(BUTTON_CW) == PRESSED)
+	if (digitalRead(BUTTON_CW) == PRESSED && whichButtonPressed == 0)
 	{
-		_moveDirection = MOVE_POSITIVE;
-		moveRelative(moveSize * _moveDirection);
+		whichButtonPressed = BUTTON_CW;
+		moveRelative(_stepsPerRotation);
 	}
-	else if (digitalRead(BUTTON_CCW) == PRESSED)
+	else if (digitalRead(BUTTON_CCW) == PRESSED && whichButtonPressed == 0)
 	{
-		_moveDirection = MOVE_NEGATIVE;
-		moveRelative(moveSize * _moveDirection);
+		whichButtonPressed = BUTTON_CCW;
+		moveRelative(1 - _stepsPerRotation);
+	}
+
+	if (digitalRead(whichButtonPressed) == !PRESSED)
+	{
+		stop();
+		whichButtonPressed = 0;
 	}
 }
+
 bool		Rotator::isRaining()
 {
 	return !digitalRead(_rainPin);
