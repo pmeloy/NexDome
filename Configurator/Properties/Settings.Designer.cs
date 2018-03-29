@@ -34,17 +34,5 @@ namespace Configurator.Properties {
                 this["updateRate"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int buttonRate {
-            get {
-                return ((int)(this["buttonRate"]));
-            }
-            set {
-                this["buttonRate"] = value;
-            }
-        }
     }
 }

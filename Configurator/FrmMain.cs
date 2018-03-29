@@ -123,6 +123,7 @@ namespace NexDomeRotatorConfigurator
         const string CMD_SHUTTRAINSTAT = "u", CMD_GETVERSION = "v", CMD_RESTARTWIRELESS = "w", CMD_WAKESHUTTER = "x", CMD_REVERSED = "y", CMD_HOMESTATUS = "z";
         const string CMD_MOVERELATIVE = "[", CMD_MAXSPEED = "#", CMD_DIRECTION = "^", CMD_STEPMODE = "$", CMD_ACCEL = "*", CMD_CENTER = "|";
         const string CMD_STEPSSTOP = "!", CMD_GETSEEKMODE = "(";
+		const int CW_BUTTON = 1, CCW_BUTTON = 2, NO_BUTTON=0;
 		#endregion
 
 		#region "Variables"
@@ -131,9 +132,7 @@ namespace NexDomeRotatorConfigurator
         int changesMade = 0;
         int lastStepMode;
         int seekStatus;
-        bool cwButtonDown,ccwButtonDown;
-        long rotateButtonSteps = 2000;
-        long DIRECTION_POSITIVE = 1, DIRECTION_NEGATIVE = -1;
+
 		bool isCalibrating = false;
 		bool isOriginalFirmware = false;
 
@@ -144,6 +143,8 @@ namespace NexDomeRotatorConfigurator
         List<string> messageList = new List<string>();
         String[] homeStates = new String[] { "Not homed", "Homed", "At Home" };
 		String[] seekStates = new String[] { "None", "Homing", "Find Start", "Move off Start", "Measuring Dome" };
+
+		int whichButtonIsDown = 0;
 
 		public static readonly List<string> SupportedBaudRates = new List<string>
         {"300","600","1200","2400","4800","9600","19200","38400","57600","115200","230400","460800","921600"};
@@ -169,7 +170,6 @@ namespace NexDomeRotatorConfigurator
                 cbxBaudRates.SelectedIndex = cbxBaudRates.FindString("9600");
             }
             cbxUpdateRate.SelectedIndex = Configurator.Properties.Settings.Default.updateRate;
-			cbxButtonRate.SelectedIndex = Configurator.Properties.Settings.Default.buttonRate;
             SetControlsConnectStatus(false);
         }
 
@@ -360,7 +360,6 @@ namespace NexDomeRotatorConfigurator
 			btnConnect.Text = "Connect";
 			ParseTimer.Enabled = false;
 			UpdateTimer.Enabled = false;
-			ButtonTimer.Enabled = false;
 			SetControlsConnectStatus(false);
 
 		}
@@ -388,6 +387,7 @@ namespace NexDomeRotatorConfigurator
 				Debug.Print("Version doesn't have any Vs");
 			}
 		}
+
 		private void SetControlsConnectStatus(bool connected)
         {
 			// Controller Group
@@ -432,7 +432,6 @@ namespace NexDomeRotatorConfigurator
             btnDoCalibrate.Enabled = connected;
 			// Movement Group
 			cbxUpdateRate.Enabled = connected;
-			cbxButtonRate.Enabled = connected;
 			btnParkDome.Enabled = connected;
             tbxGotoAz.Text = "";
             tbxGotoAz.Enabled = connected;
@@ -490,7 +489,6 @@ namespace NexDomeRotatorConfigurator
 			btnParkAzimuth.Enabled = true;
 			// Motion group
 			cbxUpdateRate.Enabled = true;
-			cbxButtonRate.Enabled = false;
 			btnParkDome.Enabled = true;
 			btnSync.Enabled = true;
 			tbxGotoAz.Text = "";
@@ -901,28 +899,50 @@ namespace NexDomeRotatorConfigurator
 			SendCommand(CMD_STOP);
 			AddTextToTerminal("-> Stop!");
 		}
-		private void RotateButton(long direction)
-		{
-			SendCommand(CMD_MOVERELATIVE, (direction * rotateButtonSteps).ToString());
-		}
 		private void btnRotateCW_MouseDown(object sender, MouseEventArgs e)
 		{
-			RotateButton(DIRECTION_POSITIVE);
-			cwButtonDown = true;
+			if (whichButtonIsDown == 0)
+			{
+				whichButtonIsDown = CW_BUTTON;
+				SendCommand("[ " + stepsPerRotation.ToString());
+			}
 		}
 		private void btnRotateCW_MouseUp(object sender, MouseEventArgs e)
 		{
-			cwButtonDown = false;
+			if (whichButtonIsDown == CW_BUTTON)
+			{
+				SendCommand("a");
+				whichButtonIsDown = NO_BUTTON;
+			}
 		}
 		private void btnRotateCCW_MouseDown(object sender, MouseEventArgs e)
 		{
-			RotateButton(DIRECTION_NEGATIVE);
-			ccwButtonDown = true;
+				if (whichButtonIsDown == NO_BUTTON)
+				{
+					whichButtonIsDown = CCW_BUTTON;
+					SendCommand("[ " + stepsPerRotation.ToString());
+				}
+
 		}
 		private void btnRotateCCW_MouseUp(object sender, MouseEventArgs e)
 		{
-			ccwButtonDown = false;
+			if (whichButtonIsDown == CCW_BUTTON)
+			{
+				SendCommand("a");
+				whichButtonIsDown = NO_BUTTON;
+			}
 		}
+
+		private void btnOpenShutter_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnCloseShutter_Click(object sender, EventArgs e)
+		{
+
+		}
+
 
 		#endregion
 
@@ -936,23 +956,6 @@ namespace NexDomeRotatorConfigurator
 
 			}
 		}
-		private void cbxButtonRate_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			ButtonTimer.Interval = Convert.ToInt32(cbxButtonRate.Text);
-			Configurator.Properties.Settings.Default.buttonRate = cbxButtonRate.SelectedIndex;
-			Configurator.Properties.Settings.Default.Save();
-		}
-		private void Button_Timer_Tick(object sender, EventArgs e)
-        {
-            if (cwButtonDown == true)
-            {
-                RotateButton(DIRECTION_POSITIVE);
-            }
-            else if (ccwButtonDown == true)
-            {
-                RotateButton(DIRECTION_NEGATIVE);
-            }
-        }
 		private void cbxUpdateRate_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateTimer.Interval = Convert.ToInt32(cbxUpdateRate.Text);
