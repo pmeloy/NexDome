@@ -1,5 +1,11 @@
 # Changes #
 
+## April 24, 2018 ##
+
+Re-factored rotator firmware, wrote shutter firmware from scratch, wrote ASCOM driver from scratch (Well, from the ASCOM driver template). Pushed to github and added a release ZIP.
+
+Configurator is dead! The ASCOM driver took over it's duties although its capabilities are missing some of the Configurator functions while it has functions that Configurator didn't have.
+
 ## March 28, 2018 ##
 Finished including the original shutter code into firmware. Will have a good look once I get the second Leonardo going with it's XBee so it an pretend to be a shutter controller. Also changing all docs to .md files for a much better look.
 
