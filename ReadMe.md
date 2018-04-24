@@ -27,7 +27,7 @@ Click on releases to find the binary downloads
 
 The ASCOM driver has a basic installer (default ASCOM provided) while the Arduio files have to be copied to whereever you want them. The Arduino IDE usually creates an Arduino directory in your documents folder which is a good place.
 
-Arduino programs must have the same name as they directory they are in so it's easiest to just copy then PDMRotator and PDMShutter directories rather than the individual files.
+Arduino programs must have the same name as the directory they are in so it's easiest to just copy the PDMRotator and PDMShutter directories rather than the individual files.
 
 To upload the firmwares, connect a USB cable to the unit then double click the .ino (not the .h - those automagically load). Set your board to Leonardo and choose the correct COM port (should say Arduino Leonardo(COMx). Then hit upload and a few seconds later it'll be finished.
 
