@@ -1,63 +1,40 @@
-These are the commands sent to the controller by whatever you're using to control it. They can just be typed in manually from the Arduino IDE or Configurator serial area as well.
+const String DEBUGStart = ""; // Come up with a good character to use after alphabetizing
+const String WIRELESS_DEBUG_COMMENT		= "B"; // Handy debug messages sent to Shutter which can serial print. Used directly, not in case statements
+const char ACCELERATION_ROTATOR_CMD		= 'e'; // Get/Set stepper acceleration
+const char ABORT_MOVE_CMD				= 'a'; // Tell everything to STOP!
+const char CALIBRATE_ROTATOR_CMD		= 'c'; // Calibrate the dome
+const char ERROR_AZ_ROTATOR_GET			= 'o'; // Azimuth error when I finally implement it
+const char GOTO_ROTATOR_CMD				= 'g'; // Get/set dome azimuth
+const char HOME_ROTATOR_CMD				= 'h'; // Home the dome
+const char HOMEAZ_ROTATOR_CMD			= 'i'; // Get/Set home position
+const char HOMESTATUS_ROTATOR_GET		= 'z'; // Get homed status
+const char MOVE_RELATIVE_ROTATOR_CMD	= 'b'; // Move relative - steps from current position +/-
+const char PARKAZ_ROTATOR_CMD			= 'l'; // Get/Set park azimuth
+const char POSITION_ROTATOR_GET			= 'p'; // Get/Set step position
+const char RAIN_ROTATOR_CMD				= 'f'; // Get rain sensor state /Set rain check interval
+const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status 
+const char SEEKSTATE_GET				= 'd'; // None, homing, calibration steps.
+const char SLEW_ROTATOR_GET				= 'm'; // Get Slewing status/direction
+const char SPEED_ROTATOR_CMD			= 'r'; // Get/Set step rate (speed)
+const char STEPSPER_ROTATOR_CMD			= 't'; // GetSteps per rotation
+const char SYNC_ROTATOR_CMD				= 's'; // Sync to telescope
+const char VERSION_ROTATOR_GET			= 'v'; // Get Version string
+const char VOLTS_ROTATOR_CMD			= 'k'; // Get volts and get/set cutoff
 
-_Italics_ means optional.
-
-Original Firmware Commands
-
- Cmd     | Description                       | Response      | Tested | Comment                       
--------- | --------------------------------- | ------------- | ------ |-----
-a        | Abort movement/Stop dome          | A             | Y      |
-b        | Get Shutter Position              | B int         | N      |
-c        | Start calibration routine         | C or E        | Y      | E if not at home position           
-d        | Open shutter                      | D or E        | N      | E means rain sensor has aborted     
-e        | Close shutter                     | D             | N      |
-f float  | Set shutter position              | F             | N      | 0 to 100%? Verify this              
-g float  | Goto supplied azimuth             | G or E        | Y      | 0.00 to 359.99 degrees, E=invalid   
-h        | Home the dome                     | H             | Y      |                                     
-i        | Get home azimuth                  | I float       | Y      |                                     
-j float  | Set home azimuth                  | I float       | Y      | 0.00 to 359.99 degrees              
-k _int_  | Get battery voltages, set cutoff  | K int int int | P      | Main, Shutter, Low voltage cutout   
-l float  | Set park azimuth                  | N float       | Y      | 0.00359.99 degrees                  
-m        | Motion status                     | M int         | Y      | 0-3                                 
-n        | Get park azimuth                  | N float       | Y      |                                     
-o        | Get last heading error            | O float       | Y      |                                     
-p        | Get stepper position              | P long        | Y      |                                     
-q        | Get current azimuth               | Q float       | Y      |                                     
-r _long_ | Get or Set shutter sleep time     | R long        | N      |                                     
-s float  | Sync to supplied azimuth          | S float or E  | Y      | 0.00359.99 degrees, E if invalid    
-t        | Get steps per rotation            | T long        | Y      |                                     
-u        | Get shutter status                | U int         | N      | Rain status removed for now         
-v        | Get firmware version              | V string      | P      | Major Minor _Shutter_
-w        | Restart wireless                  | W             | Y      |                                     
-y _int_  | Get or set reversed motion status | Y             | Y      | 0 normal, 1 reversed                
-x        | Wake shutter                      | X             | N      |                                     
-z        | Home status                       | Z int         | Y      | 1 not homed,0 not at home,1 at home 
-
-New Firmware Commands
-
- Cmd       | Description                     | Response      | Tested | Comment                       
----------- | ------------------------------- | ------------- | ------ |-----
-\[ long    | Relative move by step count     |               | Y      | How many steps +/-, from position 
-\# _float_ | Get/Set maximum speed           |               | Y      | Great for tweaking rotator calibration.
-^          | Get motor direction             | ^ int         | Y      | -1 negative, 1 positive            
-$ _int_    | Get/Set number of microsteps    | $ int         | Y      | Must match dip switch settings!!    
-\* _float_ | Get/Set acceleration            | * float       | Y      | Around 8k good at 8 microsteps      
-\          | Get seek mode                   | \ int         | Y      | See seekmodes                       
-? _int_    | Load config or defaults         | ?             | Y      | If 1 supplied, reset to defaults
-/          | Save config to EEPROM           | /             | Y      | 
-
-Shutter Commands over wireless. Not gospel, just figuring these out now.
-
-Cmd       | Description                     | Response      | Tested | Comment                       
----------- | ------------------------------- | ------------- | ------ |-----
-a     | Abort movement/Stop shutter       | ?        |  N  |                               
-c     | Close shutter                     | ?        |  N  |                               
-f float   | Set shutter position              | ?        |  N  | 0100%? Clarify with vendor
-h long   | Set shutter sleep time            | ?        |  N  |                            
-k _int_ | Get battery voltages, set cutoff  | ?        |  N  | Main, Shutter, Low voltage cutout 
-r _long_ | Get/set shutter hibernate timer   | ?        |  N  | millseconds? Clarify with vendor 
-o     | Open shutter                      | ?        |  N  |                                   
-v     | Get firmware versions             | ?        |  N  | Verions Major/Minor               
-w     | restart wireless                  | ?        |  N  |                                   
-x     | Wake shutter                      | ?        |  N  |
-
+const char ACCELERATION_SHUTTER_CMD		= 'E'; // Get/Set stepper acceleration
+const char CALIBRATE_SHUTTER_CMD		= 'L'; // Calibrate the shutter
+const char CLOSE_SHUTTER_CMD			= 'C'; // Close shutter
+const char ELEVATION_SHUTTER_CMD		= 'G'; // Get/Set altitude
+const char HELLO_CMD					= 'H'; // Let shutter know we're here
+const char HOMESTATUS_SHUTTER_GET		= 'Z'; // Get homed status (has it been closed)
+const char INACTIVE_SHUTTER_CMD			= 'X'; // Get/Set how long before shutter closes
+const char OPEN_SHUTTER_CMD				= 'O'; // Open the shutter
+const char POSITION_SHUTTER_GET			= 'P'; // Get step position
+const char RAIN_SHUTTER_CMD					= 'F'; // Tell shutter if it'raining or not
+const char SPEED_SHUTTER_CMD			= 'R'; // Get/Set step rate (speed)
+const char REVERSED_SHUTTER_CMD			= 'Y'; // Get/Set stepper reversed status
+const char SLEEP_SHUTTER_CMD			= 'S'; // Get/Set radio sleep settings
+const char STATE_SHUTTER_GET			= 'M'; // Get shutter state
+const char STEPSPER_SHUTTER_CMD			= 'T'; // Get/Set steps per stroke
+const char VERSION_SHUTTER_GET			= 'V'; // Get version string
+const char VOLTS_SHUTTER_CMD			= 'K'; // Get volts and get/set cutoff
