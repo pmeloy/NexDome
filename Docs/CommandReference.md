@@ -37,4 +37,4 @@ const char SLEEP_SHUTTER_CMD			= 'S'; // Get/Set radio sleep settings
 const char STATE_SHUTTER_GET			= 'M'; // Get shutter state
 const char STEPSPER_SHUTTER_CMD			= 'T'; // Get/Set steps per stroke
 const char VERSION_SHUTTER_GET			= 'V'; // Get version string
-const char VOLTS_SHUTTER_CMD			= 'K'; // Get volts and get/set cutoff
+const char VOLTS_SHUTTER_CMD			= 'K'; // Get volts and get/set cutoff 
