@@ -1,5 +1,6 @@
 const String DEBUGStart = ""; // Come up with a good character to use after alphabetizing
-const String WIRELESS_DEBUG_COMMENT		= "B"; // Handy debug messages sent to Shutter which can serial print. Used directly, not in case statements
+const String WIRELESS_DEBUG_COMMENT		= "B"; // Handy debug messages sent to Shutter which
+                                             // can serial print. Used directly, not in case statements
 const char ACCELERATION_ROTATOR_CMD		= 'e'; // Get/Set stepper acceleration
 const char ABORT_MOVE_CMD				= 'a'; // Tell everything to STOP!
 const char CALIBRATE_ROTATOR_CMD		= 'c'; // Calibrate the dome
