@@ -27,7 +27,7 @@
 #endif
 
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DBPrint(x) Serial.print(x)
 #define DBPrintln(x) Serial.println(x)
