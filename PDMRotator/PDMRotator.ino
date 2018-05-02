@@ -24,11 +24,9 @@
 //#include <XBeeClass.h>
 #include <AccelStepper.h>
 
-//todo: Fix calibration so it stops at home then goes positive only.
 //todo: Implement low voltage safety
-//todo: Rain sensor flakey, maybe fast polling too?
 //todo: Make debug prints show up in ASCOM "Traffic" form?
-//todo: Decide on a "comment" char to start all debug printing with so
+// Decide on a "comment" char to start all debug printing with so
 // ASCOM definately won't be affected (all messages validated anyway but
 // that'll stop mistaken "Invalid" messages.
 
@@ -37,7 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-const String VERSION = "0.5.0";
+const String VERSION = "0.5.0.5";
 
 #define Computer Serial
 String computerBuffer;
@@ -66,7 +64,7 @@ bool SentHello = false;
 // Status is checked periodically (see Rotator.RainCheckInterval()) but only sent when
 // the status changes (hence the lastIsRaining).
 unsigned long nextRainCheck;
-bool lastRainStatus = false, GetRainStatus = false;
+bool currentRainStatus = false;
 #pragma endregion
 
 #pragma region command constants
@@ -124,7 +122,7 @@ const char HOMESTATUS_SHUTTER_GET		= 'Z'; // Get homed status (has it been close
 const char INACTIVE_SHUTTER_CMD			= 'X'; // Get/Set how long before shutter closes
 const char OPEN_SHUTTER_CMD				= 'O'; // Open the shutter
 const char POSITION_SHUTTER_GET			= 'P'; // Get step position
-const char RAIN_SHUTTER_CMD					= 'F'; // Tell shutter if it'raining or not
+const char RAIN_SHUTTER_GET				= 'F'; // Tell shutter if it'raining or not
 const char SPEED_SHUTTER_CMD			= 'R'; // Get/Set step rate (speed)
 const char REVERSED_SHUTTER_CMD			= 'Y'; // Get/Set stepper reversed status
 const char SLEEP_SHUTTER_CMD			= 'S'; // Get/Set radio sleep settings
@@ -212,13 +210,10 @@ void CheckForRain()
 	// Disable by setting rain check interval to 0;
 	if (millis() > nextRainCheck)
 	{
-		int rainingNow = (int)Rotator.GetRainStatus();
-		DBPrintln("Rain sensor says " + String(rainingNow));
-		if (lastRainStatus != rainingNow)
-		{
-			GetRainStatus = lastRainStatus = rainingNow;
-			Wireless.print(String(RAIN_SHUTTER_CMD) + String(GetRainStatus) + "#");
-		}
+		currentRainStatus = Rotator.GetRainStatus();
+		String rainMessage = "It is " + String((currentRainStatus == true) ? "raining" : "not raining");
+		DBPrintln(rainMessage);
+		//Wireless.print(String(RAIN_SHUTTER_CMD) + String(currentRainStatus) + "#");
 		nextRainCheck = millis() + (Rotator.rainCheckInterval * 1000);
 	}
 }
@@ -289,7 +284,7 @@ void ProcessSerialCommand()
 		break;
 	case CALIBRATE_ROTATOR_CMD:
 		Rotator.StartCalibrating();
-		serialMessage = String(CALIBRATE_ROTATOR_CMD);
+		serialMessage = String(CALIBRATE_ROTATOR_CMD) + "Starting";
 		break;
 	case ERROR_AZ_ROTATOR_GET:
 		// todo: See if azimuth error is needed (when passing home switch check to see if the
@@ -447,6 +442,10 @@ void ProcessSerialCommand()
 	case POSITION_SHUTTER_GET:
 			serialMessage = String(POSITION_SHUTTER_GET) + String(RemoteShutter.position);
 			break;
+	case RAIN_SHUTTER_GET:
+		wirelessMessage = String(RAIN_SHUTTER_GET) + String((Rotator.GetRainStatus() == true) ? "1" : "0");
+		DBPrintln("Rain message");
+		break;
 	case REVERSED_SHUTTER_CMD:
 		localString = String(REVERSED_SHUTTER_CMD);
 		if (hasValue == true)
@@ -585,6 +584,10 @@ void ProcessWireless()
 		DBPrintln("Got Speed " + value);
 		RemoteShutter.speed = value;
 		break;
+	case RAIN_SHUTTER_GET:
+		wirelessMessage = String(RAIN_SHUTTER_GET) + String((Rotator.GetRainStatus() == true) ? "1" : "0");
+		DBPrintln("Rain message " + wirelessMessage);
+		break;
 	case REVERSED_SHUTTER_CMD:
 		DBPrintln("Got Reversed " + value);
 		RemoteShutter.reversed = value;
@@ -609,6 +612,10 @@ void ProcessWireless()
 		DBPrintln("Got Volts " + value);
 		RemoteShutter.volts = value;
 		break;
+	}
+	if (wirelessMessage.length() > 0)
+	{
+		Wireless.print(wirelessMessage + "#");
 	}
 }
 #pragma endregion

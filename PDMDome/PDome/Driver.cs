@@ -134,8 +134,6 @@ namespace ASCOM.PDome
         {
             HOMING_NONE, // Not homing or calibrating
             HOMING_HOME, // Homing
-            CALIBRATION_START, // Calibrate finding home before calibrating
-            CALIBRATION_REVERSE,
             CALIBRATION_MOVEOFF, // Ignore home until we've moved off while measuring the dome.
             CALIBRATION_MEASURE // Measu
         }
@@ -145,7 +143,7 @@ namespace ASCOM.PDome
         internal long nextRainCheck;
         internal static int rotatorHomedStatus;
         internal static SeekStates rotatorSeekState;
-        internal byte domeDirection;
+        internal int domeDirection;
 
         // Rotator local values
         internal static string rotatorVersion="";
@@ -507,12 +505,23 @@ namespace ASCOM.PDome
         }
         void ParseVoltStrings(string value, out double volts, out double cutoff)
         {
-            int v, c;
-            string[] values = value.Split(',');
-            int.TryParse(values[0], out v);
-            int.TryParse(values[1], out c);
+            int v=0, c=0;
+            if (value.IndexOf(',') > 0)
+            {
+                string[] values = value.Split(',');
+                if (values.Length > 1)
+                {
+                    int.TryParse(values[0], out v);
+                    int.TryParse(values[1], out c);
+                }
+            }
+            else
+            {
+                LogMessage("Get Unpolled Shutter Values", "Volts string invalid " + value);
+            }
             volts = v / 100.0;
             cutoff = c / 100.0;
+
         }
         #endregion
 
@@ -641,7 +650,7 @@ namespace ASCOM.PDome
             get
             {
 
-                throw new ASCOM.ActionNotImplementedException("Altitude");
+                throw new ASCOM.PropertyNotImplementedException("Altitude");
             }
         }
         public bool AtHome
@@ -659,75 +668,103 @@ namespace ASCOM.PDome
         {
             get
             {
-                throw new ASCOM.PropertyNotImplementedException("AtPark", false);
+                if (CanSetPark == true)
+                {
+                    if (Math.Abs(azimuth - rotatorParkPosition) < 0.2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    throw new ASCOM.PropertyNotImplementedException("AtPark", false);
+                }
             }
         }
         public double Azimuth
         {
             get
             {
-                
-                bool res, slew = Slewing;
-                int status,seek;
-                Double az;
-                string value;
-
-                value = CommandString(HOMED_ROT_STATUS);
-                res = int.TryParse(value, out status);
-                if (res == false || status <-1 || status > 1)
+                if (CanSetAzimuth == true)
                 {
-                    LogMessage("Azimuth GET", "Homed status invalid {1}", status);
+
+                    bool res, slew = Slewing;
+                    int status, seek;
+                    Double az;
+                    string value;
+
+                    value = CommandString(HOMED_ROT_STATUS);
+                    res = int.TryParse(value, out status);
+                    if (res == false || status < -1 || status > 1)
+                    {
+                        LogMessage("Azimuth GET", "Homed status invalid {1}", status);
+                    }
+                    else
+                    {
+                        rotatorHomedStatus = status;
+                        isHome = (rotatorHomedStatus == 1);
+                    }
+
+                    value = CommandString(SEEKSTATE_GET);
+                    res = int.TryParse(value, out seek);
+                    if (res == false)
+                    {
+                        LogMessage("Azimuth GET", "SEEK Mode invalid ({0})", value);
+                    }
+                    else
+                    {
+                        rotatorSeekState = (SeekStates)seek;
+                    }
+
+                    value = CommandString(GOTO_ROT_CMD);
+                    res = Double.TryParse(value, out az);
+                    if (res == false)
+                    {
+                        LogMessage("Azimuth GET", "Invalid value: ({0})", value);
+                        return 0; // don't change the az value
+                    }
+
+                    value = CommandString(POS_ROT_CMD);
+                    if (long.TryParse(value, out rotatorStepPosition) == false)
+                    {
+                        LogMessage("Azimuth GET", "Step position invalid ({0})", value);
+                    }
+
+                    if (nextRainCheck <= 0 && rainCheckInterval > 0)
+                    {
+                        value = CommandString(RAIN_ROT_CMD);
+                        isRaining = value.Equals("1");
+                        nextRainCheck = rainCheckInterval;
+                    }
+                    nextRainCheck--;
+
+
+                    azimuth = az;
+                    return az;
                 }
                 else
                 {
-                    rotatorHomedStatus = status;
-                    isHome = (rotatorHomedStatus == 1);
+                    throw new ASCOM.MethodNotImplementedException("Azimuth");
                 }
-
-                value = CommandString(SEEKSTATE_GET);
-                res = int.TryParse(value, out seek);
-                if (res == false)
-                {
-                    LogMessage("Azimuth GET", "SEEK Mode invalid ({0})", value);
-                }
-                else
-                {
-                    rotatorSeekState = (SeekStates)seek;
-                }
-
-                value = CommandString(GOTO_ROT_CMD);
-                res = Double.TryParse(value, out az);
-                if (res == false)
-                {
-                    LogMessage("Azimuth GET", "Invalid value: ({0})",value);
-                    return 0; // don't change the az value
-                }
-
-                value = CommandString(POS_ROT_CMD);
-                if (long.TryParse(value, out rotatorStepPosition) ==false)
-                {
-                    LogMessage("Azimuth GET", "Step position invalid ({0})", value);
-                }
-
-                if (nextRainCheck <= 0 && rainCheckInterval > 0)
-                {
-                    value = CommandString(RAIN_ROT_CMD);
-                    isRaining = value.Equals("1");
-                    nextRainCheck = rainCheckInterval;
-                }
-                nextRainCheck--;
-
-
-                azimuth = az;
-                return az;
             }
         }
         public void CloseShutter()
         {
-            if (shutterState != ShutterState.shutterClosed && shutterState != ShutterState.shutterClosing)
+            if (CanSetShutter == true)
             {
-                CommandString(CLOSE_SHUTTER_CMD);
-                LogMessage("Shutter Move", "Close");
+                if (shutterState != ShutterState.shutterClosed && shutterState != ShutterState.shutterClosing)
+                {
+                    CommandString(CLOSE_SHUTTER_CMD);
+                    LogMessage("Shutter Move", "Close");
+                }
+            }
+            else
+            {
+                throw new ASCOM.MethodNotImplementedException("CloseShutter");
             }
         }
         public void FindHome()
@@ -744,22 +781,35 @@ namespace ASCOM.PDome
         }
         public void OpenShutter()
         {
-            if (shutterState != ShutterState.shutterOpen && shutterState != ShutterState.shutterOpening)
+            if (CanSetShutter == true)
             {
-                CommandString(OPEN_SHUTTER_CMD);
-                tl.LogMessage("Shutter Move", "Open");
-                shutterState = ShutterState.shutterOpening;
+                if (shutterState != ShutterState.shutterOpen && shutterState != ShutterState.shutterOpening)
+                {
+                    CommandString(OPEN_SHUTTER_CMD);
+                    tl.LogMessage("Shutter Move", "Open");
+                    shutterState = ShutterState.shutterOpening;
+                }
+                else
+                {
+                    LogMessage("Shutter OPEN", "Already Open or Opening");
+                }
             }
             else
             {
-                LogMessage("Shutter OPEN", "Already Open or Opening");
+                throw new ASCOM.MethodNotImplementedException("Open Shutter");
             }
-
         }
         public void Park()
         {
-            tl.LogMessage("Park", "Not implemented");
-            throw new ASCOM.MethodNotImplementedException("Park");
+            if (CanSetPark == true)
+            {
+                SlewToAzimuth(rotatorParkPosition);
+            }
+            else
+            {
+                tl.LogMessage("Park", "Not implemented");
+                throw new ASCOM.MethodNotImplementedException("Park");
+            }
         }
         public void SetPark()
         {
@@ -778,7 +828,7 @@ namespace ASCOM.PDome
         {
             get
             {
-                if (CanSetShutter == true)
+                if (shutterVersion.Equals("")==false)
                 {
                     string value;
                     byte val;
@@ -804,7 +854,7 @@ namespace ASCOM.PDome
                 }
                 else
                 {
-                    throw new ASCOM.ActionNotImplementedException("ShutterStatus");
+                    throw new ASCOM.PropertyNotImplementedException("ShutterStatus");
                 }
             }
         }
@@ -830,7 +880,7 @@ namespace ASCOM.PDome
             }
             else
             {
-                throw new ASCOM.MethodNotImplementedException("SlewToAltitude");
+                throw new ASCOM.PropertyNotImplementedException("SlewToAltitude");
             }
         }
         public void SlewToAzimuth(double Azimuth)
@@ -843,9 +893,9 @@ namespace ASCOM.PDome
         {
             get
             {
-                byte direction;
+                int direction;
                 string value = CommandString(SLEW_ROT_STATUS);
-                bool res = byte.TryParse(value, out direction);
+                bool res = int.TryParse(value, out direction);
                 if (res == false)
                 {
                     LogMessage("Slewing Direction", "Invalid " + value);

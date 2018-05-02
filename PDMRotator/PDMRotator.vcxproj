@@ -92,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="__vm\.PDMRotator.vsarduino.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="RemoteShutterClass.cpp" />
-  </ItemGroup>
   <PropertyGroup>
     <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
   </PropertyGroup>
@@ -103,7 +100,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties arduino.upload.port="COM3" />
+      <UserProperties arduino.upload.port="COM4" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

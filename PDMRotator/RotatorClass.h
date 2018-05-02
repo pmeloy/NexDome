@@ -60,8 +60,6 @@ public:
 	{
 		HOMING_NONE, // Not homing or calibrating
 		HOMING_HOME, // Homing
-		CALIBRATION_START, // Calibrate finding home before calibrating
-		CALIBRATION_REVERSE, // If moving CCW stop then do the rest CW. To keep position numbers positive.
 		CALIBRATION_MOVEOFF, // Ignore home until we've moved off while measuring the dome.
 		CALIBRATION_MEASURE // Measuring dome until home hit again.
 	};
@@ -156,11 +154,13 @@ private:
 	bool		_isAtHome;
 	bool		_hasBeenHomed;
 	enum Seeks	_seekMode;
-	bool		_doSync;
+	bool		_doSync, _doStepsPerRotation;
 	bool		_reversed;
 	long		_stepsToStop;
 	long		_stepsPerRotation;
 	float		_stepsPerDegree;
+	unsigned long	_moveOffDelay;
+	
 
 	// movement
 	const int	MOVE_NEGATIVE = -1;
@@ -405,58 +405,35 @@ void RotatorClass::StartCalibrating()
 	float diff;
 	long distance;
 
+	if (_isAtHome == false) return;
+	DBPrintln("Must be at home");
 	String msg;
 	diff = GetAngularDistance(GetAzimuth(), GetHomeAzimuth());
 	_moveDirection = MOVE_POSITIVE;
-	if (diff < 1) _moveDirection = MOVE_NEGATIVE;
-	_seekMode = CALIBRATION_START;
+	if (diff < 0) _moveDirection = MOVE_NEGATIVE;
+	_seekMode = CALIBRATION_MOVEOFF;
 	stepper.setCurrentPosition(0);
 	distance = (_stepsPerRotation  * _moveDirection * 1.5);
+	_moveOffDelay = millis() + 5000;
+	_doStepsPerRotation = false;
 	moveRelative(distance);
+	DBPrintln("Calibration start, moving " + String(distance) + " " + String(_seekMode) + " Delay " + String((_moveOffDelay - millis())));
 }
 void RotatorClass::doCalibrate()
 {
-	static long moveOffDelay, stopDelay, homePositionEnd, currentPosition;
+	static long stopDelay, homePositionEnd, currentPosition;
 	static bool lastSwitchState;
 
 	if (_seekMode > HOMING_HOME)
 	{
 		switch (_seekMode)
 		{
-		case(CALIBRATION_START):
-			if (_isAtHome == true)
-			{
-				if (_moveDirection == MOVE_NEGATIVE)
-				{
-					DBPrintln("Movedirection " + String(_moveDirection));
-					_seekMode = CALIBRATION_REVERSE;
-					stopDelay = millis() + 2000;
-				}
-				else
-				{
-					_seekMode = CALIBRATION_MOVEOFF;
-				}
-			}
-			break;
-		case CALIBRATION_REVERSE:
-			stepper.stop();
-			if (millis() > stopDelay)
-			{
-				DBPrintln("Stopped, changing direction");
-				_seekMode = CALIBRATION_MOVEOFF;
-				stepper.setCurrentPosition(0);
-				moveRelative(_stepsPerRotation * 1.5);
-				moveOffDelay = millis() + 5000; // 5 seconds to Get off the home switch
-			}
-			break;
 		case(CALIBRATION_MOVEOFF):
-			if (millis() > stopDelay)
+			if (millis() >= _moveOffDelay)
 			{
-				if (millis() >= moveOffDelay)
-				{
-					_seekMode = CALIBRATION_MEASURE;
-					lastSwitchState = false;
-				}
+				DBPrintln("millis()= " + String(millis() + " > " + String(_moveOffDelay)));
+				_seekMode = CALIBRATION_MEASURE;
+				lastSwitchState = false;
 			}
 			break;
 		case(CALIBRATION_MEASURE):
@@ -464,9 +441,8 @@ void RotatorClass::doCalibrate()
 			{
 				_seekMode = HOMING_NONE;
 				lastSwitchState = false;
-				//_stepsPerRotation = stepper.currentPosition();
 				homeHit();
-				SaveToEEProm();
+				_doStepsPerRotation = true; // Once stopped, set SPR to stepper position and save to eeprom.
 			}
 			else
 				break;
@@ -550,7 +526,7 @@ long RotatorClass::GetPosition()
 	/// last sync position
 	long position;
 	position = stepper.currentPosition();
-	if (_seekMode < CALIBRATION_START)
+	if (_seekMode < CALIBRATION_MOVEOFF)
 	{
 		if (position > _stepsPerRotation) position -= _stepsPerRotation;
 		if (position < 0) position += _stepsPerRotation;
@@ -649,13 +625,11 @@ float RotatorClass::GetAzimuth()
 void RotatorClass::run()
 {
 	static bool wasRunning = false;
-	static long PeriodicReadings;
+	static long nextPeriodicReading;
 	long stepsFromZero;
 	int nextCheck;
 
-
 	wasRunning = stepper.run();
-
 	if (millis() > nextCheck)
 	{
 		nextCheck += 10;
@@ -677,42 +651,45 @@ void RotatorClass::run()
 	if (GetSeekMode() != 0) doCalibrate();
 
 
-	if (PeriodicReadings < millis())
+	if (nextPeriodicReading < millis())
 	{
 		_volts = GetVolts();
-		PeriodicReadings = millis() + 10000;
+		nextPeriodicReading = millis() + 10000;
 	}
 
 	if (stepper.run() == true) return;
 
 	if (wasRunning == true)
 	{
-		if (_seekMode != CALIBRATION_REVERSE)
+		DBPrintln("Stopped!");
+		_moveDirection = MOVE_NONE;
+		_seekMode = HOMING_NONE;
+
+		if (_doStepsPerRotation == true)
 		{
-			_moveDirection = MOVE_NONE;
-			_seekMode = HOMING_NONE;
-
-			stepsFromZero = GetPosition();
-			if (stepsFromZero < 0)
-			{
-				while (stepsFromZero < 0) stepsFromZero += _stepsPerRotation;
-				stepper.setCurrentPosition(stepsFromZero);
-			}
-			if (stepsFromZero > _stepsPerRotation)
-			{
-				while (stepsFromZero > _stepsPerRotation) stepsFromZero -= _stepsPerRotation;
-				stepper.setCurrentPosition(stepsFromZero);
-			}
-			if (_doSync == true)
-			{
-
-				syncPosition(_homeAzimuth);
-				SaveToEEProm();
-				_doSync = false;
-			}
-			enableMotor(false);
-			wasRunning = false;
+			_stepsPerRotation = stepper.currentPosition();
+			SaveToEEProm();
 		}
+
+		stepsFromZero = GetPosition();
+		if (stepsFromZero < 0)
+		{
+			while (stepsFromZero < 0) stepsFromZero += _stepsPerRotation;
+			stepper.setCurrentPosition(stepsFromZero);
+		}
+		if (stepsFromZero > _stepsPerRotation)
+		{
+			while (stepsFromZero > _stepsPerRotation) stepsFromZero -= _stepsPerRotation;
+			stepper.setCurrentPosition(stepsFromZero);
+		}
+		if (_doSync == true)
+		{
+			syncPosition(_homeAzimuth);
+			SaveToEEProm();
+			_doSync = false;
+		}
+		enableMotor(false);
+		wasRunning = false;
 	}
 }
 void RotatorClass::stop()
@@ -723,7 +700,6 @@ void RotatorClass::stop()
 	// few extra steps for getting to a full step position.
 
 	if (!stepper.run()) return;
-
 	_seekMode = HOMING_NONE;
 	stepper.stop();
 }

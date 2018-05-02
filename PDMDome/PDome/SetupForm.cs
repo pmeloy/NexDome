@@ -37,7 +37,7 @@ namespace ASCOM.PDome
         private int _shutterSleepPeriod, _shutterSleepDelay;
         private double _rotatorHomePosition, _rotatorParkPosition, _shutterMaxElevation, _shutterMinElevation;
         private int _rainCheckPeriod;
-        bool hasError;
+        bool hasError, isCalibrating = false;
 
 
         private void btnHome_Click(object sender, EventArgs e)
@@ -60,11 +60,13 @@ namespace ASCOM.PDome
             {
                 myDome.CommandBlind(Dome.CAL_ROT_CMD);
                 btnCalibrateRotator.Text = "Cancel";
+                isCalibrating = true;
             }
             else
             {
                 myDome.CommandBlind(Dome.ABORT_MOVE_CMD);
                 btnCalibrateRotator.Text = "Calibrate";
+                isCalibrating = false;
             }
         }
 
@@ -75,12 +77,34 @@ namespace ASCOM.PDome
 
         private void btnOpenShutter_Click(object sender, EventArgs e)
         {
-            myDome.CommandBlind(Dome.OPEN_SHUTTER_CMD);
+            if (btnOpenShutter.Text.Equals( "Open"))
+            {
+                myDome.OpenShutter();
+                btnOpenShutter.Text = "STOP";
+                btnCloseShutter.Enabled = false;
+            }
+            else
+            {
+                myDome.AbortSlew();
+                btnOpenShutter.Text = "Open";
+                btnCloseShutter.Enabled = true;
+            }
         }
 
         private void btnCloseShutter_Click(object sender, EventArgs e)
         {
-            myDome.CommandBlind(Dome.CLOSE_SHUTTER_CMD);
+            if (btnCloseShutter.Text.Equals("Close"))
+            {
+                myDome.CloseShutter();
+                btnCloseShutter.Text = "STOP";
+                btnOpenShutter.Enabled = false;
+            }
+            else
+            {
+                myDome.AbortSlew();
+                btnCloseShutter.Text = "Close";
+                btnOpenShutter.Enabled = true;
+            }
         }
 
         private void Double_Validation(object sender, CancelEventArgs e)
@@ -136,7 +160,7 @@ namespace ASCOM.PDome
             if (long.TryParse(tbxRotatorStepRate.Text, out _rotatorSpeed) == false) errorcount++;
             if (int.TryParse(tbxRainCheckPeriod.Text, out _rainCheckPeriod) == false) errorcount++;
 
-            if (Dome.shutterVersion.Equals("") == false)
+            if (Dome.canSetShutter == true)
             {
                 if (double.TryParse(tbxShutterCutOff.Text, out _shutterCutoffVolts) == false) errorcount++;
                 if (long.TryParse(tbxShutterAcceleration.Text, out _shutterAcceleration) == false) errorcount++;
@@ -166,11 +190,10 @@ namespace ASCOM.PDome
                 myDome.CommandBlind(Dome.RAIN_ROT_CMD + _rainCheckPeriod.ToString());
             }
             Dome.LogMessage("Shutter Version", "Equals ({0})", Dome.shutterVersion);
-            if (Dome.shutterVersion.Equals("") == false)
+            if (Dome.canSetShutter == true)
             {
 
                 Dome.canSetAltitude = chkCanSetAltitude.Checked;
-                Dome.canSetShutter = chkCanSetShutter.Checked;
                 if (chkShutterReversed.Checked != Dome.shutterReversed) myDome.CommandBlind(Dome.REV_SHUT_CMD + myDome.BoolToNumberString(chkShutterReversed.Checked));
                 if (_shutterCutoffVolts != Dome.shutterCutoffVolts) myDome.CommandBlind(Dome.VOLTS_SHUT_CMD + _shutterCutoffVolts.ToString());
                 if (_shutterAcceleration != Dome.shutterAcceleration) myDome.CommandBlind(Dome.ACCEL_SHUT_CMD + _shutterAcceleration.ToString());
@@ -183,6 +206,7 @@ namespace ASCOM.PDome
                 }
             }
 
+            Dome.canSetShutter = chkCanSetShutter.Checked;
             Dome.canFindHome = chkCanFindHome.Checked;
             Dome.canPark = chkCanPark.Checked;
             Dome.canSetAzimuth = chkCanSetAzimuth.Checked;
@@ -229,11 +253,11 @@ namespace ASCOM.PDome
             tbxRotatorAcceleration.Text = Dome.rotatorAcceleration.ToString();
             tbxRotatorStepRate.Text = Dome.rotatorSpeed.ToString();
             tbxRainCheckPeriod.Text = Dome.rainCheckInterval.ToString();
-            
 
-            if (Dome.shutterVersion.Equals("") == false)
+
+            if (Dome.canSetShutter == true)
             {
-                
+
                 string shutterText = "";
                 lblShutterStepPos.Text = Dome.shutterPosition.ToString();
                 gbShutterVersion.Text = "Shutter Version " + Dome.shutterVersion;
@@ -250,7 +274,7 @@ namespace ASCOM.PDome
                 tbxShutterSleepPeriod.Text = Dome.shutterSleepPeriod.ToString();
                 tbxShutterSleepDelay.Text = Dome.shutterSleepDelay.ToString();
                 chkShutterSleepEnabled.Checked = Dome.shutterSleepEnabled;
-                
+
                 switch (Dome.shutterState)
                 {
                     case ShutterState.shutterOpen:
@@ -296,19 +320,18 @@ namespace ASCOM.PDome
                 case Dome.SeekStates.CALIBRATION_MEASURE:
                     seekText = "Measuring dome";
                     break;
-                case Dome.SeekStates.CALIBRATION_REVERSE:
-                    seekText = "Reversing";
-                    break;
                 case Dome.SeekStates.CALIBRATION_MOVEOFF:
                     seekText = "Move off home";
-                    break;
-                case Dome.SeekStates.CALIBRATION_START:
-                    seekText = "Finding home";
                     break;
                 case Dome.SeekStates.HOMING_HOME:
                     seekText = "Finding home";
                     break;
                 case Dome.SeekStates.HOMING_NONE:
+                    if (isCalibrating == true)
+                    {
+                        isCalibrating = false;
+                        tbxRotatorStepsPer.Text = myDome.CommandString(Dome.STEPS_ROT_CMD);
+                    }
                     seekText = "---";
                     break;
             }
@@ -326,6 +349,11 @@ namespace ASCOM.PDome
             else if (Dome.rotatorHomedStatus == 1)
             {
                 homeText = "At home";
+                if (btnHome.Text.Equals("Cancel"))
+                {
+                    btnHome.Text = "Home";
+                    btnCalibrateRotator.Enabled = true;
+                }
             }
             lblHomeStatus.Text = homeText;
 
@@ -335,7 +363,7 @@ namespace ASCOM.PDome
 
             #region "Shutter"
 
-            if (Dome.shutterVersion.Equals("") == false)
+            if (Dome.canSetShutter == true)
             {
                 lblShutterStepPos.Text = Dome.shutterPosition.ToString();
                 lblShutterElevation.Text = Dome.shutterElevation.ToString();
@@ -344,9 +372,19 @@ namespace ASCOM.PDome
                 {
                     case ShutterState.shutterOpen:
                         shutterText = "Open";
+                        if (btnOpenShutter.Text.Equals("STOP"))
+                        {
+                            btnOpenShutter.Text = "Open";
+                            btnCloseShutter.Enabled = true;
+                        }
                         break;
                     case ShutterState.shutterClosed:
                         shutterText = "Closed";
+                        if (btnCloseShutter.Text.Equals("STOP"))
+                        {
+                            btnCloseShutter.Text = "Close";
+                            btnOpenShutter.Enabled = true;
+                        }
                         break;
                     case ShutterState.shutterOpening:
                         shutterText = "Opening";
