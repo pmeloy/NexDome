@@ -1,14 +1,14 @@
 /*
 * PDM NexDome Shutter kit firmware. NOT compatible with original NexDome ASCOM driver or Rotation kit firmware.
 *
-* Copyright © 2018 Patrick Meloy
+* Copyright ï¿½ 2018 Patrick Meloy
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
-*  files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy,
+*  files (the ï¿½Softwareï¿½), to deal in the Software without restriction, including without limitation the rights to use, copy,
 *  modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
 *  is furnished to do so, subject to the following conditions:
 *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 *
-*  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+*  THE SOFTWARE IS PROVIDED ï¿½AS ISï¿½, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
 *  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 *  OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -41,17 +41,7 @@
 
 #include <AccelStepper.h>
 #include <EEPROM.h>
-//#include <XBeeClass.h>
 #include "PDMShutterClass.h"
-
-//#define DEBUG
-#ifdef DEBUG
-#define DBPrint(x) Computer.print(x)
-#define DBPrintln(x) Computer.println(x)
-#else
-#define DBPrint(x) 
-#define DBPrintln(x) 
-#endif // DEBUG
 
 #define Computer Serial
 String computerBuffer;
@@ -59,7 +49,7 @@ String computerBuffer;
 #define Wireless Serial1
 String wirelessBuffer;
 
-const String version = "0.5.0";
+const String version = "0.5.0.5";
 
 // Stepper motor configuration
 #pragma endregion
@@ -86,7 +76,8 @@ const char HELLO_CMD				= 'H'; // Let rotator know we're here
 const char INACTIVE_SHUTTER_CMD		= 'X'; // Get/Set how long before shutter closes
 const char OPEN_SHUTTER_CMD			= 'O'; // Open the shutter
 const char POSITION_SHUTTER_GET		= 'P'; // Get step position
-const char RAINING_CMD				= 'F'; // Rotator telling us if it's raining or not
+const char RAIN_INTERVAL_SET		= 'I'; // Tell us how long between checks in seconds
+const char RAIN_SHUTTER_GET			= 'F'; // Rotator telling us if it's raining or not
 const char SLEEP_SHUTTER_CMD		= 'S'; // Get/Set radio sleep settings
 const char SPEED_SHUTTER_CMD		= 'R'; // Get/Set step rate (speed)
 const char REVERSED_SHUTTER_CMD		= 'Y'; // Get/Set stepper reversed status
@@ -105,7 +96,8 @@ bool SentHello = false, XbeeStarted = false;
 bool isRaining = false;
 
 unsigned long nextUpdateTime, nextStepTime;
-unsigned int updateInterval, stepInterval;
+unsigned long updateInterval, stepInterval;
+unsigned long nextRainCheck;
 bool doFinalUpdate = false;
 
 void setup()
@@ -133,6 +125,9 @@ void loop()
 	
 	if (millis() > nextUpdateTime && (Shutter.sendUpdates == true || doFinalUpdate == true)) UpdateRotator();
 
+	if (Shutter.isConfiguringWireless == false) RainCheck();
+
+	Shutter.DoButtons();
 	Shutter.Run();
 }
 
@@ -199,7 +194,15 @@ void SendHello()
 	Wireless.println("H#");
 	SentHello = true;
 }
-
+void RainCheck()
+{
+	if (millis() > nextRainCheck)
+	{
+		DBPrintln("Asking for rain status");
+		Wireless.print(String(RAIN_SHUTTER_GET) + "#");
+		nextRainCheck = millis() + Shutter.rainCheckInterval;
+	}
+}
 #pragma region Computer Communications
 void ReceiveComputer()
 {
@@ -371,8 +374,16 @@ void ProcessWireless()
 		 //Rotator update will be through UpdateRotator
 		wirelessMessage = String(POSITION_SHUTTER_GET) + String(Shutter.GetPosition());
 		break;
-	case RAINING_CMD:
+	case RAIN_INTERVAL_SET:
+		if (value.length() > 0)
+		{
+			Shutter.rainCheckInterval = value.toInt();
+			DBPrintln("Rain check interval set to " + value);
+		}
+		break;
+	case RAIN_SHUTTER_GET:
 		local16 = value.toInt();
+		DBPrintln("Got rain status of " + value);
 		if (local16 == 1)
 		{
 			if (isRaining == false)

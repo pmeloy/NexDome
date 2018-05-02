@@ -770,9 +770,9 @@ namespace ASCOM.PDome
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label19.Location = new System.Drawing.Point(6, 150);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(96, 13);
+            this.label19.Size = new System.Drawing.Size(87, 13);
             this.label19.TabIndex = 34;
-            this.label19.Text = "Steps Per Rotation";
+            this.label19.Text = "Steps Per Stroke";
             // 
             // tbxShutterInactive
             // 
@@ -943,7 +943,7 @@ namespace ASCOM.PDome
             this.Name = "SetupForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "PDM NexDome Setup";
+            this.Text = "PDM NexDome Setup v0.5.0.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SetupForm_FormClosing);
             this.Load += new System.EventHandler(this.SetupDialogForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).EndInit();

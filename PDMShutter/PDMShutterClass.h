@@ -34,7 +34,7 @@
 
 #pragma region Debug Printing
 // Debug printing, uncomment #define DEBUG to enable
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DBPrint(x) Serial.print(x)
 #define DBPrintln(x) Serial.println(x)
@@ -74,6 +74,7 @@ public:
 
 	bool		isConfiguringWireless = false;
 
+	long int	rainCheckInterval;
 
 	// Helper functions
 	float		PositionToAltitude(long);
@@ -102,6 +103,7 @@ public:
 	void		SetVoltsFromString(String);
 
 	// Movers
+	void		DoButtons();
 	void		Open();
 	void		Close();
 	void		GotoPosition(long);
@@ -126,19 +128,22 @@ private:
 		uint8_t		stepMode;
 		uint8_t		reversed;
 		uint16_t	cutoffVolts;
+		long int	rainCheckInterval;
 		uint16_t	jogStart; // milliseconds before triggering "sticky" move
 		uint16_t	jogMax; // milliseconds after which "sticky" expires
 		bool		eStopEnabled;
 	};
 
 	const int		_eepromLocation = 100;
-	const int		_eePromSignature = 4700;
+	const int		_eePromSignature = 4750;
+
 	byte			_sleepMode = 0;
 	uint16_t		_sleepPeriod = 300;
-	uint16_t		_sleepDelay = 300000;
+	uint16_t		_sleepDelay = 30000;
 	String			_ATString;
 	int				_configStep;
 
+	bool			_knowsLocation = false;
 	uint16_t		_acceleration;
 	uint16_t		_maxSpeed;
 	bool			_reversed;
@@ -163,7 +168,6 @@ private:
 
 
 	float		MeasureVoltage();
-	void		DoButtons();
 	void		ReadEEProm();
 	void		WriteEEProm();
 	void		DefaultEEProm();
@@ -211,6 +215,7 @@ void		ShutterClass::DefaultEEProm()
 	_stepMode = 8;
 	_reversed = false;
 	_cutoffVolts = 1220;
+	rainCheckInterval = 20000;
 	_eStopEnabled = false;
 	_jogStart = 1000;
 	_jogMax = 3000;
@@ -236,6 +241,7 @@ void		ShutterClass::ReadEEProm()
 	_maxSpeed		= cfg.maxSpeed;
 	_stepMode		= cfg.stepMode;
 	_cutoffVolts	= cfg.cutoffVolts;
+	rainCheckInterval = cfg.rainCheckInterval;
 	_eStopEnabled	= cfg.eStopEnabled;
 	_jogStart		= cfg.jogStart;
 	_jogMax			= cfg.jogMax;
@@ -254,6 +260,7 @@ void		ShutterClass::WriteEEProm()
 	cfg.maxSpeed		= _maxSpeed;
 	cfg.stepMode		= _stepMode;
 	cfg.cutoffVolts		= _cutoffVolts;
+	cfg.rainCheckInterval = rainCheckInterval;
 	cfg.eStopEnabled	= _eStopEnabled;
 	cfg.jogStart		= _jogStart;
 	cfg.jogMax			= _jogMax;
@@ -265,6 +272,29 @@ void		ShutterClass::WriteEEProm()
 // INPUTS
 void		ShutterClass::DoButtons()
 {
+	int PRESSED = 0;
+	static int whichButtonPressed = 0, lastButtonPressed = 0;
+
+	if (digitalRead(BUTTON_OPEN) == PRESSED && whichButtonPressed == 0)
+	{
+		DBPrintln("Button Open Shutter");
+		whichButtonPressed = BUTTON_OPEN;
+		MoveRelative(_stepsPerStroke);
+		lastButtonPressed = BUTTON_OPEN;
+	}
+	else if (digitalRead(BUTTON_CLOSE) == PRESSED && whichButtonPressed == 0)
+	{
+		DBPrintln("Button Close Shutter");
+		whichButtonPressed = BUTTON_CLOSE;
+		MoveRelative(1 - _stepsPerStroke);
+		lastButtonPressed = BUTTON_CLOSE;
+	}
+
+	if (digitalRead(whichButtonPressed) == !PRESSED && lastButtonPressed > 0)
+	{
+		Stop();
+		lastButtonPressed = whichButtonPressed = 0;
+	}
 }
 float		ShutterClass::MeasureVoltage()
 {
@@ -407,10 +437,25 @@ void		ShutterClass::SetVoltsFromString(String value)
 }
 
 // Movers
+void		ShutterClass::Open()
+{
+	_shutterState = OPENING;
+	if (_knowsLocation == true)
+	{
+		GotoPosition(_stepsPerStroke);
+	}
+}
 void		ShutterClass::Close()
 {
 	_shutterState = CLOSING;
-	MoveRelative(1 - _stepsPerStroke * 2);
+	if (_knowsLocation == true)
+	{
+		GotoPosition(0);
+	}
+	else 
+	{
+		MoveRelative(1 - _stepsPerStroke * 2);
+	}
 }
 void		ShutterClass::GotoPosition(long newPos)
 {
@@ -439,11 +484,6 @@ void		ShutterClass::MoveRelative(long amount)
 {
 	stepper.move(amount);
 }
-void		ShutterClass::Open()
-{
-	_shutterState = OPENING;
-	MoveRelative(_stepsPerStroke * 2);
-}
 void		ShutterClass::Run()
 {
 	static uint64_t nextBatteryCheck;
@@ -464,6 +504,7 @@ void		ShutterClass::Run()
 		hitSwitch = true;
 		_shutterState = CLOSED;
 		stepper.stop();
+		_knowsLocation = true;
 	}
 	if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING)
 	{
