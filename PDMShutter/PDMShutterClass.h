@@ -51,8 +51,8 @@ const uint8_t	STEPPER_STEP_PIN = 12;
 
 const uint8_t	CLOSED_PIN = 2;
 const uint8_t	OPENED_PIN = 3;
-const uint8_t	BUTTON_OPEN = 6;
-const uint8_t	BUTTON_CLOSE = 5;
+const uint8_t	BUTTON_OPEN = 5;
+const uint8_t	BUTTON_CLOSE = 6;
 const uint8_t	ESTOP_PIN = 14;
 
 AccelStepper stepper(AccelStepper::DRIVER, STEPPER_STEP_PIN, STEPPER_DIRECTION_PIN);
