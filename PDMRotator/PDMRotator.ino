@@ -35,7 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-const String VERSION = "0.5.0.5";
+const String VERSION = "0.5.1.0";
 
 #define Computer Serial
 String computerBuffer;
@@ -102,7 +102,7 @@ const char HOMEAZ_ROTATOR_CMD			= 'i'; // Get/Set home position
 const char HOMESTATUS_ROTATOR_GET		= 'z'; // Get homed status
 const char MOVE_RELATIVE_ROTATOR_CMD	= 'b'; // Move relative - steps from current position +/-
 const char PARKAZ_ROTATOR_CMD			= 'l'; // Get/Set park azimuth
-const char POSITION_ROTATOR_GET			= 'p'; // Get/Set step position
+const char POSITION_ROTATOR_CMD			= 'p'; // Get/Set step position
 const char RAIN_ROTATOR_CMD				= 'f'; // Get rain sensor state /Set rain check interval
 const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status 
 const char SEEKSTATE_GET				= 'd'; // None, homing, calibration steps.
@@ -324,7 +324,7 @@ void ProcessSerialCommand()
 		if (hasValue == true)
 		{
 			localLong = value.toInt();
-			if (localLong > 0) Rotator.moveRelative(localLong);
+			Rotator.moveRelative(localLong);
 		}
 		serialMessage = String(MOVE_RELATIVE_ROTATOR_CMD);
 		break;
@@ -345,8 +345,22 @@ void ProcessSerialCommand()
 		}
 		if (serialMessage.length() == 0) serialMessage = localString + String(Rotator.GetParkAzimuth());
 		break;
-	case POSITION_ROTATOR_GET:
-		serialMessage = String(POSITION_ROTATOR_GET) + String(Rotator.GetPosition());
+	case POSITION_ROTATOR_CMD:
+		if (value.length() > 0)
+		{
+			if (Rotator.GetVoltsAreLow() == false) 
+			{
+				Rotator.SetPosition(value.toInt());
+			}
+			else
+			{
+				serialMessage = String(POSITION_ROTATOR_CMD) + "L";
+			}
+		}
+		else
+		{
+			serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
+		}
 		break;
 	case RAIN_ROTATOR_CMD: // TODO: Have Shutter ask for rain status
 		if (hasValue == true)
