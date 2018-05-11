@@ -284,7 +284,7 @@ void ProcessSerialCommand()
 		break;
 	case CALIBRATE_ROTATOR_CMD:
 		Rotator.StartCalibrating();
-		serialMessage = String(CALIBRATE_ROTATOR_CMD) + "Starting";
+		serialMessage = String(CALIBRATE_ROTATOR_CMD);
 		break;
 	case ERROR_AZ_ROTATOR_GET:
 		// todo: See if azimuth error is needed (when passing home switch check to see if the

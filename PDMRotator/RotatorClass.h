@@ -453,7 +453,7 @@ void RotatorClass::doCalibrate()
 			}
 			break;
 		case(CALIBRATION_MEASURE):
-			if (_isAtHome == true)
+			if (digitalRead(HOME_PIN) == 0)
 			{
 				_seekMode = HOMING_NONE;
 				lastSwitchState = false;
