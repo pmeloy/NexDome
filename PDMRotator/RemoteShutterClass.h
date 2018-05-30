@@ -41,6 +41,7 @@ public:
 	String	acceleration = "";
 	String	elevation = "";
 	String	homedStatus = "";
+	String	OpenError = "";
 	String	position ="";
 	String	speed = "";
 	String	reversed = "";

@@ -6,14 +6,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ASCOM.PDM
 {
     public partial class RotatorSetup : Form
     {
         internal Dome myDome;
-        private bool isLoading = true, isHoming = false, isCalibrating=false;
-
+        private bool isLoading = true, isHoming = false;
+        private long _stepsPer = 0;
         internal enum HomeStatuses
         {
             NEVER_HOMED,
@@ -45,7 +46,8 @@ namespace ASCOM.PDM
             tbxCutoff.Text = (Dome.rotatorCutoff / 100.0).ToString("0,0.00");
             tbxMaxSpeed.Text = Dome.rotatorMaxSpeed.ToString();
             tbxAcceleration.Text = Dome.rotatorAcceleration.ToString();
-            tbxStepsPerRotation.Text = Dome.rotatorStepsPer.ToString();
+            _stepsPer = Dome.rotatorStepsPer;
+            tbxStepsPerRotation.Text = _stepsPer.ToString();
             chkReversed.Checked = Dome.rotatorReversed;
             tbxHomeAz.Text = Dome.rotatorHomeAz.ToString();
             tbxParkAz.Text = Dome.rotatorParkAz.ToString();
@@ -150,6 +152,7 @@ namespace ASCOM.PDM
             if (long.TryParse(tbxStepsPerRotation.Text, out value) == true)
             {
                 Dome.rotatorStepsPer = value;
+                _stepsPer = value;
                 myDome.SendSerial(Dome.STEPSPER_ROTATOR_CMD + value.ToString());
                 errorProvider1.SetError(tbxStepsPerRotation, "");
                 Dome.LogMessage("Rotator SET", "Steps Per Rotation ({0})", value);
@@ -257,7 +260,7 @@ namespace ASCOM.PDM
         private void btnSTOP_Click(object sender, EventArgs e)
         {
             myDome.AbortSlew();
-            Dome.tl.LogMessage("Rotator SET", "STOP");
+            Dome.tl.LogMessage("Rotator SET", "Manual STOP");
         }
         private void btnHome_Click(object sender, EventArgs e)
         {
@@ -267,7 +270,6 @@ namespace ASCOM.PDM
         }
         private void btnCalibrate_Click(object sender, EventArgs e)
         {
-            isCalibrating = true;
             myDome.SendSerial(Dome.CALIBRATE_ROTATOR_CMD);
             Dome.tl.LogMessage("Rotator SET", "Calibration Start");
         }
@@ -318,7 +320,6 @@ namespace ASCOM.PDM
                 btnCalibrate.Enabled = false;
             }
             if (Dome.rotatorSeekState == (int)Seeks.HOMING_NONE || Dome.rotatorSeekState > (int)Seeks.HOMING_HOME) isHoming = false;
-            if (Dome.rotatorSeekState < (int)Seeks.CALIBRATION_MOVEOFF) isCalibrating = false;
             if (Dome.rotatorSlewDirection == -1)
             {
                 lblMultiStatus.Text = "<<<";
@@ -331,6 +332,13 @@ namespace ASCOM.PDM
             {
                 lblMultiStatus.Text = "---";
             }
+            if (Dome.rotatorStepsPer != _stepsPer)
+            {
+                _stepsPer = Dome.rotatorStepsPer;
+                Dome.tl.LogMessage("Rotator", "Calibration completed");
+                tbxStepsPerRotation.Text = Dome.rotatorStepsPer.ToString();
+            }
+
         }
 
     }

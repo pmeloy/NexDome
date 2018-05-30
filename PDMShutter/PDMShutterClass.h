@@ -17,7 +17,6 @@
 *  https://github.com/grozzie2/NexDome
 */
 
-//Version 0.1.0
 #pragma once
 
 #pragma region Includes
@@ -34,7 +33,7 @@
 
 #pragma region Debug Printing
 // Debug printing, uncomment #define DEBUG to enable
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DBPrint(x) Serial.print(x)
 #define DBPrintln(x) Serial.println(x)
@@ -49,8 +48,8 @@ const uint8_t	STEPPER_ENABLE_PIN = 10;
 const uint8_t	STEPPER_DIRECTION_PIN = 11;
 const uint8_t	STEPPER_STEP_PIN = 12;
 
-const uint8_t	CLOSED_PIN = 2;
-const uint8_t	OPENED_PIN = 3;
+const int	CLOSED_PIN = 2;
+const int	OPENED_PIN = 3;
 const uint8_t	BUTTON_OPEN = 5;
 const uint8_t	BUTTON_CLOSE = 6;
 const uint8_t	ESTOP_PIN = 14;
@@ -69,7 +68,7 @@ public:
 
 	bool		present = false;
 
-	bool		isRunning = false;
+	bool		wasRunning = false;
 	bool		sendUpdates = false;
 
 	bool		isConfiguringWireless = false;
@@ -83,16 +82,18 @@ public:
 	// Wireless functions
 	void		StartWirelessConfig();
 	void		ChangeSleepSettings(String);
-	void		SetATString(String);
+	void		ConfigXBee(String);
 
 	// Getters
 	int32_t		GetAcceleration();
 	float		GetElevation();
+	bool		GetHasClosed();
 	uint32_t	GetMaxSpeed();
 	long		GetPosition();
 	bool		GetReversed();
 	short		GetState();
 	uint32_t	GetStepsPerStroke();
+	bool		GetVoltsAreLow();
 	String		GetVoltString();
 
 	// Setters
@@ -135,7 +136,7 @@ private:
 	};
 
 	const int		_eepromLocation = 100;
-	const int		_eePromSignature = 4750;
+	const int		_eePromSignature = 4752;
 
 	byte			_sleepMode = 0;
 	uint16_t		_sleepPeriod = 300;
@@ -143,7 +144,7 @@ private:
 	String			_ATString;
 	int				_configStep;
 
-	bool			_knowsLocation = false;
+	bool			_hasClosed = false;
 	uint16_t		_acceleration;
 	uint16_t		_maxSpeed;
 	bool			_reversed;
@@ -153,7 +154,7 @@ private:
 	uint8_t			_eStopPin;
 	bool			_eStopEnabled;
 
-	uint16_t		_controllerVolts;
+	uint16_t		_volts;
 	uint64_t		_batteryCheckInterval = 120000;
 	uint16_t		_cutoffVolts = 1220;
 
@@ -209,13 +210,13 @@ void		ShutterClass::DefaultEEProm()
 	_sleepMode = 0;
 	_sleepPeriod = 300;
 	_sleepDelay = 30000;
-	_stepsPerStroke = 264000;
-	_acceleration = 4000;
-	_maxSpeed = 3000;
+	_stepsPerStroke = 885000;
+	_acceleration = 7000;
+	_maxSpeed = 5000;
 	_stepMode = 8;
 	_reversed = false;
 	_cutoffVolts = 1220;
-	rainCheckInterval = 20000;
+	rainCheckInterval = 30000;
 	_eStopEnabled = false;
 	_jogStart = 1000;
 	_jogMax = 3000;
@@ -303,7 +304,8 @@ float		ShutterClass::MeasureVoltage()
 	volts = analogRead(VOLTAGE_MONITOR_PIN);
 	volts = volts / 2;
 	volts = volts * 3;
-	_controllerVolts = volts;
+	DBPrintln("Voltage is " + String(volts));
+	_volts = volts;
 	return volts;
 }
 
@@ -350,11 +352,11 @@ inline void ShutterClass::ChangeSleepSettings(String values)
 	WriteEEProm();
 	ReadEEProm();
 }
-inline void ShutterClass::SetATString(String result)
+inline void ShutterClass::ConfigXBee(String result)
 {
 	if (_configStep == 0)
 	{
-		_ATString = "ATCE0,AP0";
+		_ATString = "ATCE0,ID7734,AP0";
 		_ATString += ",SM" + String(_sleepMode, HEX);
 		_ATString += ",SP" + String(_sleepPeriod, HEX);
 		_ATString += ",ST" + String(_sleepDelay, HEX);
@@ -365,7 +367,7 @@ inline void ShutterClass::SetATString(String result)
 	}
 	_configStep++;
 
-	if (_configStep < 7)
+	if (_configStep < 8)
 	{
 		DBPrintln("Arg " + String(_configStep) + ": " + result);
 	}
@@ -384,6 +386,10 @@ int32_t		ShutterClass::GetAcceleration()
 float		ShutterClass::GetElevation()
 {
 	return PositionToAltitude(stepper.currentPosition());
+}
+bool		ShutterClass::GetHasClosed()
+{
+	return _hasClosed;
 }
 uint32_t	ShutterClass::GetMaxSpeed()
 {
@@ -405,9 +411,14 @@ uint32_t	ShutterClass::GetStepsPerStroke()
 {
 	return _stepsPerStroke;
 }
+inline bool ShutterClass::GetVoltsAreLow()
+{
+	bool low = (_volts <= _cutoffVolts);
+	return low;
+}
 String		ShutterClass::GetVoltString()
 {
-	return String(_controllerVolts) + "," + String(_cutoffVolts);
+	return String(_volts) + "," + String(_cutoffVolts);
 }
 
 // Setters
@@ -440,7 +451,7 @@ void		ShutterClass::SetVoltsFromString(String value)
 void		ShutterClass::Open()
 {
 	_shutterState = OPENING;
-	if (_knowsLocation == true)
+	if (_hasClosed == true)
 	{
 		GotoPosition(_stepsPerStroke);
 	}
@@ -448,7 +459,7 @@ void		ShutterClass::Open()
 void		ShutterClass::Close()
 {
 	_shutterState = CLOSING;
-	if (_knowsLocation == true)
+	if (_hasClosed == true)
 	{
 		GotoPosition(0);
 	}
@@ -487,7 +498,7 @@ void		ShutterClass::MoveRelative(long amount)
 void		ShutterClass::Run()
 {
 	static uint64_t nextBatteryCheck;
-	static bool hitSwitch = false, firstBatteryCheck = true;
+	static bool hitSwitch = false, firstBatteryCheck = true, doSync = true;
 
 	stepper.run();
 
@@ -499,19 +510,27 @@ void		ShutterClass::Run()
 	// is opened.
 	// Make both switches effectively one circuit so DIYers can use just one circuit
 	// Determines opened or closed by the direction of travel before a switch was hit
-	if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING)
+	if (stepper.isRunning() == true)
 	{
-		hitSwitch = true;
-		_shutterState = CLOSED;
-		stepper.stop();
-		_knowsLocation = true;
+		if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING && hitSwitch == false)
+		{
+			hitSwitch = true;
+			//_shutterState = CLOSED;
+			//_hasClosed = true;
+			doSync = true;
+			stepper.stop();
+
+		}
+		if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false)
+		{
+			hitSwitch = true;
+			_shutterState = OPEN;
+			stepper.stop();
+		}
+		wasRunning = true;
+		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
 	}
-	if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING)
-	{
-		hitSwitch = true;
-		_shutterState = OPEN;
-		stepper.stop();
-	}
+
 	if (stepper.isRunning() == false && _shutterState != CLOSED && _shutterState != OPEN) _shutterState = ERROR;
 
 	if (nextBatteryCheck < millis() && isConfiguringWireless == false)
@@ -530,24 +549,24 @@ void		ShutterClass::Run()
 		}
 	}
 
-	if (stepper.isRunning() == true)
+	if (stepper.isRunning() == true) return;
+
+	if (digitalRead(CLOSED_PIN) == 0 && doSync == true)
 	{
-		isRunning = true;
-		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
-		return;
+			_shutterState = CLOSED;
+			_hasClosed = true;
+			stepper.setCurrentPosition(0);
+			doSync = false;
+			DBPrintln("Stopped at closed position");
 	}
 
-	if (isRunning == true) // So this bit only runs once after stopping.
+	if (wasRunning == true) // So this bit only runs once after stopping.
 	{
 		DBPrintln("WasRunning " + String(_shutterState) + " Hitswitch " + String(hitSwitch));
 		_lastButtonPressed = 0;
-		if (_shutterState == CLOSED) 
-		{
-			stepper.setCurrentPosition(0);
-		}
-		isRunning = false;
+		wasRunning = false;
+		hitSwitch = false;
 	}
-	return; // Has to be stopped to get here
 }
 void		ShutterClass::Stop()
 {

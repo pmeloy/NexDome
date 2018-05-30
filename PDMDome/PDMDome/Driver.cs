@@ -107,13 +107,13 @@ namespace ASCOM.PDM
 
         // Timers
         System.Windows.Forms.Timer SerialMessageTimer, StatusUpdateTimer;
-        private int voltageDelayCounter;
+        private int slowUpdateCounter =31;
 
         internal static bool canFindHome, canPark, canSetPark, canSetShutter, canSetAltitude, canSetAzimuth, canSlave, canSyncAzimuth;
         //Rotator values
         internal static long rotatorPosition, rotatorStepsPer, rotatorMaxSpeed, rotatorAcceleration;
         internal static double azimuth, rotatorHomeAz, rotatorParkAz;
-        internal static bool atHome, atPark, isSlaved, rotatorReversed =false;
+        internal static bool atHome, atPark, isSlaved, rotatorReversed = false, isRaining = false;
         internal static string rotatorVersion;
         internal static int rotatorSlewDirection, rotatorHomedStatus, rotatorSeekState, rotatorVoltage, rotatorCutoff;
 
@@ -125,6 +125,7 @@ namespace ASCOM.PDM
         internal static int shutterHomedStatus, shutterVoltage, shutterCutoff;
 
         #region Serial command character constants
+        internal const string COMMENT_CMD = "%";
         internal const string ACCELERATION_ROTATOR_CMD = "e"; // Get/Set stepper acceleration
         internal const string ABORT_MOVE_CMD = "a"; // Tell everything to STOP!
         internal const string CALIBRATE_ROTATOR_CMD = "c"; // Calibrate the dome
@@ -154,6 +155,7 @@ namespace ASCOM.PDM
         internal const string HOMED_SHUTTER_GET = "Z"; // Get homed status (has it been closed)
         internal const string OPEN_SHUTTER_CMD = "O"; // Open the shutter
         internal const string POSITION_SHUTTER_GET = "P"; // Get step position
+        internal const string RAIN_ROTATOR_GET = "F"; // Get rain status
         internal const string SPEED_SHUTTER_CMD = "R"; // Get/Set step rate (speed)
         internal const string REVERSED_SHUTTER_CMD = "Y"; // Get/Set stepper reversed status
         internal const string SLEEP_SHUTTER_CMD = "S"; // Get/Set radio sleep settings
@@ -437,7 +439,7 @@ namespace ASCOM.PDM
                     where = serialBuffer.IndexOf("#");
                     part = serialBuffer.Substring(0, where);
                     serialBuffer = serialBuffer.Substring(where + 1);
-                    serialMessageList.Add(part);
+                    if (String.IsNullOrEmpty(part) == false) serialMessageList.Add(part);
                 }
             }
             catch (Exception ex)
@@ -457,27 +459,44 @@ namespace ASCOM.PDM
             SendSerial(HOMED_ROTATOR_STATUS);
             SendSerial(SEEKSTATE_GET);
             SendSerial(SLEW_ROTATOR_STATUS);
-            if (voltageDelayCounter >= 30)
+
+            if (canSetShutter == true)
             {
-                SendSerial(VOLTS_ROTATOR_CMD);
-                voltageDelayCounter = 0;
+                SendSerial(POSITION_SHUTTER_GET);
+                SendSerial(STATE_SHUTTER_GET);
             }
-            voltageDelayCounter++;
+
+            if (slowUpdateCounter >= 30)
+            {
+                tl.LogMessage("Slow update","Get");
+
+                SendSerial(RAIN_ROTATOR_GET);
+                SendSerial(VOLTS_ROTATOR_CMD);
+                slowUpdateCounter = 0;
+                if (canSetShutter) SendSerial(VOLTS_SHUTTER_CMD);
+            }
+            slowUpdateCounter++;
         }
         private void OnSerialTimer(Object source, EventArgs e)
         {
             string message = "", command = "", value = "";
+            int localInt;
             // Check for complete serial messages in messageList
             while(serialMessageList.Count > 0)
             {
-                message = serialMessageList.First();
+                message = serialMessageList.FirstOrDefault();
                 serialMessageList.RemoveAt(0);
+                if (message.Length == 0) return;
+                message.Trim();
 
                 command = message.Substring(0, 1);
                 value = message.Substring(1);
 
                 switch (command)
                 {
+                    case COMMENT_CMD:
+                        tl.LogMessage("Comment", value);
+                        break;
                     case ACCELERATION_ROTATOR_CMD:
                         if (long.TryParse(value,out rotatorAcceleration) == true)
                         {
@@ -515,6 +534,20 @@ namespace ASCOM.PDM
                             LogMessage("Rotator Get", "Homed Status Invalid ({0})", value);
                         }
                         break;
+                    case OPEN_SHUTTER_CMD:
+                        if (value.Equals("R") == true)
+                        {
+                            tl.LogMessage("Shutter Set", "Open failed: rain");
+                        }
+                        if (value.Equals("N") == true)
+                        {
+                            tl.LogMessage("Shutter SET", "Open failed: Position unknown, must close first");
+                        }
+                        if (value.Equals("V") == true)
+                        {
+                            tl.LogMessage("Shutter SET", "Open failed: Voltage too low");
+                        }
+                        break;
                     case PARKAZ_ROTATOR_CMD:
                         if (double.TryParse(value, out rotatorParkAz) == true)
                         {
@@ -526,33 +559,37 @@ namespace ASCOM.PDM
                         }
                         break;
                     case POSITION_ROTATOR_CMD:
-                        if (value.Equals("L") == true)
+                        if (value.Equals("L") == false)
                         {
-                            tl.LogMessage("Rotator SET", "Move Cancelled: LOW VOLTAGE");
-                            return;
-                        }
-                        if (long.TryParse(value, out rotatorPosition) == true)
-                        {
-                            if (rotatorStepsPer > 0)
+
+                            if (long.TryParse(value, out rotatorPosition) == true)
                             {
-                                azimuth = Math.Round(360.0 * (double)rotatorPosition / (double)rotatorStepsPer, 2);
-                                if (rotatorSlewDirection == 0)
+                                if (rotatorStepsPer > 0)
                                 {
-                                    if (Math.Abs(azimuth - rotatorParkAz) < 0.1)
+                                    azimuth = Math.Round(360.0 * (double)rotatorPosition / (double)rotatorStepsPer, 2);
+                                    if (rotatorSlewDirection == 0)
                                     {
-                                        atPark = true;
-                                    }
-                                    else
-                                    {
-                                        atPark = false;
+                                        if (Math.Abs(azimuth - rotatorParkAz) < 0.1)
+                                        {
+                                            atPark = true;
+                                        }
+                                        else
+                                        {
+                                            atPark = false;
+                                        }
                                     }
                                 }
+
                             }
-                            
+                            else
+                            {
+                                LogMessage("Rotator Position", "Invalid ({0})", value);
+                            }
                         }
                         else
                         {
-                            LogMessage("Rotator Position", "Invalid ({0})", value);
+                            tl.LogMessage("Rotator SET", "Move Cancelled: LOW VOLTAGE");
+                            throw new ASCOM.InvalidOperationException("Positioning Failed: Rotator voltage too low");
                         }
                         break;
                     case POSITION_SHUTTER_GET:
@@ -567,6 +604,17 @@ namespace ASCOM.PDM
                         {
                             LogMessage("Shutter Position", "Invalid ({0})", value);
                         }
+                        break;
+                    case RAIN_ROTATOR_GET:
+                        if (value.Equals("1") == true)
+                        {
+                            isRaining = true;
+                        }
+                        else
+                        {
+                            isRaining = false;
+                        }
+                        LogMessage("Rotator Get", "Raining = ({0})", value);
                         break;
                     case REVERSED_ROTATOR_CMD:
                         if (value.Equals("0") == true)
@@ -632,6 +680,12 @@ namespace ASCOM.PDM
                             LogMessage("Shutter Get", "Speed Invalid ({0})", value);
                         }
                         break;
+                    case STATE_SHUTTER_GET:
+                        if (int.TryParse(value,out localInt) == true)
+                        {
+                            domeShutterState = (ShutterState)localInt;
+                        }
+                        break;
                     case STEPSPER_ROTATOR_CMD:
                         if (long.TryParse(value, out rotatorStepsPer) == true)
                         {
@@ -645,7 +699,7 @@ namespace ASCOM.PDM
                     case STEPSPER_SHUTTER_CMD:
                         if (long.TryParse(value, out shutterStepsPer) == true)
                         {
-                            LogMessage("Shutter Get", "Steps Per ({0})", shutterStepsPer);
+                            //LogMessage("Shutter Get", "Steps Per ({0})", shutterStepsPer);
                         }
                         else
                         {
@@ -671,6 +725,13 @@ namespace ASCOM.PDM
                         {
                             LogMessage("Shutter Voltage", "Invalid ({0})", value);
                         }
+                        else
+                        {
+                            LogMessage("Shutter Voltage", "({0})", value);
+                        }
+                        break;
+                    default:
+                        tl.LogMessage("Unknown command", command + ":" + value);
                         break;
                 }
             }
@@ -717,6 +778,7 @@ namespace ASCOM.PDM
             if (canSetShutter == true)
             {
                 LogMessage("Shutter Get", "Setup Info");
+                SendSerial(STATE_SHUTTER_GET);
                 SendSerial(VERSION_SHUTTER_GET);
                 SendSerial(VOLTS_SHUTTER_CMD);
                 SendSerial(POSITION_SHUTTER_GET);
@@ -945,8 +1007,19 @@ namespace ASCOM.PDM
         {
             if (canSetShutter == true)
             {
-                SendSerial(OPEN_SHUTTER_CMD);
-                tl.LogMessage("Open Shutter", "Started");
+                if (isRaining == true)
+                {
+                    throw new ASCOM.InvalidOperationException("Rain prevents opening");
+                }
+                else if (shutterVoltage < shutterCutoff)
+                {
+                    throw new ASCOM.InvalidOperationException("Low voltage prevents opening");
+                }
+                else
+                {
+                    SendSerial(OPEN_SHUTTER_CMD);
+                    tl.LogMessage("Open Shutter", "Started");
+                }
             }
             else
             {

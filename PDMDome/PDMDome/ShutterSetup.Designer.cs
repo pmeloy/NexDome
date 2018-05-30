@@ -56,6 +56,7 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lblRainWarn = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -249,6 +250,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.lblRainWarn);
             this.groupBox3.Controls.Add(this.lblStatus);
             this.groupBox3.Controls.Add(this.lblAltitude);
             this.groupBox3.Controls.Add(this.btnSTOP);
@@ -264,7 +266,7 @@
             // lblStatus
             // 
             this.lblStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblStatus.Location = new System.Drawing.Point(23, 50);
+            this.lblStatus.Location = new System.Drawing.Point(23, 73);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(75, 19);
             this.lblStatus.TabIndex = 49;
@@ -273,7 +275,7 @@
             // lblAltitude
             // 
             this.lblAltitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblAltitude.Location = new System.Drawing.Point(35, 76);
+            this.lblAltitude.Location = new System.Drawing.Point(35, 99);
             this.lblAltitude.Name = "lblAltitude";
             this.lblAltitude.Size = new System.Drawing.Size(51, 19);
             this.lblAltitude.TabIndex = 48;
@@ -283,7 +285,7 @@
             // 
             this.btnSTOP.BackColor = System.Drawing.Color.Red;
             this.btnSTOP.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSTOP.Location = new System.Drawing.Point(6, 127);
+            this.btnSTOP.Location = new System.Drawing.Point(6, 150);
             this.btnSTOP.Name = "btnSTOP";
             this.btnSTOP.Size = new System.Drawing.Size(109, 51);
             this.btnSTOP.TabIndex = 32;
@@ -293,7 +295,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(23, 98);
+            this.btnClose.Location = new System.Drawing.Point(23, 121);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 2;
@@ -303,7 +305,7 @@
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(23, 24);
+            this.btnOpen.Location = new System.Drawing.Point(23, 47);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 0;
@@ -326,6 +328,24 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
+            // 
+            // lblRainWarn
+            // 
+            this.lblRainWarn.BackColor = System.Drawing.Color.Red;
+            this.lblRainWarn.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblRainWarn.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.lblRainWarn.Location = new System.Drawing.Point(23, 16);
+            this.lblRainWarn.Name = "lblRainWarn";
+            this.lblRainWarn.Size = new System.Drawing.Size(75, 19);
+            this.lblRainWarn.TabIndex = 50;
+            this.lblRainWarn.Text = "RAIN";
+            this.lblRainWarn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ShutterSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,6 +356,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "ShutterSetup";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ShutterSetup";
             this.Load += new System.EventHandler(this.ShutterSetup_Load);
             this.groupBox2.ResumeLayout(false);
@@ -377,5 +398,6 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label lblRainWarn;
     }
 }

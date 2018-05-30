@@ -24,7 +24,7 @@ namespace ASCOM.PDM
         {
             this.Text = "Shutter version " + Dome.shutterVersion;
             isLoading = false;
-
+            timer1.Enabled = true;
         }
 
         private void InitUI()
@@ -132,20 +132,6 @@ namespace ASCOM.PDM
             Close();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            lblVoltage.Text = (Dome.shutterVoltage / 100.0).ToString("0,0.00");
-            if (Dome.shutterVoltage <= Dome.shutterCutoff)
-            {
-                lblLowWarn.Visible = true;
-            }
-            else
-            {
-                lblLowWarn.Visible = false;
-            }
-            lblStatus.Text = StatusText((int)Dome.domeShutterState);
-            lblAltitude.Text = Dome.altitude.ToString("0.00");
-        }
         private string StatusText(int state)
         {
             string returnString = "Error";
@@ -170,5 +156,42 @@ namespace ASCOM.PDM
             return returnString;
         }
 
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+
+            lblVoltage.Text = (Dome.shutterVoltage / 100.0).ToString("0.00");
+            if (Dome.shutterVoltage <= Dome.shutterCutoff)
+            {
+                lblLowWarn.Visible = true;
+            }
+            else
+            {
+                lblLowWarn.Visible = false;
+            }
+            if (Dome.isRaining == true)
+            {
+                lblRainWarn.Visible = true;
+            }
+            else
+            {
+                lblRainWarn.Visible = false;
+            }
+            if ((int)Dome.domeShutterState == 4)
+            {
+                lblStatus.BackColor = Color.Orange;
+            }
+            else
+                lblStatus.BackColor = SystemColors.Control;
+            lblStatus.Text = StatusText((int)Dome.domeShutterState);
+            if ((int)Dome.domeShutterState == 4 || Dome.shutterVoltage <= Dome.shutterCutoff || Dome.isRaining)
+            {
+                btnOpen.Enabled = false;
+            }
+            else
+            {
+                btnOpen.Enabled = true;
+            }
+            lblAltitude.Text = Dome.altitude.ToString("0.00");
+        }
     }
 }

@@ -98,6 +98,7 @@ namespace ASCOM.PDM
         {
             using (ShutterSetup F = new ShutterSetup())
             {
+                Dome.tl.LogMessage("Setup Show", "Shutter");
                 F.myDome = myDome;
                 F.ShowDialog();
             }
