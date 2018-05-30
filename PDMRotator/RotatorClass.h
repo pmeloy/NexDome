@@ -36,9 +36,9 @@
 #define DBPrintln(x)
 #endif // DEBUG
 
-//const int NEVER_HOMED = -1;
-//const int HOMED = 0;
-//const int ATHOME = 1;
+const int NEVER_HOMED = -1;
+const int HOMED = 0;
+const int ATHOME = 1;
 
 const int HOME_PIN = 2;					// Also used for Shutter open status
 const int ENABLE_PIN = 10;		// Digital Output
@@ -56,12 +56,6 @@ class RotatorClass
 {
 
 public:
-	enum HomeStatuses
-	{
-		NEVER_HOMED,
-		HOMED,
-		ATHOME
-	};
 	enum Seeks
 	{
 		HOMING_NONE, // Not homing or calibrating
@@ -69,14 +63,13 @@ public:
 		CALIBRATION_MOVEOFF, // Ignore home until we've moved off while measuring the dome.
 		CALIBRATION_MEASURE // Measuring dome until home hit again.
 	};
-
 	RotatorClass();
 	int			rainCheckInterval; // in seconds, function  multiplies by 1000
 
 	// Getters
 	bool		GetRainStatus();
+	int			GetVolts();
 	int			GetLowVoltageCutoff();
-	bool		GetVoltsAreLow();
 	String		GetVoltString();
 	long		GetPosition();
 	int			GetSeekMode();
@@ -134,7 +127,7 @@ private:
 		int			rainCheckInterval;
 	} RotatorConfig;
 
-	const int	_signature = 8054;
+	const int	_signature = 8053;
 	const int	_eepromLocation = 10;
 	const long	_STEPSFORROTATION = 55100;
 
@@ -178,7 +171,6 @@ private:
 	// Power values
 	int			_volts;
 	int			_cutOffVolts;
-	int			ReadVolts();
 
 	// Utility
 	long		GetPositionalDistance(long, long);
@@ -285,7 +277,7 @@ void RotatorClass::WipeConfig()
 	EEPROM.put(_eepromLocation, cfg);
 }
 
-int	RotatorClass::ReadVolts()
+int	RotatorClass::GetVolts()
 {
 	int volts;
 
@@ -298,18 +290,10 @@ int	RotatorClass::ReadVolts()
 void RotatorClass::SetLowVoltageCutoff(int lowVolts)
 {
 	_cutOffVolts = lowVolts;
-	SaveToEEProm();
 }
 int	RotatorClass::GetLowVoltageCutoff()
 {
 	return _cutOffVolts;
-}
-inline bool RotatorClass::GetVoltsAreLow()
-{
-	bool voltsLow = false;
-
-	if (_volts <= _cutOffVolts) voltsLow = true;
-	return voltsLow;
 }
 inline String RotatorClass::GetVoltString()
 {
@@ -453,7 +437,7 @@ void RotatorClass::doCalibrate()
 			}
 			break;
 		case(CALIBRATION_MEASURE):
-			if (digitalRead(HOME_PIN) == 0)
+			if (_isAtHome == true)
 			{
 				_seekMode = HOMING_NONE;
 				lastSwitchState = false;
@@ -534,7 +518,7 @@ void RotatorClass::syncPosition(float newAzimuth)
 
 	newPosition = azimuthToPosition(newAzimuth);
 	stepper.setCurrentPosition(newPosition);
-	//SaveToEEProm();
+	SaveToEEProm();
 }
 long RotatorClass::GetPosition()
 {
@@ -661,21 +645,15 @@ void RotatorClass::run()
 		}
 	}
 
-	if (digitalRead(HOME_PIN) == 0 && stepper.isRunning() == false)
-	{
-		_isAtHome = true;
-		if (_hasBeenHomed == false) syncPosition(_homeAzimuth);
-	}
-	else
-	{
-		_isAtHome = false;
-	}
+	_isAtHome = false;
+	if (digitalRead(HOME_PIN) == 0) _isAtHome = true;
+
 	if (GetSeekMode() != 0) doCalibrate();
 
 
 	if (nextPeriodicReading < millis())
 	{
-		_volts = ReadVolts();
+		_volts = GetVolts();
 		nextPeriodicReading = millis() + 10000;
 	}
 
@@ -686,7 +664,6 @@ void RotatorClass::run()
 		DBPrintln("Stopped!");
 		_moveDirection = MOVE_NONE;
 		_seekMode = HOMING_NONE;
-		if (digitalRead(HOME_PIN) == 0) _isAtHome = true;
 
 		if (_doStepsPerRotation == true)
 		{
@@ -708,7 +685,7 @@ void RotatorClass::run()
 		if (_doSync == true)
 		{
 			syncPosition(_homeAzimuth);
-			//SaveToEEProm();
+			SaveToEEProm();
 			_doSync = false;
 		}
 		enableMotor(false);

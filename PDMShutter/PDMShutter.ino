@@ -49,7 +49,7 @@ String computerBuffer;
 #define Wireless Serial1
 String wirelessBuffer;
 
-const String version = "0.5.1.0";
+const String version = "0.5.0.5";
 
 // Stepper motor configuration
 #pragma endregion
