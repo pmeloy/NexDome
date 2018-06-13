@@ -117,10 +117,1768 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnClose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnClose.Location" type="System.Drawing.Point, System.Drawing">
+    <value>432, 408</value>
+  </data>
+  <data name="btnClose.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnClose.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="btnClose.Text" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="&gt;&gt;btnClose.Name" xml:space="preserve">
+    <value>btnClose</value>
+  </data>
+  <data name="&gt;&gt;btnClose.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnClose.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnClose.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.Name" xml:space="preserve">
+    <value>chkReversed</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.Name" xml:space="preserve">
+    <value>lblMaxSpeed</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.Name" xml:space="preserve">
+    <value>btnMaxSpeed</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.Name" xml:space="preserve">
+    <value>btnAcceleration</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.Name" xml:space="preserve">
+    <value>lblAcceleration</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.Name" xml:space="preserve">
+    <value>tbxMaxSpeed</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.Name" xml:space="preserve">
+    <value>tbxAcceleration</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.Name" xml:space="preserve">
+    <value>tbxStepsPerRotation</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.Name" xml:space="preserve">
+    <value>btnStepsPerRotation</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.Name" xml:space="preserve">
+    <value>lblStepsPer</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="gbxMotorSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 89</value>
+  </data>
+  <data name="gbxMotorSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>194, 167</value>
+  </data>
+  <data name="gbxMotorSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="gbxMotorSettings.Text" xml:space="preserve">
+    <value>Motor Settings</value>
+  </data>
+  <data name="&gt;&gt;gbxMotorSettings.Name" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;gbxMotorSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxMotorSettings.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxMotorSettings.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="chkReversed.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkReversed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 142</value>
+  </data>
+  <data name="chkReversed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 17</value>
+  </data>
+  <data name="chkReversed.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="chkReversed.Text" xml:space="preserve">
+    <value>Reversed</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.Name" xml:space="preserve">
+    <value>chkReversed</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;chkReversed.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblMaxSpeed.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblMaxSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 20</value>
+  </data>
+  <data name="lblMaxSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 13</value>
+  </data>
+  <data name="lblMaxSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="lblMaxSpeed.Text" xml:space="preserve">
+    <value>Max Speed</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.Name" xml:space="preserve">
+    <value>lblMaxSpeed</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;lblMaxSpeed.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnMaxSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 34</value>
+  </data>
+  <data name="btnMaxSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 23</value>
+  </data>
+  <data name="btnMaxSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="btnMaxSpeed.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.Name" xml:space="preserve">
+    <value>btnMaxSpeed</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnMaxSpeed.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnAcceleration.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 73</value>
+  </data>
+  <data name="btnAcceleration.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 23</value>
+  </data>
+  <data name="btnAcceleration.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="btnAcceleration.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.Name" xml:space="preserve">
+    <value>btnAcceleration</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnAcceleration.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblAcceleration.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblAcceleration.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 59</value>
+  </data>
+  <data name="lblAcceleration.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 13</value>
+  </data>
+  <data name="lblAcceleration.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="lblAcceleration.Text" xml:space="preserve">
+    <value>Acceleration</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.Name" xml:space="preserve">
+    <value>lblAcceleration</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;lblAcceleration.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="tbxMaxSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 36</value>
+  </data>
+  <data name="tbxMaxSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 20</value>
+  </data>
+  <data name="tbxMaxSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="tbxMaxSpeed.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.Name" xml:space="preserve">
+    <value>tbxMaxSpeed</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;tbxMaxSpeed.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="tbxAcceleration.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 75</value>
+  </data>
+  <data name="tbxAcceleration.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 20</value>
+  </data>
+  <data name="tbxAcceleration.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="tbxAcceleration.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.Name" xml:space="preserve">
+    <value>tbxAcceleration</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;tbxAcceleration.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="tbxStepsPerRotation.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 114</value>
+  </data>
+  <data name="tbxStepsPerRotation.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 20</value>
+  </data>
+  <data name="tbxStepsPerRotation.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
+  </data>
+  <data name="tbxStepsPerRotation.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.Name" xml:space="preserve">
+    <value>tbxStepsPerRotation</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;tbxStepsPerRotation.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btnStepsPerRotation.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 112</value>
+  </data>
+  <data name="btnStepsPerRotation.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 23</value>
+  </data>
+  <data name="btnStepsPerRotation.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="btnStepsPerRotation.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.Name" xml:space="preserve">
+    <value>btnStepsPerRotation</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnStepsPerRotation.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="lblStepsPer.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblStepsPer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 98</value>
+  </data>
+  <data name="lblStepsPer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 13</value>
+  </data>
+  <data name="lblStepsPer.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="lblStepsPer.Text" xml:space="preserve">
+    <value>Steps per</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.Name" xml:space="preserve">
+    <value>lblStepsPer</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.Parent" xml:space="preserve">
+    <value>gbxMotorSettings</value>
+  </data>
+  <data name="&gt;&gt;lblStepsPer.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.Name" xml:space="preserve">
+    <value>lblAtPark</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.Name" xml:space="preserve">
+    <value>btnFullTurn</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.Name" xml:space="preserve">
+    <value>lblSeekModeTitle</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;btnSync.Name" xml:space="preserve">
+    <value>btnSync</value>
+  </data>
+  <data name="&gt;&gt;btnSync.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSync.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnSync.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.Name" xml:space="preserve">
+    <value>lblSeekMode</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.Name" xml:space="preserve">
+    <value>btnSTOP</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.Name" xml:space="preserve">
+    <value>btnCalibrate</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.Name" xml:space="preserve">
+    <value>lblMultiStatus</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.Name" xml:space="preserve">
+    <value>btnGoToAz</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.Name" xml:space="preserve">
+    <value>btnRotateCCW</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.Name" xml:space="preserve">
+    <value>btnRotateCW</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.Name" xml:space="preserve">
+    <value>lblHomeStatusTitle</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.Name" xml:space="preserve">
+    <value>btnGoToPos</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;btnHome.Name" xml:space="preserve">
+    <value>btnHome</value>
+  </data>
+  <data name="&gt;&gt;btnHome.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHome.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnHome.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;btnPark.Name" xml:space="preserve">
+    <value>btnPark</value>
+  </data>
+  <data name="&gt;&gt;btnPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnPark.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnPark.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.Name" xml:space="preserve">
+    <value>lblHomedState</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.Name" xml:space="preserve">
+    <value>lblPosition</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.Name" xml:space="preserve">
+    <value>tbxGotoAz</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.Name" xml:space="preserve">
+    <value>tbxGotoPos</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.Name" xml:space="preserve">
+    <value>lblAzimuth</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="gbxMovement.Location" type="System.Drawing.Point, System.Drawing">
+    <value>222, 12</value>
+  </data>
+  <data name="gbxMovement.Size" type="System.Drawing.Size, System.Drawing">
+    <value>266, 390</value>
+  </data>
+  <data name="gbxMovement.TabIndex" type="System.Int32, mscorlib">
+    <value>48</value>
+  </data>
+  <data name="gbxMovement.Text" xml:space="preserve">
+    <value>Movement</value>
+  </data>
+  <data name="&gt;&gt;gbxMovement.Name" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;gbxMovement.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxMovement.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxMovement.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblAtPark.Location" type="System.Drawing.Point, System.Drawing">
+    <value>171, 14</value>
+  </data>
+  <data name="lblAtPark.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 23</value>
+  </data>
+  <data name="lblAtPark.TabIndex" type="System.Int32, mscorlib">
+    <value>53</value>
+  </data>
+  <data name="lblAtPark.Text" xml:space="preserve">
+    <value>At Park</value>
+  </data>
+  <data name="lblAtPark.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.Name" xml:space="preserve">
+    <value>lblAtPark</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblAtPark.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btnFullTurn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 162</value>
+  </data>
+  <data name="btnFullTurn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 38</value>
+  </data>
+  <data name="btnFullTurn.TabIndex" type="System.Int32, mscorlib">
+    <value>51</value>
+  </data>
+  <data name="btnFullTurn.Text" xml:space="preserve">
+    <value>Full Turn</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.Name" xml:space="preserve">
+    <value>btnFullTurn</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnFullTurn.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="lblSeekModeTitle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblSeekModeTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 329</value>
+  </data>
+  <data name="lblSeekModeTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 13</value>
+  </data>
+  <data name="lblSeekModeTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>52</value>
+  </data>
+  <data name="lblSeekModeTitle.Text" xml:space="preserve">
+    <value>Seek Mode</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.Name" xml:space="preserve">
+    <value>lblSeekModeTitle</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblSeekModeTitle.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnSync.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 40</value>
+  </data>
+  <data name="btnSync.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 35</value>
+  </data>
+  <data name="btnSync.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="btnSync.Text" xml:space="preserve">
+    <value>Sync Az</value>
+  </data>
+  <data name="&gt;&gt;btnSync.Name" xml:space="preserve">
+    <value>btnSync</value>
+  </data>
+  <data name="&gt;&gt;btnSync.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSync.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnSync.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblSeekMode.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="lblSeekMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>160, 322</value>
+  </data>
+  <data name="lblSeekMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 20</value>
+  </data>
+  <data name="lblSeekMode.TabIndex" type="System.Int32, mscorlib">
+    <value>50</value>
+  </data>
+  <data name="lblSeekMode.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblSeekMode.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.Name" xml:space="preserve">
+    <value>lblSeekMode</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblSeekMode.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="btnSTOP.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 18pt</value>
+  </data>
+  <data name="btnSTOP.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 206</value>
+  </data>
+  <data name="btnSTOP.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 51</value>
+  </data>
+  <data name="btnSTOP.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <data name="btnSTOP.Text" xml:space="preserve">
+    <value>STOP</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.Name" xml:space="preserve">
+    <value>btnSTOP</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnSTOP.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="btnCalibrate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>176, 265</value>
+  </data>
+  <data name="btnCalibrate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 23</value>
+  </data>
+  <data name="btnCalibrate.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="btnCalibrate.Text" xml:space="preserve">
+    <value>Calibrate</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.Name" xml:space="preserve">
+    <value>btnCalibrate</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnCalibrate.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="lblMultiStatus.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="lblMultiStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>90, 104</value>
+  </data>
+  <data name="lblMultiStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="lblMultiStatus.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
+  </data>
+  <data name="lblMultiStatus.Text" xml:space="preserve">
+    <value>---</value>
+  </data>
+  <data name="lblMultiStatus.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.Name" xml:space="preserve">
+    <value>lblMultiStatus</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblMultiStatus.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btnGoToAz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>175, 40</value>
+  </data>
+  <data name="btnGoToAz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 35</value>
+  </data>
+  <data name="btnGoToAz.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="btnGoToAz.Text" xml:space="preserve">
+    <value>Go to Az</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.Name" xml:space="preserve">
+    <value>btnGoToAz</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnGoToAz.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="btnRotateCCW.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="btnRotateCCW.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 80</value>
+  </data>
+  <data name="btnRotateCCW.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 79</value>
+  </data>
+  <data name="btnRotateCCW.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="btnRotateCCW.Text" xml:space="preserve">
+    <value>&lt;</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.Name" xml:space="preserve">
+    <value>btnRotateCCW</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCCW.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="btnRotateCW.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="btnRotateCW.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 80</value>
+  </data>
+  <data name="btnRotateCW.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 77</value>
+  </data>
+  <data name="btnRotateCW.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="btnRotateCW.Text" xml:space="preserve">
+    <value>&gt;</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.Name" xml:space="preserve">
+    <value>btnRotateCW</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnRotateCW.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="lblHomeStatusTitle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblHomeStatusTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 303</value>
+  </data>
+  <data name="lblHomeStatusTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>68, 13</value>
+  </data>
+  <data name="lblHomeStatusTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>51</value>
+  </data>
+  <data name="lblHomeStatusTitle.Text" xml:space="preserve">
+    <value>Home Status</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.Name" xml:space="preserve">
+    <value>lblHomeStatusTitle</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblHomeStatusTitle.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="btnGoToPos.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 162</value>
+  </data>
+  <data name="btnGoToPos.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 38</value>
+  </data>
+  <data name="btnGoToPos.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="btnGoToPos.Text" xml:space="preserve">
+    <value>Go to Pos</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.Name" xml:space="preserve">
+    <value>btnGoToPos</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnGoToPos.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="btnHome.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 265</value>
+  </data>
+  <data name="btnHome.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 23</value>
+  </data>
+  <data name="btnHome.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="btnHome.Text" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="&gt;&gt;btnHome.Name" xml:space="preserve">
+    <value>btnHome</value>
+  </data>
+  <data name="&gt;&gt;btnHome.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHome.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnHome.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="btnPark.Location" type="System.Drawing.Point, System.Drawing">
+    <value>87, 14</value>
+  </data>
+  <data name="btnPark.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 23</value>
+  </data>
+  <data name="btnPark.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="btnPark.Text" xml:space="preserve">
+    <value>Park</value>
+  </data>
+  <data name="&gt;&gt;btnPark.Name" xml:space="preserve">
+    <value>btnPark</value>
+  </data>
+  <data name="&gt;&gt;btnPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnPark.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;btnPark.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="lblHomedState.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="lblHomedState.Location" type="System.Drawing.Point, System.Drawing">
+    <value>160, 296</value>
+  </data>
+  <data name="lblHomedState.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 20</value>
+  </data>
+  <data name="lblHomedState.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="lblHomedState.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblHomedState.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.Name" xml:space="preserve">
+    <value>lblHomedState</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblHomedState.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="lblPosition.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="lblPosition.Location" type="System.Drawing.Point, System.Drawing">
+    <value>90, 133</value>
+  </data>
+  <data name="lblPosition.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="lblPosition.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
+  <data name="lblPosition.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblPosition.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.Name" xml:space="preserve">
+    <value>lblPosition</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblPosition.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="tbxGotoAz.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="tbxGotoAz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>90, 43</value>
+  </data>
+  <data name="tbxGotoAz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="tbxGotoAz.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="tbxGotoAz.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Center</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.Name" xml:space="preserve">
+    <value>tbxGotoAz</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoAz.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="tbxGotoPos.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="tbxGotoPos.Location" type="System.Drawing.Point, System.Drawing">
+    <value>90, 162</value>
+  </data>
+  <data name="tbxGotoPos.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="tbxGotoPos.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="tbxGotoPos.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Center</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.Name" xml:space="preserve">
+    <value>tbxGotoPos</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;tbxGotoPos.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="lblAzimuth.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9.75pt</value>
+  </data>
+  <data name="lblAzimuth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>90, 80</value>
+  </data>
+  <data name="lblAzimuth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 26</value>
+  </data>
+  <data name="lblAzimuth.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="lblAzimuth.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblAzimuth.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.Name" xml:space="preserve">
+    <value>lblAzimuth</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.Parent" xml:space="preserve">
+    <value>gbxMovement</value>
+  </data>
+  <data name="&gt;&gt;lblAzimuth.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.Name" xml:space="preserve">
+    <value>lblLowWarn</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.Name" xml:space="preserve">
+    <value>tbxCutoff</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.Name" xml:space="preserve">
+    <value>btnSetCutoff</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.Name" xml:space="preserve">
+    <value>lblVoltageBox</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.Name" xml:space="preserve">
+    <value>lblCutOffTitle</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.Name" xml:space="preserve">
+    <value>lblVoltageTitle</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="gbxVoltages.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="gbxVoltages.Size" type="System.Drawing.Size, System.Drawing">
+    <value>194, 71</value>
+  </data>
+  <data name="gbxVoltages.TabIndex" type="System.Int32, mscorlib">
+    <value>49</value>
+  </data>
+  <data name="gbxVoltages.Text" xml:space="preserve">
+    <value>Voltage</value>
+  </data>
+  <data name="&gt;&gt;gbxVoltages.Name" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;gbxVoltages.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxVoltages.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxVoltages.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="lblLowWarn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 16</value>
+  </data>
+  <data name="lblLowWarn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 19</value>
+  </data>
+  <data name="lblLowWarn.TabIndex" type="System.Int32, mscorlib">
+    <value>48</value>
+  </data>
+  <data name="lblLowWarn.Text" xml:space="preserve">
+    <value>LOW</value>
+  </data>
+  <data name="lblLowWarn.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="lblLowWarn.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.Name" xml:space="preserve">
+    <value>lblLowWarn</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblLowWarn.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tbxCutoff.Location" type="System.Drawing.Point, System.Drawing">
+    <value>66, 44</value>
+  </data>
+  <data name="tbxCutoff.Size" type="System.Drawing.Size, System.Drawing">
+    <value>51, 20</value>
+  </data>
+  <data name="tbxCutoff.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="tbxCutoff.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tbxCutoff.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Center</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.Name" xml:space="preserve">
+    <value>tbxCutoff</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;tbxCutoff.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnSetCutoff.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 42</value>
+  </data>
+  <data name="btnSetCutoff.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 23</value>
+  </data>
+  <data name="btnSetCutoff.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="btnSetCutoff.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.Name" xml:space="preserve">
+    <value>btnSetCutoff</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;btnSetCutoff.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblVoltageBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>66, 16</value>
+  </data>
+  <data name="lblVoltageBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>51, 19</value>
+  </data>
+  <data name="lblVoltageBox.TabIndex" type="System.Int32, mscorlib">
+    <value>47</value>
+  </data>
+  <data name="lblVoltageBox.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.Name" xml:space="preserve">
+    <value>lblVoltageBox</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblCutOffTitle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblCutOffTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 46</value>
+  </data>
+  <data name="lblCutOffTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>37, 13</value>
+  </data>
+  <data name="lblCutOffTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>46</value>
+  </data>
+  <data name="lblCutOffTitle.Text" xml:space="preserve">
+    <value>CutOff</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.Name" xml:space="preserve">
+    <value>lblCutOffTitle</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblCutOffTitle.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="lblVoltageTitle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblVoltageTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="lblVoltageTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 13</value>
+  </data>
+  <data name="lblVoltageTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="lblVoltageTitle.Text" xml:space="preserve">
+    <value>Voltage</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.Name" xml:space="preserve">
+    <value>lblVoltageTitle</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.Parent" xml:space="preserve">
+    <value>gbxVoltages</value>
+  </data>
+  <data name="&gt;&gt;lblVoltageTitle.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.Name" xml:space="preserve">
+    <value>lblHomePosTitle</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.Name" xml:space="preserve">
+    <value>btnSetHome</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.Name" xml:space="preserve">
+    <value>btnSetPark</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.Name" xml:space="preserve">
+    <value>lblParkPosTitle</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.Name" xml:space="preserve">
+    <value>tbxHomeAz</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.Name" xml:space="preserve">
+    <value>tbxParkAz</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="gbxHomeandPark.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 262</value>
+  </data>
+  <data name="gbxHomeandPark.Size" type="System.Drawing.Size, System.Drawing">
+    <value>194, 97</value>
+  </data>
+  <data name="gbxHomeandPark.TabIndex" type="System.Int32, mscorlib">
+    <value>50</value>
+  </data>
+  <data name="gbxHomeandPark.Text" xml:space="preserve">
+    <value>Home and Park</value>
+  </data>
+  <data name="&gt;&gt;gbxHomeandPark.Name" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;gbxHomeandPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxHomeandPark.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxHomeandPark.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblHomePosTitle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblHomePosTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 16</value>
+  </data>
+  <data name="lblHomePosTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>35, 13</value>
+  </data>
+  <data name="lblHomePosTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="lblHomePosTitle.Text" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.Name" xml:space="preserve">
+    <value>lblHomePosTitle</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;lblHomePosTitle.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btnSetHome.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 30</value>
+  </data>
+  <data name="btnSetHome.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 23</value>
+  </data>
+  <data name="btnSetHome.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="btnSetHome.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.Name" xml:space="preserve">
+    <value>btnSetHome</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;btnSetHome.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnSetPark.Location" type="System.Drawing.Point, System.Drawing">
+    <value>123, 69</value>
+  </data>
+  <data name="btnSetPark.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 23</value>
+  </data>
+  <data name="btnSetPark.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="btnSetPark.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.Name" xml:space="preserve">
+    <value>btnSetPark</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;btnSetPark.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblParkPosTitle.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblParkPosTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 55</value>
+  </data>
+  <data name="lblParkPosTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>29, 13</value>
+  </data>
+  <data name="lblParkPosTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="lblParkPosTitle.Text" xml:space="preserve">
+    <value>Park</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.Name" xml:space="preserve">
+    <value>lblParkPosTitle</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;lblParkPosTitle.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="tbxHomeAz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 32</value>
+  </data>
+  <data name="tbxHomeAz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 20</value>
+  </data>
+  <data name="tbxHomeAz.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
+  </data>
+  <data name="tbxHomeAz.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.Name" xml:space="preserve">
+    <value>tbxHomeAz</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;tbxHomeAz.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="tbxParkAz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 71</value>
+  </data>
+  <data name="tbxParkAz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 20</value>
+  </data>
+  <data name="tbxParkAz.TabIndex" type="System.Int32, mscorlib">
+    <value>44</value>
+  </data>
+  <data name="tbxParkAz.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.Name" xml:space="preserve">
+    <value>tbxParkAz</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.Parent" xml:space="preserve">
+    <value>gbxHomeandPark</value>
+  </data>
+  <data name="&gt;&gt;tbxParkAz.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
   <metadata name="errorProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>104, 17</value>
   </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>501, 443</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>RotatorSetup</value>
+  </data>
+  <data name="&gt;&gt;timer1.Name" xml:space="preserve">
+    <value>timer1</value>
+  </data>
+  <data name="&gt;&gt;timer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;errorProvider1.Name" xml:space="preserve">
+    <value>errorProvider1</value>
+  </data>
+  <data name="&gt;&gt;errorProvider1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ErrorProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>RotatorSetup</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

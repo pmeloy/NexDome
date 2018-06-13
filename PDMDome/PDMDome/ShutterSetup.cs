@@ -22,13 +22,38 @@ namespace ASCOM.PDM
 
         private void ShutterSetup_Load(object sender, EventArgs e)
         {
-            this.Text = "Shutter version " + Dome.shutterVersion;
+            this.Text = GlobalStrings.ShutterVersionText + " " + Dome.shutterVersion;
             isLoading = false;
-
+            timer1.Enabled = true;
         }
 
         private void InitUI()
         {
+            gbxVoltages.Text = GlobalStrings.VoltagesBoxTitle;
+            lblVoltageTitle.Text = GlobalStrings.VoltageText;
+            lblCutOffTitle.Text = GlobalStrings.CutOffText;
+            btnSetCutoff.Text = GlobalStrings.SetText;
+
+            lblLowWarn.Text = GlobalStrings.LowText;
+
+            gbxMotorSettings.Text = GlobalStrings.MotorSettingsText;
+            lblMaxSpeedTitle.Text = GlobalStrings.MaxSpeedText;
+            btnMaxSpeed.Text = GlobalStrings.SetText;
+            lblAccelerationTitle.Text = GlobalStrings.AccelerationText;
+            btnAcceleration.Text = GlobalStrings.SetText;
+            lblStepsPerTitle.Text = GlobalStrings.StepPerText;
+            btnStepsPerRotation.Text = GlobalStrings.SetText;
+            chkReversed.Text = GlobalStrings.ReversedText;
+
+            gbxMovement.Text = GlobalStrings.MovementText;
+            lblRainWarn.Text = GlobalStrings.RainWarnText;
+
+            btnOpenShutter.Text = GlobalStrings.OpenShutterText;
+            btnCloseShutter.Text = GlobalStrings.CloseShutterText;
+            btnSTOP.Text = GlobalStrings.StopText;
+
+            btnCloseForm.Text = GlobalStrings.CloseFormText;
+
             tbxCutoff.Text = (Dome.shutterCutoff / 100.0).ToString("0,0.00");
             tbxMaxSpeed.Text = Dome.shutterMaxSpeed.ToString();
             tbxAcceleration.Text = Dome.shutterAcceleration.ToString();
@@ -132,9 +157,39 @@ namespace ASCOM.PDM
             Close();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private string StatusText(int state)
         {
-            lblVoltage.Text = (Dome.shutterVoltage / 100.0).ToString("0,0.00");
+            string returnString = GlobalStrings.ErrorText;
+            switch (state)
+            {
+                case 0:
+                    returnString = GlobalStrings.ShutterOpenText;
+                    Dome.tl.LogMessage("Shutter state", "Open");
+                    break;
+                case 1:
+                    returnString = GlobalStrings.ShutterClosedText;
+                    Dome.tl.LogMessage("Shutter state", "Closed");
+                    break;
+                case 2:
+                    returnString = GlobalStrings.ShutterOpeningText;
+                    Dome.tl.LogMessage("Shutter state", "Opening");
+                    break;
+                case 3:
+                    returnString = GlobalStrings.ShutterClosingText;
+                    Dome.tl.LogMessage("Shutter state", "Closing");
+                    break;
+                case 4:
+                    returnString = GlobalStrings.ShutterUnknownText;
+                    Dome.tl.LogMessage("Shutter state", "Unknown");
+                    break;
+            }
+            return returnString;
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+
+            lblVoltage.Text = (Dome.shutterVoltage / 100.0).ToString("0.00");
             if (Dome.shutterVoltage <= Dome.shutterCutoff)
             {
                 lblLowWarn.Visible = true;
@@ -143,32 +198,31 @@ namespace ASCOM.PDM
             {
                 lblLowWarn.Visible = false;
             }
+            if (Dome.isRaining == true)
+            {
+                lblRainWarn.Visible = true;
+            }
+            else
+            {
+                lblRainWarn.Visible = false;
+            }
+            if ((int)Dome.domeShutterState == 4)
+            {
+                lblStatus.BackColor = Color.Orange;
+            }
+            else
+                lblStatus.BackColor = SystemColors.Control;
             lblStatus.Text = StatusText((int)Dome.domeShutterState);
+            Dome.tl.LogMessage("ShutterState value", Dome.domeShutterState.ToString());
+            if ((int)Dome.domeShutterState == 4 || Dome.shutterVoltage <= Dome.shutterCutoff || Dome.isRaining)
+            {
+                btnOpenShutter.Enabled = false;
+            }
+            else
+            {
+                btnOpenShutter.Enabled = true;
+            }
             lblAltitude.Text = Dome.altitude.ToString("0.00");
         }
-        private string StatusText(int state)
-        {
-            string returnString = "Error";
-            switch (state)
-            {
-                case 0:
-                    returnString = "Open";
-                    break;
-                case 1:
-                    returnString = "Closed";
-                    break;
-                case 2:
-                    returnString = "Opening";
-                    break;
-                case 3:
-                    returnString = "Closing";
-                    break;
-                case 4:
-                    returnString = "Unknown";
-                    break;
-            }
-            return returnString;
-        }
-
     }
 }

@@ -6,14 +6,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ASCOM.PDM
 {
     public partial class RotatorSetup : Form
     {
         internal Dome myDome;
-        private bool isLoading = true, isHoming = false, isCalibrating=false;
-
+        private bool isLoading = true, isHoming = false;
+        private long _stepsPer = 0;
         internal enum HomeStatuses
         {
             NEVER_HOMED,
@@ -36,16 +37,53 @@ namespace ASCOM.PDM
 
         private void RotatorSetup_Load(object sender, EventArgs e)
         {
-            this.Text = "Rotator version " + Dome.rotatorVersion;
+            this.Text = GlobalStrings.RotatorVersionText+ " " + Dome.rotatorVersion;
             isLoading = false;
         }
 
         private void InitUI()
         {
+            
+            gbxVoltages.Text = GlobalStrings.VoltagesBoxTitle;
+            btnSetCutoff.Text = GlobalStrings.SetText;
+            lblVoltageTitle.Text = GlobalStrings.VoltageText;
+            lblCutOffTitle.Text = GlobalStrings.CutOffText;
+            lblLowWarn.Text = GlobalStrings.LowText;
+
+            gbxMotorSettings.Text = GlobalStrings.MotorSettingsText;
+            lblAcceleration.Text = GlobalStrings.AccelerationText;
+            btnAcceleration.Text = GlobalStrings.SetText;
+            lblMaxSpeed.Text = GlobalStrings.MaxSpeedText;
+            btnMaxSpeed.Text = GlobalStrings.SetText;
+            lblStepsPer.Text = GlobalStrings.StepPerText;
+            btnStepsPerRotation.Text = GlobalStrings.SetText;
+            chkReversed.Text = GlobalStrings.ReversedText;
+            gbxHomeandPark.Text = GlobalStrings.HomeAndParkText;
+            lblHomePosTitle.Text = GlobalStrings.HomeText;
+            btnSetHome.Text = GlobalStrings.SetText;
+            btnSetPark.Text = GlobalStrings.SetText;
+            lblParkPosTitle.Text = GlobalStrings.ParkText;
+
+            gbxMovement.Text = GlobalStrings.MovementText;
+            btnPark.Text = GlobalStrings.GoParkText;
+            btnGoToAz.Text = GlobalStrings.GoToAzText;
+            btnSync.Text = GlobalStrings.SyncAzText;
+            btnFullTurn.Text = GlobalStrings.FullTurnText;
+            btnGoToPos.Text = GlobalStrings.GoToPosText;
+            btnSTOP.Text = GlobalStrings.StopText;
+            btnHome.Text = GlobalStrings.GoHomeText;
+            btnCalibrate.Text = GlobalStrings.DoCalibrateText;
+            lblHomeStatusTitle.Text = GlobalStrings.HomeStatusText;
+            lblSeekModeTitle.Text = GlobalStrings.SeekModeText;
+            btnClose.Text = GlobalStrings.CloseText;
+
+            lblAtPark.Text = GlobalStrings.AtParkText;
+
             tbxCutoff.Text = (Dome.rotatorCutoff / 100.0).ToString("0,0.00");
             tbxMaxSpeed.Text = Dome.rotatorMaxSpeed.ToString();
             tbxAcceleration.Text = Dome.rotatorAcceleration.ToString();
-            tbxStepsPerRotation.Text = Dome.rotatorStepsPer.ToString();
+            _stepsPer = Dome.rotatorStepsPer;
+            tbxStepsPerRotation.Text = _stepsPer.ToString();
             chkReversed.Checked = Dome.rotatorReversed;
             tbxHomeAz.Text = Dome.rotatorHomeAz.ToString();
             tbxParkAz.Text = Dome.rotatorParkAz.ToString();
@@ -59,13 +97,13 @@ namespace ASCOM.PDM
             switch ((HomeStatuses)mode)
             {
                 case HomeStatuses.NEVER_HOMED:
-                    homedText = "Has not homed";
+                    homedText = GlobalStrings.NeverHomedText;
                     break;
                 case HomeStatuses.HOMED:
-                    homedText = "Has homed";
+                    homedText = GlobalStrings.HasHomedText;
                     break;
                 case HomeStatuses.ATHOME:
-                    homedText = "At home";
+                    homedText = GlobalStrings.AtHomeText;
                     break;
             }
 
@@ -77,16 +115,16 @@ namespace ASCOM.PDM
             switch ((Seeks)mode)
             {
                 case Seeks.HOMING_NONE:
-                    seekText = "None";
+                    seekText = GlobalStrings.SeekNoneText;
                     break;
                 case Seeks.HOMING_HOME:
-                    seekText = "Homing";
+                    seekText = GlobalStrings.SeekHomeText;
                     break;
                 case Seeks.CALIBRATION_MOVEOFF:
-                    seekText = "Move off home";
+                    seekText = GlobalStrings.SeekMoveOff;
                     break;
                 case Seeks.CALIBRATION_MEASURE:
-                    seekText = "Measuring Dome";
+                    seekText = GlobalStrings.SeekMeasuring;
                     break;
             }
             return seekText;
@@ -150,6 +188,7 @@ namespace ASCOM.PDM
             if (long.TryParse(tbxStepsPerRotation.Text, out value) == true)
             {
                 Dome.rotatorStepsPer = value;
+                _stepsPer = value;
                 myDome.SendSerial(Dome.STEPSPER_ROTATOR_CMD + value.ToString());
                 errorProvider1.SetError(tbxStepsPerRotation, "");
                 Dome.LogMessage("Rotator SET", "Steps Per Rotation ({0})", value);
@@ -257,7 +296,7 @@ namespace ASCOM.PDM
         private void btnSTOP_Click(object sender, EventArgs e)
         {
             myDome.AbortSlew();
-            Dome.tl.LogMessage("Rotator SET", "STOP");
+            Dome.tl.LogMessage("Rotator SET", "Manual STOP");
         }
         private void btnHome_Click(object sender, EventArgs e)
         {
@@ -267,7 +306,6 @@ namespace ASCOM.PDM
         }
         private void btnCalibrate_Click(object sender, EventArgs e)
         {
-            isCalibrating = true;
             myDome.SendSerial(Dome.CALIBRATE_ROTATOR_CMD);
             Dome.tl.LogMessage("Rotator SET", "Calibration Start");
         }
@@ -296,7 +334,7 @@ namespace ASCOM.PDM
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            lblVoltage.Text = (Dome.rotatorVoltage / 100.0).ToString("0,0.00");
+            lblVoltageBox.Text = (Dome.rotatorVoltage / 100.0).ToString("0,0.00");
             if (Dome.rotatorVoltage <= Dome.rotatorCutoff)
             {
                 lblLowWarn.Visible = true;
@@ -318,7 +356,8 @@ namespace ASCOM.PDM
                 btnCalibrate.Enabled = false;
             }
             if (Dome.rotatorSeekState == (int)Seeks.HOMING_NONE || Dome.rotatorSeekState > (int)Seeks.HOMING_HOME) isHoming = false;
-            if (Dome.rotatorSeekState < (int)Seeks.CALIBRATION_MOVEOFF) isCalibrating = false;
+            Dome.LogMessage("Rotator Settings Get","Slew Direction ({0})",Dome.rotatorSlewDirection);
+
             if (Dome.rotatorSlewDirection == -1)
             {
                 lblMultiStatus.Text = "<<<";
@@ -330,6 +369,20 @@ namespace ASCOM.PDM
             else
             {
                 lblMultiStatus.Text = "---";
+            }
+            if (Dome.rotatorStepsPer != _stepsPer)
+            {
+                _stepsPer = Dome.rotatorStepsPer;
+                Dome.tl.LogMessage("Rotator", "Calibration completed");
+                tbxStepsPerRotation.Text = Dome.rotatorStepsPer.ToString();
+            }
+            if (myDome.AtPark == true)
+            {
+                lblAtPark.Visible = true;
+            }
+            else
+            {
+                lblAtPark.Visible = false;
             }
         }
 

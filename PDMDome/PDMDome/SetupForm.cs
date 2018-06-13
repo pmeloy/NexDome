@@ -28,6 +28,23 @@ namespace ASCOM.PDM
 
         private void InitUI()
         {
+            gbxRotVersion.Text = GlobalStrings.RotatorText;
+            gbxShutVersion.Text = GlobalStrings.ShutterText;
+            gbxCapabilities.Text = GlobalStrings.CapabilitiesText;
+            lblVersionText1.Text = GlobalStrings.VersionText;
+            lblVersionText2.Text = GlobalStrings.VersionText;
+            btnRotatorSettings.Text = GlobalStrings.SettingsText;
+            btnShutterSettings.Text = GlobalStrings.SettingsText;
+            btnSave.Text = GlobalStrings.SaveText;
+            btnCancel.Text = GlobalStrings.CancelText;
+            chkCanFindHome.Text = GlobalStrings.CanFindHomeText;
+            chkCanPark.Text = GlobalStrings.CanParkText;
+            chkCanSetAltitude.Text = GlobalStrings.CanSetAltitudeText;
+            chkCanSetAzimuth.Text = GlobalStrings.CanSetAzimuthText;
+            chkCanSetPark.Text = GlobalStrings.CanSetParkText;
+            chkCanSetShutter.Text = GlobalStrings.CanSetShutterText;
+            chkCanSyncAz.Text = GlobalStrings.CanSyncAzimuthText;
+
             chkCanFindHome.Checked = Dome.canFindHome;
             chkCanPark.Checked = Dome.canPark;
             chkCanSetAltitude.Checked = Dome.canSetAltitude;
@@ -66,7 +83,7 @@ namespace ASCOM.PDM
             {
                 lblShutterVersion.Text = "N/A";
             }
-            gbxShutter.Enabled = enabled;
+            gbxShutVersion.Enabled = enabled;
         }
         private void btnClose_Click(object sender, EventArgs e)
         {
@@ -98,6 +115,7 @@ namespace ASCOM.PDM
         {
             using (ShutterSetup F = new ShutterSetup())
             {
+                Dome.tl.LogMessage("Setup Show", "Shutter");
                 F.myDome = myDome;
                 F.ShowDialog();
             }
