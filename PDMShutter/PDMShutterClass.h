@@ -87,7 +87,7 @@ public:
 	// Getters
 	int32_t		GetAcceleration();
 	float		GetElevation();
-	bool		GetHasClosed();
+	int			GetEndSwitchStatus();
 	uint32_t	GetMaxSpeed();
 	long		GetPosition();
 	bool		GetReversed();
@@ -276,17 +276,19 @@ void		ShutterClass::DoButtons()
 	int PRESSED = 0;
 	static int whichButtonPressed = 0, lastButtonPressed = 0;
 
-	if (digitalRead(BUTTON_OPEN) == PRESSED && whichButtonPressed == 0)
+	if (digitalRead(BUTTON_OPEN) == PRESSED && whichButtonPressed == 0 && GetEndSwitchStatus() != OPEN)
 	{
 		DBPrintln("Button Open Shutter");
 		whichButtonPressed = BUTTON_OPEN;
+		_shutterState = OPENING;
 		MoveRelative(_stepsPerStroke);
 		lastButtonPressed = BUTTON_OPEN;
 	}
-	else if (digitalRead(BUTTON_CLOSE) == PRESSED && whichButtonPressed == 0)
+	else if (digitalRead(BUTTON_CLOSE) == PRESSED && whichButtonPressed == 0 && GetEndSwitchStatus() != CLOSED)
 	{
 		DBPrintln("Button Close Shutter");
 		whichButtonPressed = BUTTON_CLOSE;
+		_shutterState = CLOSING;
 		MoveRelative(1 - _stepsPerStroke);
 		lastButtonPressed = BUTTON_CLOSE;
 	}
@@ -383,13 +385,16 @@ int32_t		ShutterClass::GetAcceleration()
 {
 	return _acceleration;
 }
+int			ShutterClass::GetEndSwitchStatus()
+{
+	int result= ERROR;
+	if (digitalRead(CLOSED_PIN) == 0) result = CLOSED;
+	if (digitalRead(OPENED_PIN) == 0) result = OPEN;
+	return result;
+}
 float		ShutterClass::GetElevation()
 {
 	return PositionToAltitude(stepper.currentPosition());
-}
-bool		ShutterClass::GetHasClosed()
-{
-	return _hasClosed;
 }
 uint32_t	ShutterClass::GetMaxSpeed()
 {
@@ -451,22 +456,12 @@ void		ShutterClass::SetVoltsFromString(String value)
 void		ShutterClass::Open()
 {
 	_shutterState = OPENING;
-	if (_hasClosed == true)
-	{
-		GotoPosition(_stepsPerStroke);
-	}
+	MoveRelative(_stepsPerStroke * 1.2);
 }
 void		ShutterClass::Close()
 {
 	_shutterState = CLOSING;
-	if (_hasClosed == true)
-	{
-		GotoPosition(0);
-	}
-	else 
-	{
-		MoveRelative(1 - _stepsPerStroke * 2);
-	}
+	MoveRelative(1 - _stepsPerStroke * 1.2);
 }
 void		ShutterClass::GotoPosition(long newPos)
 {
@@ -515,10 +510,10 @@ void		ShutterClass::Run()
 		if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING && hitSwitch == false)
 		{
 			hitSwitch = true;
-			//_shutterState = CLOSED;
-			//_hasClosed = true;
 			doSync = true;
+			_shutterState = CLOSED;
 			stepper.stop();
+			DBPrintln("Hit closed switch");
 
 		}
 		if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false)
@@ -526,6 +521,7 @@ void		ShutterClass::Run()
 			hitSwitch = true;
 			_shutterState = OPEN;
 			stepper.stop();
+			DBPrintln("Hit opened switch");
 		}
 		wasRunning = true;
 		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
@@ -551,10 +547,8 @@ void		ShutterClass::Run()
 
 	if (stepper.isRunning() == true) return;
 
-	if (digitalRead(CLOSED_PIN) == 0 && doSync == true)
+	if (doSync == true && digitalRead(CLOSED_PIN) == 0)
 	{
-			_shutterState = CLOSED;
-			_hasClosed = true;
 			stepper.setCurrentPosition(0);
 			doSync = false;
 			DBPrintln("Stopped at closed position");

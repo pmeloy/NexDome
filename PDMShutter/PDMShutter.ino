@@ -49,7 +49,7 @@ String computerBuffer;
 #define Wireless Serial1
 String wirelessBuffer;
 
-const String version = "0.5.1.3";
+const String version = "0.5.1.4";
 
 // Stepper motor configuration
 #pragma endregion
@@ -71,6 +71,7 @@ const char ABORT_CMD				= 'a';
 const char ACCELERATION_SHUTTER_CMD = 'E'; // Get/Set stepper acceleration
 const char CALIBRATE_SHUTTER_CMD	= 'L'; // Calibrate the shutter
 const char CLOSE_SHUTTER_CMD		= 'C'; // Close shutter
+const char ENDSWITCH_STATUS_GET		= 'W'; // 4-None, 0-OPEN,1-CLOSED
 const char ELEVATION_SHUTTER_CMD	= 'G'; // Get/Set altitude
 const char HELLO_CMD				= 'H'; // Let rotator know we're here
 const char HASCLOSED_SHUTTER_GET	= 'Z'; // Has to be closed before the shutter knows where it is
@@ -338,6 +339,10 @@ void ProcessWireless(String buffer)
 		}
 		wirelessMessage = String(STATE_SHUTTER_GET) + String(Shutter.GetState());
 		break;
+	case ENDSWITCH_STATUS_GET:
+		wirelessMessage = String(ENDSWITCH_STATUS_GET) + String(Shutter.GetEndSwitchStatus());
+		DBPrintln("End switch status is " + String(Shutter.GetEndSwitchStatus()));
+		break;
 	case ELEVATION_SHUTTER_CMD:
 		// Rotator update will be through UpdateRotator
 		// Send only error messages
@@ -375,15 +380,9 @@ void ProcessWireless(String buffer)
 		DBPrintln("Sent hello back");
 		break;
 	case OPEN_SHUTTER_CMD:
-		DBPrintln("Open shutter, hasclosed = " + String(Shutter.GetHasClosed()));
 		// Rotator update will be through UpdateRotator
 		DBPrintln("Received Open Shutter Command");
-		if (Shutter.GetHasClosed() == false)
-		{
-			wirelessMessage = "OC"; // Open command Must (C)lose first
-			DBPrintln("Must close once before opening");
-		}
-		else if (isRaining == true)
+		if (isRaining == true)
 		{
 			wirelessMessage = "OR"; // (O)pen command (R)ain cancel
 			DBPrintln("Raining");

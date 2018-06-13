@@ -117,4 +117,556 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="chkCanFindHome.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="chkCanFindHome.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="chkCanFindHome.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 17</value>
+  </data>
+  <data name="chkCanFindHome.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="chkCanFindHome.Text" xml:space="preserve">
+    <value>Can Find Home</value>
+  </data>
+  <data name="&gt;&gt;chkCanFindHome.Name" xml:space="preserve">
+    <value>chkCanFindHome</value>
+  </data>
+  <data name="&gt;&gt;chkCanFindHome.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanFindHome.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanFindHome.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="chkCanSetShutter.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkCanSetShutter.Location" type="System.Drawing.Point, System.Drawing">
+    <value>339, 19</value>
+  </data>
+  <data name="chkCanSetShutter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>101, 17</value>
+  </data>
+  <data name="chkCanSetShutter.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="chkCanSetShutter.Text" xml:space="preserve">
+    <value>Can Set Shutter</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetShutter.Name" xml:space="preserve">
+    <value>chkCanSetShutter</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetShutter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetShutter.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetShutter.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="chkCanSetAltitude.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkCanSetAltitude.Location" type="System.Drawing.Point, System.Drawing">
+    <value>339, 42</value>
+  </data>
+  <data name="chkCanSetAltitude.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 17</value>
+  </data>
+  <data name="chkCanSetAltitude.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="chkCanSetAltitude.Text" xml:space="preserve">
+    <value>Can Set Altitude</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAltitude.Name" xml:space="preserve">
+    <value>chkCanSetAltitude</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAltitude.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAltitude.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAltitude.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="chkCanPark.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkCanPark.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 42</value>
+  </data>
+  <data name="chkCanPark.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 17</value>
+  </data>
+  <data name="chkCanPark.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="chkCanPark.Text" xml:space="preserve">
+    <value>Can Park</value>
+  </data>
+  <data name="&gt;&gt;chkCanPark.Name" xml:space="preserve">
+    <value>chkCanPark</value>
+  </data>
+  <data name="&gt;&gt;chkCanPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanPark.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanPark.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="chkCanSetPark.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkCanSetPark.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 65</value>
+  </data>
+  <data name="chkCanSetPark.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 17</value>
+  </data>
+  <data name="chkCanSetPark.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="chkCanSetPark.Text" xml:space="preserve">
+    <value>Can Set Park</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetPark.Name" xml:space="preserve">
+    <value>chkCanSetPark</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetPark.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetPark.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetPark.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="chkCanSyncAz.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkCanSyncAz.Location" type="System.Drawing.Point, System.Drawing">
+    <value>165, 42</value>
+  </data>
+  <data name="chkCanSyncAz.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 17</value>
+  </data>
+  <data name="chkCanSyncAz.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="chkCanSyncAz.Text" xml:space="preserve">
+    <value>Can Sync Azimuth</value>
+  </data>
+  <data name="&gt;&gt;chkCanSyncAz.Name" xml:space="preserve">
+    <value>chkCanSyncAz</value>
+  </data>
+  <data name="&gt;&gt;chkCanSyncAz.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanSyncAz.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanSyncAz.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="chkCanSetAzimuth.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkCanSetAzimuth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>165, 19</value>
+  </data>
+  <data name="chkCanSetAzimuth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>104, 17</value>
+  </data>
+  <data name="chkCanSetAzimuth.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="chkCanSetAzimuth.Text" xml:space="preserve">
+    <value>Can Set Azimuth</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAzimuth.Name" xml:space="preserve">
+    <value>chkCanSetAzimuth</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAzimuth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAzimuth.Parent" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;chkCanSetAzimuth.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.Name" xml:space="preserve">
+    <value>btnRotatorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.Parent" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.Name" xml:space="preserve">
+    <value>lblRotatorVersion</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.Parent" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.Name" xml:space="preserve">
+    <value>lblVersionText1</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.Parent" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="gbxRotVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 13</value>
+  </data>
+  <data name="gbxRotVersion.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 42</value>
+  </data>
+  <data name="gbxRotVersion.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="gbxRotVersion.Text" xml:space="preserve">
+    <value>Rotator</value>
+  </data>
+  <data name="&gt;&gt;gbxRotVersion.Name" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;gbxRotVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxRotVersion.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxRotVersion.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="btnRotatorSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>109, 11</value>
+  </data>
+  <data name="btnRotatorSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 23</value>
+  </data>
+  <data name="btnRotatorSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="btnRotatorSettings.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.Name" xml:space="preserve">
+    <value>btnRotatorSettings</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.Parent" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;btnRotatorSettings.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblRotatorVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>54, 15</value>
+  </data>
+  <data name="lblRotatorVersion.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 16</value>
+  </data>
+  <data name="lblRotatorVersion.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.Name" xml:space="preserve">
+    <value>lblRotatorVersion</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.Parent" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;lblRotatorVersion.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="lblVersionText1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblVersionText1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 16</value>
+  </data>
+  <data name="lblVersionText1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 13</value>
+  </data>
+  <data name="lblVersionText1.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="lblVersionText1.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.Name" xml:space="preserve">
+    <value>lblVersionText1</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.Parent" xml:space="preserve">
+    <value>gbxRotVersion</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="gbxCapabilities.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 61</value>
+  </data>
+  <data name="gbxCapabilities.Size" type="System.Drawing.Size, System.Drawing">
+    <value>534, 91</value>
+  </data>
+  <data name="gbxCapabilities.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="gbxCapabilities.Text" xml:space="preserve">
+    <value>Capabilities</value>
+  </data>
+  <data name="&gt;&gt;gbxCapabilities.Name" xml:space="preserve">
+    <value>gbxCapabilities</value>
+  </data>
+  <data name="&gt;&gt;gbxCapabilities.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxCapabilities.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxCapabilities.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.Name" xml:space="preserve">
+    <value>btnShutterSettings</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.Parent" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.Name" xml:space="preserve">
+    <value>lblShutterVersion</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.Parent" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.Name" xml:space="preserve">
+    <value>lblVersionText2</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.Parent" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="gbxShutVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>250, 13</value>
+  </data>
+  <data name="gbxShutVersion.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 42</value>
+  </data>
+  <data name="gbxShutVersion.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="gbxShutVersion.Text" xml:space="preserve">
+    <value>Shutter</value>
+  </data>
+  <data name="&gt;&gt;gbxShutVersion.Name" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;gbxShutVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxShutVersion.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxShutVersion.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnShutterSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>109, 11</value>
+  </data>
+  <data name="btnShutterSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 23</value>
+  </data>
+  <data name="btnShutterSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="btnShutterSettings.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.Name" xml:space="preserve">
+    <value>btnShutterSettings</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.Parent" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;btnShutterSettings.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblShutterVersion.Location" type="System.Drawing.Point, System.Drawing">
+    <value>54, 15</value>
+  </data>
+  <data name="lblShutterVersion.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 16</value>
+  </data>
+  <data name="lblShutterVersion.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.Name" xml:space="preserve">
+    <value>lblShutterVersion</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.Parent" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;lblShutterVersion.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="lblVersionText2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblVersionText2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 16</value>
+  </data>
+  <data name="lblVersionText2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 13</value>
+  </data>
+  <data name="lblVersionText2.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="lblVersionText2.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.Name" xml:space="preserve">
+    <value>lblVersionText2</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.Parent" xml:space="preserve">
+    <value>gbxShutVersion</value>
+  </data>
+  <data name="&gt;&gt;lblVersionText2.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>489, 158</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+    <value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnSave.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="btnSave.Location" type="System.Drawing.Point, System.Drawing">
+    <value>390, 158</value>
+  </data>
+  <data name="btnSave.Size" type="System.Drawing.Size, System.Drawing">
+    <value>93, 23</value>
+  </data>
+  <data name="btnSave.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="btnSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="&gt;&gt;btnSave.Name" xml:space="preserve">
+    <value>btnSave</value>
+  </data>
+  <data name="&gt;&gt;btnSave.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSave.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnSave.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>558, 189</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>SetupForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>SetupForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

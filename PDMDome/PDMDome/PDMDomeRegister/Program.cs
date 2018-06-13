@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ASCOM
 {
@@ -20,6 +21,8 @@ namespace ASCOM
         static void Main(string[] args)
         {
             // Uncomment the code that's required
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
 #if UseChooser
             // choose the device
             string id = ASCOM.DriverAccess.Dome.Choose("");
@@ -29,7 +32,7 @@ namespace ASCOM
             ASCOM.DriverAccess.Dome device = new ASCOM.DriverAccess.Dome(id);
 #else
             // this can be replaced by this code, it avoids the chooser and creates the driver class directly.
-            ASCOM.DriverAccess.Dome device = new ASCOM.DriverAccess.Dome("ASCOM.PDome.Dome");
+            ASCOM.DriverAccess.Dome device = new ASCOM.DriverAccess.Dome("ASCOM.PDM.Dome");
 #endif
             // now run some tests, adding code to your driver so that the tests will pass.
             // these first tests are common to all drivers.

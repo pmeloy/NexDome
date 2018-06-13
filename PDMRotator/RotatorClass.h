@@ -28,13 +28,13 @@
 
 
 //#define DEBUG
-#ifdef DEBUG
-#define DBPrint(x) Serial.print(x)
-#define DBPrintln(x) Serial.println(x)
-#else
-#define DBPrint(x)
-#define DBPrintln(x)
-#endif // DEBUG
+//#ifdef DEBUG
+//#define DBPrint(x) Serial.print(x)
+//#define DebugPrint(x) Serial.println(x)
+//#else
+//#define DBPrint(x)
+//#define DebugPrint(x)
+//#endif // DEBUG
 
 //const int NEVER_HOMED = -1;
 //const int HOMED = 0;
@@ -73,6 +73,9 @@ public:
 	RotatorClass();
 	int			rainCheckInterval; // in seconds, function  multiplies by 1000
 
+	// Debugging
+	byte		debugEnabled = 1;
+	void		DebugPrint(String);
 	// Getters
 	bool		GetRainStatus();
 	int			GetLowVoltageCutoff();
@@ -193,7 +196,6 @@ private:
 	float		GetAngularDistance(float fromAngle, float toAngle);
 
 };
-
 
 RotatorClass::RotatorClass()
 {
@@ -341,6 +343,13 @@ void RotatorClass::ButtonCheck()
 		lastButtonPressed = whichButtonPressed = 0;
 	}
 }
+inline void RotatorClass::DebugPrint(String msg)
+{
+	if (debugEnabled == 1)
+	{
+		Serial.print("%" + msg + "#");
+	}
+}
 bool RotatorClass::GetRainStatus()
 {
 	return (digitalRead(RAIN_SENSOR_PIN) == 0);
@@ -358,7 +367,7 @@ long RotatorClass::GetMaxSpeed()
 }
 void RotatorClass::SetMaxSpeed(long newSpeed)
 {
-	DBPrintln("%Set max speed to " + String(newSpeed));
+	DebugPrint("Rotator set max speed to " + String(newSpeed));
 	_maxSpeed = newSpeed;
 	stepper.setMaxSpeed(newSpeed);
 	SaveToEEProm();
@@ -369,7 +378,7 @@ long RotatorClass::GetAcceleration()
 }
 void RotatorClass::SetAcceleration(long newAccel)
 {
-	DBPrintln("%Set acceleration to " + String(newAccel));
+	DebugPrint("Rotator set acceleration to " + String(newAccel));
 	_acceleration = newAccel;
 	stepper.setAcceleration(newAccel);
 	SaveToEEProm();
@@ -421,7 +430,7 @@ void RotatorClass::StartCalibrating()
 	_seekMode = CALIBRATION_MOVEOFF;
 	stepper.setCurrentPosition(0);
 	_moveOffUntil = millis() + 5000;
-	DBPrintln("%Move off from " + String(millis()) + " to " + String(_moveOffUntil));
+	DebugPrint("Rotator move off from " + String(millis()) + " to " + String(_moveOffUntil));
 	_doStepsPerRotation = false;
 	MoveRelative(_stepsPerRotation  * 1.5);
 }
@@ -436,7 +445,7 @@ void RotatorClass::Calibrate()
 		case(CALIBRATION_MOVEOFF):
 			if (millis() >= _moveOffUntil)
 			{
-				DBPrintln("%Move off complete");
+				DebugPrint("Rotator move off complete");
 				_seekMode = CALIBRATION_MEASURE;
 			}
 			break;
@@ -520,7 +529,7 @@ long RotatorClass::GetPosition()
 	position = stepper.currentPosition();
 	if (_seekMode < CALIBRATION_MOVEOFF) 
 	{
-		while (position > _stepsPerRotation) position -= _stepsPerRotation;
+		while (position >= _stepsPerRotation) position -= _stepsPerRotation;
 		while (position < 0) position += _stepsPerRotation;
 	}
 	return position;
@@ -636,8 +645,11 @@ void RotatorClass::Run()
 
 	if (_seekMode > HOMING_HOME) Calibrate();
 
+	if (digitalRead(HOME_PIN) == 0) DebugPrint("Rotator hit home switch");
+
 	if (stepper.run() == true)
 	{
+
 		wasRunning = true;
 		if (_seekMode == HOMING_HOME && digitalRead(HOME_PIN) == 0) // We're looking for home and found it
 		{
@@ -664,7 +676,7 @@ void RotatorClass::Run()
 
 	if (wasRunning == true)
 	{
-		DBPrintln("%Stopped!");
+		DebugPrint("Rotator stopped!");
 		_moveDirection = MOVE_NONE;
 
 		if (_doStepsPerRotation == true)

@@ -29,21 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RotatorSetup));
+            this.btnClose = new System.Windows.Forms.Button();
+            this.gbxMotorSettings = new System.Windows.Forms.GroupBox();
             this.chkReversed = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblMaxSpeed = new System.Windows.Forms.Label();
             this.btnMaxSpeed = new System.Windows.Forms.Button();
             this.btnAcceleration = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblAcceleration = new System.Windows.Forms.Label();
             this.tbxMaxSpeed = new System.Windows.Forms.TextBox();
             this.tbxAcceleration = new System.Windows.Forms.TextBox();
             this.tbxStepsPerRotation = new System.Windows.Forms.TextBox();
             this.btnStepsPerRotation = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.Movement = new System.Windows.Forms.GroupBox();
+            this.lblStepsPer = new System.Windows.Forms.Label();
+            this.gbxMovement = new System.Windows.Forms.GroupBox();
+            this.lblAtPark = new System.Windows.Forms.Label();
             this.btnFullTurn = new System.Windows.Forms.Button();
-            this.label16 = new System.Windows.Forms.Label();
+            this.lblSeekModeTitle = new System.Windows.Forms.Label();
             this.btnSync = new System.Windows.Forms.Button();
             this.lblSeekMode = new System.Windows.Forms.Label();
             this.btnSTOP = new System.Windows.Forms.Button();
@@ -52,7 +54,7 @@
             this.btnGoToAz = new System.Windows.Forms.Button();
             this.btnRotateCCW = new System.Windows.Forms.Button();
             this.btnRotateCW = new System.Windows.Forms.Button();
-            this.label15 = new System.Windows.Forms.Label();
+            this.lblHomeStatusTitle = new System.Windows.Forms.Label();
             this.btnGoToPos = new System.Windows.Forms.Button();
             this.btnHome = new System.Windows.Forms.Button();
             this.btnPark = new System.Windows.Forms.Button();
@@ -61,205 +63,158 @@
             this.tbxGotoAz = new System.Windows.Forms.TextBox();
             this.tbxGotoPos = new System.Windows.Forms.TextBox();
             this.lblAzimuth = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbxVoltages = new System.Windows.Forms.GroupBox();
             this.lblLowWarn = new System.Windows.Forms.Label();
             this.tbxCutoff = new System.Windows.Forms.TextBox();
             this.btnSetCutoff = new System.Windows.Forms.Button();
-            this.lblVoltage = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lblVoltageBox = new System.Windows.Forms.Label();
+            this.lblCutOffTitle = new System.Windows.Forms.Label();
+            this.lblVoltageTitle = new System.Windows.Forms.Label();
+            this.gbxHomeandPark = new System.Windows.Forms.GroupBox();
+            this.lblHomePosTitle = new System.Windows.Forms.Label();
             this.btnSetHome = new System.Windows.Forms.Button();
             this.btnSetPark = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lblParkPosTitle = new System.Windows.Forms.Label();
             this.tbxHomeAz = new System.Windows.Forms.TextBox();
             this.tbxParkAz = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.groupBox1.SuspendLayout();
-            this.Movement.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.gbxMotorSettings.SuspendLayout();
+            this.gbxMovement.SuspendLayout();
+            this.gbxVoltages.SuspendLayout();
+            this.gbxHomeandPark.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnCancel
+            // btnClose
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(387, 366);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(57, 23);
-            this.btnCancel.TabIndex = 13;
-            this.btnCancel.Text = "Exit";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnClose_Click);
+            resources.ApplyResources(this.btnClose, "btnClose");
+            this.btnClose.Name = "btnClose";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // groupBox1
+            // gbxMotorSettings
             // 
-            this.groupBox1.Controls.Add(this.chkReversed);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnMaxSpeed);
-            this.groupBox1.Controls.Add(this.btnAcceleration);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.tbxMaxSpeed);
-            this.groupBox1.Controls.Add(this.tbxAcceleration);
-            this.groupBox1.Controls.Add(this.tbxStepsPerRotation);
-            this.groupBox1.Controls.Add(this.btnStepsPerRotation);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Location = new System.Drawing.Point(12, 89);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(162, 167);
-            this.groupBox1.TabIndex = 15;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Motor Settings";
+            this.gbxMotorSettings.Controls.Add(this.chkReversed);
+            this.gbxMotorSettings.Controls.Add(this.lblMaxSpeed);
+            this.gbxMotorSettings.Controls.Add(this.btnMaxSpeed);
+            this.gbxMotorSettings.Controls.Add(this.btnAcceleration);
+            this.gbxMotorSettings.Controls.Add(this.lblAcceleration);
+            this.gbxMotorSettings.Controls.Add(this.tbxMaxSpeed);
+            this.gbxMotorSettings.Controls.Add(this.tbxAcceleration);
+            this.gbxMotorSettings.Controls.Add(this.tbxStepsPerRotation);
+            this.gbxMotorSettings.Controls.Add(this.btnStepsPerRotation);
+            this.gbxMotorSettings.Controls.Add(this.lblStepsPer);
+            resources.ApplyResources(this.gbxMotorSettings, "gbxMotorSettings");
+            this.gbxMotorSettings.Name = "gbxMotorSettings";
+            this.gbxMotorSettings.TabStop = false;
             // 
             // chkReversed
             // 
-            this.chkReversed.AutoSize = true;
-            this.chkReversed.Location = new System.Drawing.Point(6, 142);
+            resources.ApplyResources(this.chkReversed, "chkReversed");
             this.chkReversed.Name = "chkReversed";
-            this.chkReversed.Size = new System.Drawing.Size(72, 17);
-            this.chkReversed.TabIndex = 42;
-            this.chkReversed.Text = "Reversed";
             this.chkReversed.UseVisualStyleBackColor = true;
             this.chkReversed.CheckedChanged += new System.EventHandler(this.chkReversed_CheckedChanged);
             // 
-            // label1
+            // lblMaxSpeed
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 13);
-            this.label1.TabIndex = 34;
-            this.label1.Text = "Max Speed";
+            resources.ApplyResources(this.lblMaxSpeed, "lblMaxSpeed");
+            this.lblMaxSpeed.Name = "lblMaxSpeed";
             // 
             // btnMaxSpeed
             // 
-            this.btnMaxSpeed.Location = new System.Drawing.Point(84, 34);
+            resources.ApplyResources(this.btnMaxSpeed, "btnMaxSpeed");
             this.btnMaxSpeed.Name = "btnMaxSpeed";
-            this.btnMaxSpeed.Size = new System.Drawing.Size(65, 23);
-            this.btnMaxSpeed.TabIndex = 33;
-            this.btnMaxSpeed.Text = "Set";
             this.btnMaxSpeed.UseVisualStyleBackColor = true;
             this.btnMaxSpeed.Click += new System.EventHandler(this.btnMaxSpeed_Click);
             // 
             // btnAcceleration
             // 
-            this.btnAcceleration.Location = new System.Drawing.Point(84, 73);
+            resources.ApplyResources(this.btnAcceleration, "btnAcceleration");
             this.btnAcceleration.Name = "btnAcceleration";
-            this.btnAcceleration.Size = new System.Drawing.Size(65, 23);
-            this.btnAcceleration.TabIndex = 36;
-            this.btnAcceleration.Text = "Set";
             this.btnAcceleration.UseVisualStyleBackColor = true;
             this.btnAcceleration.Click += new System.EventHandler(this.btnAcceleration_Click);
             // 
-            // label3
+            // lblAcceleration
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 59);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 13);
-            this.label3.TabIndex = 37;
-            this.label3.Text = "Acceleration";
+            resources.ApplyResources(this.lblAcceleration, "lblAcceleration");
+            this.lblAcceleration.Name = "lblAcceleration";
             // 
             // tbxMaxSpeed
             // 
-            this.tbxMaxSpeed.Location = new System.Drawing.Point(6, 36);
+            resources.ApplyResources(this.tbxMaxSpeed, "tbxMaxSpeed");
             this.tbxMaxSpeed.Name = "tbxMaxSpeed";
-            this.tbxMaxSpeed.Size = new System.Drawing.Size(72, 20);
-            this.tbxMaxSpeed.TabIndex = 35;
-            this.tbxMaxSpeed.Text = "0";
             // 
             // tbxAcceleration
             // 
-            this.tbxAcceleration.Location = new System.Drawing.Point(6, 75);
+            resources.ApplyResources(this.tbxAcceleration, "tbxAcceleration");
             this.tbxAcceleration.Name = "tbxAcceleration";
-            this.tbxAcceleration.Size = new System.Drawing.Size(72, 20);
-            this.tbxAcceleration.TabIndex = 38;
-            this.tbxAcceleration.Text = "0";
             // 
             // tbxStepsPerRotation
             // 
-            this.tbxStepsPerRotation.Location = new System.Drawing.Point(6, 114);
+            resources.ApplyResources(this.tbxStepsPerRotation, "tbxStepsPerRotation");
             this.tbxStepsPerRotation.Name = "tbxStepsPerRotation";
-            this.tbxStepsPerRotation.Size = new System.Drawing.Size(72, 20);
-            this.tbxStepsPerRotation.TabIndex = 41;
-            this.tbxStepsPerRotation.Text = "0";
             // 
             // btnStepsPerRotation
             // 
-            this.btnStepsPerRotation.Location = new System.Drawing.Point(84, 112);
+            resources.ApplyResources(this.btnStepsPerRotation, "btnStepsPerRotation");
             this.btnStepsPerRotation.Name = "btnStepsPerRotation";
-            this.btnStepsPerRotation.Size = new System.Drawing.Size(65, 23);
-            this.btnStepsPerRotation.TabIndex = 39;
-            this.btnStepsPerRotation.Text = "Set";
             this.btnStepsPerRotation.UseVisualStyleBackColor = true;
             this.btnStepsPerRotation.Click += new System.EventHandler(this.btnStepsPerRotation_Click);
             // 
-            // label5
+            // lblStepsPer
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 98);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(52, 13);
-            this.label5.TabIndex = 40;
-            this.label5.Text = "Steps per";
+            resources.ApplyResources(this.lblStepsPer, "lblStepsPer");
+            this.lblStepsPer.Name = "lblStepsPer";
             // 
-            // Movement
+            // gbxMovement
             // 
-            this.Movement.Controls.Add(this.btnFullTurn);
-            this.Movement.Controls.Add(this.label16);
-            this.Movement.Controls.Add(this.btnSync);
-            this.Movement.Controls.Add(this.lblSeekMode);
-            this.Movement.Controls.Add(this.btnSTOP);
-            this.Movement.Controls.Add(this.btnCalibrate);
-            this.Movement.Controls.Add(this.lblMultiStatus);
-            this.Movement.Controls.Add(this.btnGoToAz);
-            this.Movement.Controls.Add(this.btnRotateCCW);
-            this.Movement.Controls.Add(this.btnRotateCW);
-            this.Movement.Controls.Add(this.label15);
-            this.Movement.Controls.Add(this.btnGoToPos);
-            this.Movement.Controls.Add(this.btnHome);
-            this.Movement.Controls.Add(this.btnPark);
-            this.Movement.Controls.Add(this.lblHomedState);
-            this.Movement.Controls.Add(this.lblPosition);
-            this.Movement.Controls.Add(this.tbxGotoAz);
-            this.Movement.Controls.Add(this.tbxGotoPos);
-            this.Movement.Controls.Add(this.lblAzimuth);
-            this.Movement.Location = new System.Drawing.Point(180, 12);
-            this.Movement.Name = "Movement";
-            this.Movement.Size = new System.Drawing.Size(264, 347);
-            this.Movement.TabIndex = 48;
-            this.Movement.TabStop = false;
-            this.Movement.Text = "Movement";
+            this.gbxMovement.Controls.Add(this.lblAtPark);
+            this.gbxMovement.Controls.Add(this.btnFullTurn);
+            this.gbxMovement.Controls.Add(this.lblSeekModeTitle);
+            this.gbxMovement.Controls.Add(this.btnSync);
+            this.gbxMovement.Controls.Add(this.lblSeekMode);
+            this.gbxMovement.Controls.Add(this.btnSTOP);
+            this.gbxMovement.Controls.Add(this.btnCalibrate);
+            this.gbxMovement.Controls.Add(this.lblMultiStatus);
+            this.gbxMovement.Controls.Add(this.btnGoToAz);
+            this.gbxMovement.Controls.Add(this.btnRotateCCW);
+            this.gbxMovement.Controls.Add(this.btnRotateCW);
+            this.gbxMovement.Controls.Add(this.lblHomeStatusTitle);
+            this.gbxMovement.Controls.Add(this.btnGoToPos);
+            this.gbxMovement.Controls.Add(this.btnHome);
+            this.gbxMovement.Controls.Add(this.btnPark);
+            this.gbxMovement.Controls.Add(this.lblHomedState);
+            this.gbxMovement.Controls.Add(this.lblPosition);
+            this.gbxMovement.Controls.Add(this.tbxGotoAz);
+            this.gbxMovement.Controls.Add(this.tbxGotoPos);
+            this.gbxMovement.Controls.Add(this.lblAzimuth);
+            resources.ApplyResources(this.gbxMovement, "gbxMovement");
+            this.gbxMovement.Name = "gbxMovement";
+            this.gbxMovement.TabStop = false;
+            // 
+            // lblAtPark
+            // 
+            this.lblAtPark.BackColor = System.Drawing.Color.LightGreen;
+            resources.ApplyResources(this.lblAtPark, "lblAtPark");
+            this.lblAtPark.Name = "lblAtPark";
             // 
             // btnFullTurn
             // 
-            this.btnFullTurn.Location = new System.Drawing.Point(6, 154);
+            resources.ApplyResources(this.btnFullTurn, "btnFullTurn");
             this.btnFullTurn.Name = "btnFullTurn";
-            this.btnFullTurn.Size = new System.Drawing.Size(66, 27);
-            this.btnFullTurn.TabIndex = 51;
-            this.btnFullTurn.Text = "Full Turn";
             this.btnFullTurn.UseVisualStyleBackColor = true;
             this.btnFullTurn.Click += new System.EventHandler(this.btnFullTurn_Click);
             // 
-            // label16
+            // lblSeekModeTitle
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(7, 308);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(62, 13);
-            this.label16.TabIndex = 52;
-            this.label16.Text = "Seek Mode";
+            resources.ApplyResources(this.lblSeekModeTitle, "lblSeekModeTitle");
+            this.lblSeekModeTitle.Name = "lblSeekModeTitle";
             // 
             // btnSync
             // 
-            this.btnSync.Location = new System.Drawing.Point(6, 44);
+            resources.ApplyResources(this.btnSync, "btnSync");
             this.btnSync.Name = "btnSync";
-            this.btnSync.Size = new System.Drawing.Size(66, 27);
-            this.btnSync.TabIndex = 39;
-            this.btnSync.Text = "Sync Az";
             this.btnSync.UseVisualStyleBackColor = true;
             this.btnSync.Click += new System.EventHandler(this.btnSync_Click);
             // 
@@ -267,33 +222,21 @@
             // 
             this.lblSeekMode.BackColor = System.Drawing.Color.White;
             this.lblSeekMode.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblSeekMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSeekMode.Location = new System.Drawing.Point(140, 301);
+            resources.ApplyResources(this.lblSeekMode, "lblSeekMode");
             this.lblSeekMode.Name = "lblSeekMode";
-            this.lblSeekMode.Size = new System.Drawing.Size(100, 20);
-            this.lblSeekMode.TabIndex = 50;
-            this.lblSeekMode.Text = "0";
-            this.lblSeekMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnSTOP
             // 
             this.btnSTOP.BackColor = System.Drawing.Color.Red;
-            this.btnSTOP.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSTOP.Location = new System.Drawing.Point(69, 184);
+            resources.ApplyResources(this.btnSTOP, "btnSTOP");
             this.btnSTOP.Name = "btnSTOP";
-            this.btnSTOP.Size = new System.Drawing.Size(109, 51);
-            this.btnSTOP.TabIndex = 31;
-            this.btnSTOP.Text = "STOP";
             this.btnSTOP.UseVisualStyleBackColor = false;
             this.btnSTOP.Click += new System.EventHandler(this.btnSTOP_Click);
             // 
             // btnCalibrate
             // 
-            this.btnCalibrate.Location = new System.Drawing.Point(175, 241);
+            resources.ApplyResources(this.btnCalibrate, "btnCalibrate");
             this.btnCalibrate.Name = "btnCalibrate";
-            this.btnCalibrate.Size = new System.Drawing.Size(65, 23);
-            this.btnCalibrate.TabIndex = 42;
-            this.btnCalibrate.Text = "Calibrate";
             this.btnCalibrate.UseVisualStyleBackColor = true;
             this.btnCalibrate.Click += new System.EventHandler(this.btnCalibrate_Click);
             // 
@@ -301,84 +244,55 @@
             // 
             this.lblMultiStatus.BackColor = System.Drawing.Color.White;
             this.lblMultiStatus.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblMultiStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMultiStatus.Location = new System.Drawing.Point(90, 96);
+            resources.ApplyResources(this.lblMultiStatus, "lblMultiStatus");
             this.lblMultiStatus.Name = "lblMultiStatus";
-            this.lblMultiStatus.Size = new System.Drawing.Size(66, 26);
-            this.lblMultiStatus.TabIndex = 30;
-            this.lblMultiStatus.Text = "---";
-            this.lblMultiStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnGoToAz
             // 
-            this.btnGoToAz.Location = new System.Drawing.Point(174, 43);
+            resources.ApplyResources(this.btnGoToAz, "btnGoToAz");
             this.btnGoToAz.Name = "btnGoToAz";
-            this.btnGoToAz.Size = new System.Drawing.Size(66, 27);
-            this.btnGoToAz.TabIndex = 15;
-            this.btnGoToAz.Text = "Go to Az";
             this.btnGoToAz.UseVisualStyleBackColor = true;
             this.btnGoToAz.Click += new System.EventHandler(this.btnGotoAz_Click);
             // 
             // btnRotateCCW
             // 
-            this.btnRotateCCW.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRotateCCW.Location = new System.Drawing.Point(6, 72);
+            resources.ApplyResources(this.btnRotateCCW, "btnRotateCCW");
             this.btnRotateCCW.Name = "btnRotateCCW";
-            this.btnRotateCCW.Size = new System.Drawing.Size(66, 79);
-            this.btnRotateCCW.TabIndex = 13;
-            this.btnRotateCCW.Text = "<";
             this.btnRotateCCW.UseVisualStyleBackColor = true;
             this.btnRotateCCW.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnRotateCCW_MouseDown);
             this.btnRotateCCW.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnRotate_UP);
             // 
             // btnRotateCW
             // 
-            this.btnRotateCW.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRotateCW.Location = new System.Drawing.Point(174, 72);
+            resources.ApplyResources(this.btnRotateCW, "btnRotateCW");
             this.btnRotateCW.Name = "btnRotateCW";
-            this.btnRotateCW.Size = new System.Drawing.Size(66, 77);
-            this.btnRotateCW.TabIndex = 14;
-            this.btnRotateCW.Text = ">";
             this.btnRotateCW.UseVisualStyleBackColor = true;
             this.btnRotateCW.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnRotateCW_MouseDown);
             this.btnRotateCW.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnRotate_UP);
             // 
-            // label15
+            // lblHomeStatusTitle
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(7, 284);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(68, 13);
-            this.label15.TabIndex = 51;
-            this.label15.Text = "Home Status";
+            resources.ApplyResources(this.lblHomeStatusTitle, "lblHomeStatusTitle");
+            this.lblHomeStatusTitle.Name = "lblHomeStatusTitle";
             // 
             // btnGoToPos
             // 
-            this.btnGoToPos.Location = new System.Drawing.Point(174, 154);
+            resources.ApplyResources(this.btnGoToPos, "btnGoToPos");
             this.btnGoToPos.Name = "btnGoToPos";
-            this.btnGoToPos.Size = new System.Drawing.Size(66, 27);
-            this.btnGoToPos.TabIndex = 16;
-            this.btnGoToPos.Text = "Go to Pos";
             this.btnGoToPos.UseVisualStyleBackColor = true;
             this.btnGoToPos.Click += new System.EventHandler(this.btnGoToPos_Click);
             // 
             // btnHome
             // 
-            this.btnHome.Location = new System.Drawing.Point(6, 241);
+            resources.ApplyResources(this.btnHome, "btnHome");
             this.btnHome.Name = "btnHome";
-            this.btnHome.Size = new System.Drawing.Size(65, 23);
-            this.btnHome.TabIndex = 37;
-            this.btnHome.Text = "Home";
             this.btnHome.UseVisualStyleBackColor = true;
             this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
             // 
             // btnPark
             // 
-            this.btnPark.Location = new System.Drawing.Point(87, 14);
+            resources.ApplyResources(this.btnPark, "btnPark");
             this.btnPark.Name = "btnPark";
-            this.btnPark.Size = new System.Drawing.Size(72, 23);
-            this.btnPark.TabIndex = 38;
-            this.btnPark.Text = "Park";
             this.btnPark.UseVisualStyleBackColor = true;
             this.btnPark.Click += new System.EventHandler(this.btnPark_Click);
             // 
@@ -386,198 +300,126 @@
             // 
             this.lblHomedState.BackColor = System.Drawing.Color.White;
             this.lblHomedState.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblHomedState.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHomedState.Location = new System.Drawing.Point(140, 277);
+            resources.ApplyResources(this.lblHomedState, "lblHomedState");
             this.lblHomedState.Name = "lblHomedState";
-            this.lblHomedState.Size = new System.Drawing.Size(100, 20);
-            this.lblHomedState.TabIndex = 32;
-            this.lblHomedState.Text = "0";
-            this.lblHomedState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblPosition
             // 
             this.lblPosition.BackColor = System.Drawing.Color.White;
             this.lblPosition.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblPosition.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPosition.Location = new System.Drawing.Point(90, 125);
+            resources.ApplyResources(this.lblPosition, "lblPosition");
             this.lblPosition.Name = "lblPosition";
-            this.lblPosition.Size = new System.Drawing.Size(66, 26);
-            this.lblPosition.TabIndex = 29;
-            this.lblPosition.Text = "0";
-            this.lblPosition.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tbxGotoAz
             // 
-            this.tbxGotoAz.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxGotoAz.Location = new System.Drawing.Point(90, 43);
+            resources.ApplyResources(this.tbxGotoAz, "tbxGotoAz");
             this.tbxGotoAz.Name = "tbxGotoAz";
-            this.tbxGotoAz.Size = new System.Drawing.Size(66, 26);
-            this.tbxGotoAz.TabIndex = 17;
-            this.tbxGotoAz.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbxGotoPos
             // 
-            this.tbxGotoPos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxGotoPos.Location = new System.Drawing.Point(90, 154);
+            resources.ApplyResources(this.tbxGotoPos, "tbxGotoPos");
             this.tbxGotoPos.Name = "tbxGotoPos";
-            this.tbxGotoPos.Size = new System.Drawing.Size(66, 26);
-            this.tbxGotoPos.TabIndex = 18;
-            this.tbxGotoPos.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblAzimuth
             // 
             this.lblAzimuth.BackColor = System.Drawing.Color.White;
             this.lblAzimuth.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblAzimuth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAzimuth.Location = new System.Drawing.Point(90, 72);
+            resources.ApplyResources(this.lblAzimuth, "lblAzimuth");
             this.lblAzimuth.Name = "lblAzimuth";
-            this.lblAzimuth.Size = new System.Drawing.Size(66, 26);
-            this.lblAzimuth.TabIndex = 19;
-            this.lblAzimuth.Text = "0";
-            this.lblAzimuth.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // groupBox2
+            // gbxVoltages
             // 
-            this.groupBox2.Controls.Add(this.lblLowWarn);
-            this.groupBox2.Controls.Add(this.tbxCutoff);
-            this.groupBox2.Controls.Add(this.btnSetCutoff);
-            this.groupBox2.Controls.Add(this.lblVoltage);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(12, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(162, 71);
-            this.groupBox2.TabIndex = 49;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Voltage";
+            this.gbxVoltages.Controls.Add(this.lblLowWarn);
+            this.gbxVoltages.Controls.Add(this.tbxCutoff);
+            this.gbxVoltages.Controls.Add(this.btnSetCutoff);
+            this.gbxVoltages.Controls.Add(this.lblVoltageBox);
+            this.gbxVoltages.Controls.Add(this.lblCutOffTitle);
+            this.gbxVoltages.Controls.Add(this.lblVoltageTitle);
+            resources.ApplyResources(this.gbxVoltages, "gbxVoltages");
+            this.gbxVoltages.Name = "gbxVoltages";
+            this.gbxVoltages.TabStop = false;
             // 
             // lblLowWarn
             // 
             this.lblLowWarn.BackColor = System.Drawing.Color.Red;
             this.lblLowWarn.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblLowWarn.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.lblLowWarn.Location = new System.Drawing.Point(112, 18);
+            resources.ApplyResources(this.lblLowWarn, "lblLowWarn");
             this.lblLowWarn.Name = "lblLowWarn";
-            this.lblLowWarn.Size = new System.Drawing.Size(44, 19);
-            this.lblLowWarn.TabIndex = 48;
-            this.lblLowWarn.Text = "LOW";
-            this.lblLowWarn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblLowWarn.Visible = false;
             // 
             // tbxCutoff
             // 
-            this.tbxCutoff.Location = new System.Drawing.Point(55, 43);
+            resources.ApplyResources(this.tbxCutoff, "tbxCutoff");
             this.tbxCutoff.Name = "tbxCutoff";
-            this.tbxCutoff.Size = new System.Drawing.Size(51, 20);
-            this.tbxCutoff.TabIndex = 43;
-            this.tbxCutoff.Text = "0";
-            this.tbxCutoff.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnSetCutoff
             // 
-            this.btnSetCutoff.Location = new System.Drawing.Point(112, 41);
+            resources.ApplyResources(this.btnSetCutoff, "btnSetCutoff");
             this.btnSetCutoff.Name = "btnSetCutoff";
-            this.btnSetCutoff.Size = new System.Drawing.Size(44, 23);
-            this.btnSetCutoff.TabIndex = 43;
-            this.btnSetCutoff.Text = "Set";
             this.btnSetCutoff.UseVisualStyleBackColor = true;
             this.btnSetCutoff.Click += new System.EventHandler(this.btnSetCutoff_Click);
             // 
-            // lblVoltage
+            // lblVoltageBox
             // 
-            this.lblVoltage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblVoltage.Location = new System.Drawing.Point(55, 18);
-            this.lblVoltage.Name = "lblVoltage";
-            this.lblVoltage.Size = new System.Drawing.Size(51, 19);
-            this.lblVoltage.TabIndex = 47;
-            this.lblVoltage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblVoltageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            resources.ApplyResources(this.lblVoltageBox, "lblVoltageBox");
+            this.lblVoltageBox.Name = "lblVoltageBox";
             // 
-            // label4
+            // lblCutOffTitle
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 46);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(37, 13);
-            this.label4.TabIndex = 46;
-            this.label4.Text = "CutOff";
+            resources.ApplyResources(this.lblCutOffTitle, "lblCutOffTitle");
+            this.lblCutOffTitle.Name = "lblCutOffTitle";
             // 
-            // label2
+            // lblVoltageTitle
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(43, 13);
-            this.label2.TabIndex = 45;
-            this.label2.Text = "Voltage";
+            resources.ApplyResources(this.lblVoltageTitle, "lblVoltageTitle");
+            this.lblVoltageTitle.Name = "lblVoltageTitle";
             // 
-            // groupBox3
+            // gbxHomeandPark
             // 
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Controls.Add(this.btnSetHome);
-            this.groupBox3.Controls.Add(this.btnSetPark);
-            this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Controls.Add(this.tbxHomeAz);
-            this.groupBox3.Controls.Add(this.tbxParkAz);
-            this.groupBox3.Location = new System.Drawing.Point(12, 262);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(162, 97);
-            this.groupBox3.TabIndex = 50;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Home and Park";
+            this.gbxHomeandPark.Controls.Add(this.lblHomePosTitle);
+            this.gbxHomeandPark.Controls.Add(this.btnSetHome);
+            this.gbxHomeandPark.Controls.Add(this.btnSetPark);
+            this.gbxHomeandPark.Controls.Add(this.lblParkPosTitle);
+            this.gbxHomeandPark.Controls.Add(this.tbxHomeAz);
+            this.gbxHomeandPark.Controls.Add(this.tbxParkAz);
+            resources.ApplyResources(this.gbxHomeandPark, "gbxHomeandPark");
+            this.gbxHomeandPark.Name = "gbxHomeandPark";
+            this.gbxHomeandPark.TabStop = false;
             // 
-            // label6
+            // lblHomePosTitle
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 16);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 40;
-            this.label6.Text = "Home";
+            resources.ApplyResources(this.lblHomePosTitle, "lblHomePosTitle");
+            this.lblHomePosTitle.Name = "lblHomePosTitle";
             // 
             // btnSetHome
             // 
-            this.btnSetHome.Location = new System.Drawing.Point(84, 30);
+            resources.ApplyResources(this.btnSetHome, "btnSetHome");
             this.btnSetHome.Name = "btnSetHome";
-            this.btnSetHome.Size = new System.Drawing.Size(65, 23);
-            this.btnSetHome.TabIndex = 39;
-            this.btnSetHome.Text = "Set";
             this.btnSetHome.UseVisualStyleBackColor = true;
             this.btnSetHome.Click += new System.EventHandler(this.btnSetHome_Click);
             // 
             // btnSetPark
             // 
-            this.btnSetPark.Location = new System.Drawing.Point(84, 69);
+            resources.ApplyResources(this.btnSetPark, "btnSetPark");
             this.btnSetPark.Name = "btnSetPark";
-            this.btnSetPark.Size = new System.Drawing.Size(65, 23);
-            this.btnSetPark.TabIndex = 42;
-            this.btnSetPark.Text = "Set";
             this.btnSetPark.UseVisualStyleBackColor = true;
             this.btnSetPark.Click += new System.EventHandler(this.btnSetPark_Click);
             // 
-            // label7
+            // lblParkPosTitle
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 55);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(29, 13);
-            this.label7.TabIndex = 43;
-            this.label7.Text = "Park";
+            resources.ApplyResources(this.lblParkPosTitle, "lblParkPosTitle");
+            this.lblParkPosTitle.Name = "lblParkPosTitle";
             // 
             // tbxHomeAz
             // 
-            this.tbxHomeAz.Location = new System.Drawing.Point(6, 32);
+            resources.ApplyResources(this.tbxHomeAz, "tbxHomeAz");
             this.tbxHomeAz.Name = "tbxHomeAz";
-            this.tbxHomeAz.Size = new System.Drawing.Size(72, 20);
-            this.tbxHomeAz.TabIndex = 41;
-            this.tbxHomeAz.Text = "0";
             // 
             // tbxParkAz
             // 
-            this.tbxParkAz.Location = new System.Drawing.Point(6, 71);
+            resources.ApplyResources(this.tbxParkAz, "tbxParkAz");
             this.tbxParkAz.Name = "tbxParkAz";
-            this.tbxParkAz.Size = new System.Drawing.Size(72, 20);
-            this.tbxParkAz.TabIndex = 44;
-            this.tbxParkAz.Text = "0";
             // 
             // timer1
             // 
@@ -591,47 +433,47 @@
             // 
             // RotatorSetup
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(456, 401);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.Movement);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnCancel);
+            this.ControlBox = false;
+            this.Controls.Add(this.gbxHomeandPark);
+            this.Controls.Add(this.gbxVoltages);
+            this.Controls.Add(this.gbxMovement);
+            this.Controls.Add(this.gbxMotorSettings);
+            this.Controls.Add(this.btnClose);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "RotatorSetup";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "RotatorSetup";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Load += new System.EventHandler(this.RotatorSetup_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.Movement.ResumeLayout(false);
-            this.Movement.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.gbxMotorSettings.ResumeLayout(false);
+            this.gbxMotorSettings.PerformLayout();
+            this.gbxMovement.ResumeLayout(false);
+            this.gbxMovement.PerformLayout();
+            this.gbxVoltages.ResumeLayout(false);
+            this.gbxVoltages.PerformLayout();
+            this.gbxHomeandPark.ResumeLayout(false);
+            this.gbxHomeandPark.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.GroupBox gbxMotorSettings;
         private System.Windows.Forms.CheckBox chkReversed;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblMaxSpeed;
         private System.Windows.Forms.Button btnMaxSpeed;
         private System.Windows.Forms.Button btnAcceleration;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblAcceleration;
         private System.Windows.Forms.TextBox tbxMaxSpeed;
         private System.Windows.Forms.TextBox tbxAcceleration;
         private System.Windows.Forms.TextBox tbxStepsPerRotation;
         private System.Windows.Forms.Button btnStepsPerRotation;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox Movement;
+        private System.Windows.Forms.Label lblStepsPer;
+        private System.Windows.Forms.GroupBox gbxMovement;
         private System.Windows.Forms.Button btnFullTurn;
-        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label lblSeekModeTitle;
         private System.Windows.Forms.Button btnSync;
         private System.Windows.Forms.Label lblSeekMode;
         private System.Windows.Forms.Button btnSTOP;
@@ -640,7 +482,7 @@
         private System.Windows.Forms.Button btnGoToAz;
         private System.Windows.Forms.Button btnRotateCCW;
         private System.Windows.Forms.Button btnRotateCW;
-        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label lblHomeStatusTitle;
         private System.Windows.Forms.Button btnGoToPos;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnPark;
@@ -649,21 +491,22 @@
         private System.Windows.Forms.TextBox tbxGotoAz;
         private System.Windows.Forms.TextBox tbxGotoPos;
         private System.Windows.Forms.Label lblAzimuth;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.GroupBox gbxVoltages;
+        private System.Windows.Forms.Label lblCutOffTitle;
+        private System.Windows.Forms.Label lblVoltageTitle;
+        private System.Windows.Forms.GroupBox gbxHomeandPark;
+        private System.Windows.Forms.Label lblHomePosTitle;
         private System.Windows.Forms.Button btnSetHome;
         private System.Windows.Forms.Button btnSetPark;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblParkPosTitle;
         private System.Windows.Forms.TextBox tbxHomeAz;
         private System.Windows.Forms.TextBox tbxParkAz;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Button btnSetCutoff;
-        private System.Windows.Forms.Label lblVoltage;
+        private System.Windows.Forms.Label lblVoltageBox;
         private System.Windows.Forms.TextBox tbxCutoff;
         private System.Windows.Forms.Label lblLowWarn;
+        private System.Windows.Forms.Label lblAtPark;
     }
 }

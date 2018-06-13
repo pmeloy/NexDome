@@ -33,6 +33,8 @@ using System.IO.Ports;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 
 using ASCOM;
 using ASCOM.Astrometry;
@@ -167,7 +169,8 @@ namespace ASCOM.PDM
 
         List<string> serialMessageList;
 
-        SerialPort serialPort;
+        SerialPort  serialPort = new SerialPort();
+
         string serialBuffer, serialString; // For holding serial data
         #endregion
 
@@ -177,6 +180,9 @@ namespace ASCOM.PDM
         /// </summary>
         public Dome()
         {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
+
             tl = new TraceLogger("", "PDM");
             ReadProfile(); // Read device configuration from the ASCOM Profile store
 
@@ -227,7 +233,6 @@ namespace ASCOM.PDM
                 {
                     connectedState = true;
                     LogMessage("Connected Set", "Connecting to port {0}", comPort);
-                    serialPort = new SerialPort();
                     serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialDataReceived);
                     serialPort.PortName = comPort;
                     serialPort.BaudRate = 9600;
@@ -373,7 +378,7 @@ namespace ASCOM.PDM
             {
                 string version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
                 // TODO customise this driver description
-                string driverInfo = "NexDome Driver. Version: " + version; // String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+                string driverInfo = GlobalStrings.DriverVersionText + " " + version; // String.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
                 return driverInfo;
             }
         }
@@ -486,7 +491,8 @@ namespace ASCOM.PDM
             {
                 message = serialMessageList.FirstOrDefault();
                 serialMessageList.RemoveAt(0);
-                if (message.Length == 0) return;
+                if (String.IsNullOrEmpty(message) == true) return;
+                if (message.Length < 2) return;
                 message.Trim();
 
                 command = message.Substring(0, 1);
@@ -567,17 +573,6 @@ namespace ASCOM.PDM
                                 if (rotatorStepsPer > 0)
                                 {
                                     azimuth = Math.Round(360.0 * (double)rotatorPosition / (double)rotatorStepsPer, 2);
-                                    if (rotatorSlewDirection == 0)
-                                    {
-                                        if (Math.Abs(azimuth - rotatorParkAz) < 0.1)
-                                        {
-                                            atPark = true;
-                                        }
-                                        else
-                                        {
-                                            atPark = false;
-                                        }
-                                    }
                                 }
 
                             }
@@ -681,9 +676,17 @@ namespace ASCOM.PDM
                         }
                         break;
                     case STATE_SHUTTER_GET:
+                        LogMessage("ShutterState Get", "Value ({0})", value);
                         if (int.TryParse(value,out localInt) == true)
                         {
                             domeShutterState = (ShutterState)localInt;
+                            tl.LogMessage("ShutterState Received",localInt.ToString());
+          
+                            if (localInt < 0 || localInt > 4) LogMessage("Shutter Get", "State invalud ({0})", localInt);
+                        }
+                        else
+                        {
+                            LogMessage("ShutterState Get", "Invalid ({0})", value);
                         }
                         break;
                     case STEPSPER_ROTATOR_CMD:
@@ -904,6 +907,20 @@ namespace ASCOM.PDM
             {
                 if (canPark == true)
                 {
+                    LogMessage("Rotator Get", "Slewing ({0})", rotatorSlewDirection);
+                    if (rotatorSlewDirection == 0)
+                    {
+                        double parkDiff = azimuth - rotatorParkAz;
+                        if (Math.Abs(parkDiff) < 0.1)
+                        {
+                            atPark = true;
+                        }
+                        else
+                        {
+                            atPark = false;
+                        }
+                    }
+
                     return atPark;
                 }
                 else
