@@ -180,8 +180,9 @@ namespace ASCOM.PDM
         /// </summary>
         public Dome()
         {
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
-            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
+            // For forcing locales so I can test different languages
+            //Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
+            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
 
             tl = new TraceLogger("", "PDM");
             ReadProfile(); // Read device configuration from the ASCOM Profile store
@@ -426,10 +427,8 @@ namespace ASCOM.PDM
             }
             catch (Exception ex)
             {
-
                 LogMessage("SendSerial()","Exception ", ex.GetType().FullName.ToString());
             }
-
         }
 
         private void SerialDataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -449,12 +448,10 @@ namespace ASCOM.PDM
             }
             catch (Exception ex)
             {
-
                 LogMessage("Serial Receive Exception", ex.ToString());
             }
         }
         #endregion
-
 
         #region "Timer and serial buffer processing"
 
@@ -491,8 +488,17 @@ namespace ASCOM.PDM
             {
                 message = serialMessageList.FirstOrDefault();
                 serialMessageList.RemoveAt(0);
-                if (String.IsNullOrEmpty(message) == true) return;
-                if (message.Length < 2) return;
+                if (String.IsNullOrEmpty(message) == true)
+                {
+                    LogMessage("Serial Receive", "Null Message");
+                    return;
+                }
+
+                if (message.Length < 2)
+                {
+                    LogMessage("Serial Receive", "Short message ({0})", message);
+                    return;
+                }
                 message.Trim();
 
                 command = message.Substring(0, 1);

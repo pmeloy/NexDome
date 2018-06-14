@@ -5,15 +5,15 @@
 [Setup]
 AppID=PDM NexDome Driver
 AppName=ASCOM PDM Dome Driver
-AppVerName=ASCOM PDM Dome Dome Driver 0.5.1.4
-AppVersion=0.5.1.4
+AppVerName=ASCOM PDM Dome Driver
+AppVersion=0.5.2.0
 AppPublisher=Patrick Meloy <pat.meloy@netbistro.com>
 AppPublisherURL=mailto:pat.meloy@netbistro.com
 AppSupportURL=http://tech.groups.yahoo.com/group/ASCOM-Talk/
 AppUpdatesURL=http://ascom-standards.org/
 VersionInfoVersion=1.0.0
 MinVersion=0,5.0.2195sp4
-DefaultDirName="{cf}\ASCOM\Dome"
+DefaultDirName="{cf}\ASCOM\Dome\PDM Dome"
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir="."
@@ -31,10 +31,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Dirs]
 Name: "{cf}\ASCOM\Uninstall\Dome\PDM Dome"
+Name: "{app}\Resources"
 ; TODO: Add subfolders below {app} as needed (e.g. Name: "{app}\MyFolder")
 
 [Files]
-Source: "D:\Programming\NexDomeGit\NexDome\PDMDome\PDMDome\bin\Release\ASCOM.PDM.Dome.dll"; DestDir: "{app}"
+Source: "D:\Programming\NexDomeGit\NexDome\PDMDome\PDMDome\bin\Debug\ASCOM.PDM.Dome.dll"; DestDir: "{app}"
 ; Require a read-me HTML to appear after installation, maybe driver's Help doc
 Source: "D:\Programming\NexDomeGit\NexDome\PDMDome\PDMDome\ReadMe.txt"; DestDir: "{app}"; Flags: isreadme
 ; TODO: Add other files needed by your driver here (add subfolders above)
