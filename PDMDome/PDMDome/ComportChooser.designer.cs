@@ -87,7 +87,7 @@ namespace ASCOM.PDM
             // chkTrace
             // 
             this.chkTrace.AutoSize = true;
-            this.chkTrace.Location = new System.Drawing.Point(75, 43);
+            this.chkTrace.Location = new System.Drawing.Point(96, 39);
             this.chkTrace.Name = "chkTrace";
             this.chkTrace.Size = new System.Drawing.Size(69, 17);
             this.chkTrace.TabIndex = 6;
