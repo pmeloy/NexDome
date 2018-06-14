@@ -28,9 +28,6 @@
 #define __inline__
 #define __volatile__
 #define GCC_VERSION 40902
-
-#define __cplusplus 201103L
-#undef __cplusplus
 #define __cplusplus 201103L
 
 #define volatile(va_arg) 

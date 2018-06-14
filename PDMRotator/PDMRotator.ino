@@ -35,11 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-<<<<<<< HEAD
-const String VERSION = "0.5.0.5";
-=======
 const String VERSION = "0.5.2.0";
->>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 
 #define Computer Serial
 String computerBuffer;
@@ -110,13 +106,8 @@ const char HOMEAZ_ROTATOR_CMD			= 'i'; // Get/Set home position
 const char HOMESTATUS_ROTATOR_GET		= 'z'; // Get homed status
 const char MOVE_RELATIVE_ROTATOR_CMD	= 'b'; // Move relative - steps from current position +/-
 const char PARKAZ_ROTATOR_CMD			= 'l'; // Get/Set park azimuth
-<<<<<<< HEAD
-const char POSITION_ROTATOR_GET			= 'p'; // Get/Set step position
-const char RAIN_ROTATOR_CMD				= 'f'; // Get rain sensor state /Set rain check interval
-=======
 const char POSITION_ROTATOR_CMD			= 'p'; // Get/Set step position
 const char RAIN_ROTATOR_CMD				= 'f'; // Get or Set Rain Check Interval
->>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status 
 const char SEEKSTATE_GET				= 'd'; // None, homing, calibration steps.
 const char SLEW_ROTATOR_GET				= 'm'; // Get Slewing status/direction
@@ -320,7 +311,7 @@ void ProcessSerialCommand()
 		break;
 	case CALIBRATE_ROTATOR_CMD:
 		Rotator.StartCalibrating();
-		serialMessage = String(CALIBRATE_ROTATOR_CMD) + "Starting";
+		serialMessage = String(CALIBRATE_ROTATOR_CMD);
 		break;
 	case ERROR_AZ_ROTATOR_GET:
 		// todo: See if azimuth error is needed (when passing home switch check to see if the
@@ -360,11 +351,7 @@ void ProcessSerialCommand()
 		if (hasValue == true)
 		{
 			localLong = value.toInt();
-<<<<<<< HEAD
-			if (localLong > 0) Rotator.moveRelative(localLong);
-=======
 			Rotator.MoveRelative(localLong);
->>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 		}
 		serialMessage = String(MOVE_RELATIVE_ROTATOR_CMD);
 		break;
@@ -385,8 +372,22 @@ void ProcessSerialCommand()
 		}
 		if (serialMessage.length() == 0) serialMessage = localString + String(Rotator.GetParkAzimuth());
 		break;
-	case POSITION_ROTATOR_GET:
-		serialMessage = String(POSITION_ROTATOR_GET) + String(Rotator.GetPosition());
+	case POSITION_ROTATOR_CMD:
+		if (value.length() > 0)
+		{
+			if (Rotator.GetVoltsAreLow() == false) 
+			{
+				Rotator.SetPosition(value.toInt());
+			}
+			else
+			{
+				serialMessage = String(POSITION_ROTATOR_CMD) + "L";
+			}
+		}
+		else
+		{
+			serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
+		}
 		break;
 	case RAIN_ROTATOR_CMD:
 		if (hasValue == true)
