@@ -35,7 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-const String VERSION = "0.5.1.4";
+const String VERSION = "0.5.2.0";
 
 #define Computer Serial
 String computerBuffer;
