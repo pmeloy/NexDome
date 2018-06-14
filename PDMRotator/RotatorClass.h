@@ -28,13 +28,13 @@
 
 
 //#define DEBUG
-#ifdef DEBUG
-#define DBPrint(x) Serial.print(x)
-#define DBPrintln(x) Serial.println(x)
-#else
-#define DBPrint(x)
-#define DBPrintln(x)
-#endif // DEBUG
+//#ifdef DEBUG
+//#define DBPrint(x) Serial.print(x)
+//#define DebugPrint(x) Serial.println(x)
+//#else
+//#define DBPrint(x)
+//#define DebugPrint(x)
+//#endif // DEBUG
 
 const int NEVER_HOMED = -1;
 const int HOMED = 0;
@@ -66,6 +66,9 @@ public:
 	RotatorClass();
 	int			rainCheckInterval; // in seconds, function  multiplies by 1000
 
+	// Debugging
+	byte		debugEnabled = 0;
+	void		DebugPrint(String);
 	// Getters
 	bool		GetRainStatus();
 	int			GetVolts();
@@ -83,11 +86,10 @@ public:
 	int			GetHomeStatus();
 
 	float		GetParkAzimuth();
-	long		azimuthToPosition(float);
+	long		GetAzimuthToPosition(float);
 
 	// Setters
 	void		SetLowVoltageCutoff(int);
-	void		SetSeekMode(int);
 	void		SetPosition(long);
 	void		SetMaxSpeed(long);
 	void		SetAcceleration(long);
@@ -99,17 +101,17 @@ public:
 	void		SetHomeAzimuth(float);
 
 	// Movers
-	void		moveRelative(long steps);
-	void		stop();
-	void		run();
+	void		MoveRelative(long steps);
+	void		Stop();
+	void		Run();
 
 
 	// Homing and Calibration
-	void		startHoming();
+	void		StartHoming();
 	void		StartCalibrating();
-	void		doCalibrate();
-	void		syncPosition(float);
-	void		syncHome(float);
+	void		Calibrate();
+	void		SyncPosition(float);
+	void		SyncHome(float);
 
 
 private:
@@ -127,7 +129,11 @@ private:
 		int			rainCheckInterval;
 	} RotatorConfig;
 
+<<<<<<< HEAD
 	const int	_signature = 8053;
+=======
+	const int	_signature = 8055;
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 	const int	_eepromLocation = 10;
 	const long	_STEPSFORROTATION = 55100;
 
@@ -154,12 +160,12 @@ private:
 	bool		_isAtHome;
 	bool		_hasBeenHomed;
 	enum Seeks	_seekMode;
-	bool		_doSync, _doStepsPerRotation;
+	bool		_SetToHomeAzimuth, _doStepsPerRotation;
 	bool		_reversed;
 	long		_stepsToStop;
 	long		_stepsPerRotation;
 	float		_stepsPerDegree;
-	unsigned long	_moveOffDelay;
+	unsigned long	_moveOffUntil;
 	
 
 	// movement
@@ -184,9 +190,8 @@ private:
 
 	void		enableMotor(bool);
 	float		GetAngularDistance(float fromAngle, float toAngle);
-	void		homeHit();
-};
 
+};
 
 RotatorClass::RotatorClass()
 {
@@ -310,20 +315,27 @@ void RotatorClass::ButtonCheck()
 	if (digitalRead(BUTTON_CW) == PRESSED && whichButtonPressed == 0)
 	{
 		whichButtonPressed = BUTTON_CW;
-		moveRelative(_stepsPerRotation);
+		MoveRelative(_stepsPerRotation);
 		lastButtonPressed = BUTTON_CW;
 	}
 	else if (digitalRead(BUTTON_CCW) == PRESSED && whichButtonPressed == 0)
 	{
 		whichButtonPressed = BUTTON_CCW;
-		moveRelative(1 - _stepsPerRotation);
+		MoveRelative(1 - _stepsPerRotation);
 		lastButtonPressed = BUTTON_CCW;
 	}
 
 	if (digitalRead(whichButtonPressed) == !PRESSED && lastButtonPressed > 0)
 	{
-		stop();
+		Stop();
 		lastButtonPressed = whichButtonPressed = 0;
+	}
+}
+inline void RotatorClass::DebugPrint(String msg)
+{
+	if (debugEnabled == 1)
+	{
+		Serial.print("%" + msg + "#");
 	}
 }
 bool RotatorClass::GetRainStatus()
@@ -343,7 +355,7 @@ long RotatorClass::GetMaxSpeed()
 }
 void RotatorClass::SetMaxSpeed(long newSpeed)
 {
-	DBPrintln("Set max speed to " + String(newSpeed));
+	DebugPrint("Rotator set max speed to " + String(newSpeed));
 	_maxSpeed = newSpeed;
 	stepper.setMaxSpeed(newSpeed);
 	SaveToEEProm();
@@ -354,7 +366,7 @@ long RotatorClass::GetAcceleration()
 }
 void RotatorClass::SetAcceleration(long newAccel)
 {
-	DBPrintln("Set acceleration to " + String(newAccel));
+	DebugPrint("Rotator set acceleration to " + String(newAccel));
 	_acceleration = newAccel;
 	stepper.setAcceleration(newAccel);
 	SaveToEEProm();
@@ -387,75 +399,56 @@ inline void RotatorClass::SetRainInterval(uint16_t interval)
 #pragma endregion
 
 #pragma region "Homing and Calibrating"
-void RotatorClass::startHoming()
+void RotatorClass::StartHoming()
 {
 	float diff;
 	long distance;
-	DBPrintln("Starting homing");
-	String msg;
+
+	if (_isAtHome == true) return;
 	diff = GetAngularDistance(GetAzimuth(), GetHomeAzimuth());
 	_moveDirection = MOVE_POSITIVE;
 	if (diff < 0) _moveDirection = MOVE_NEGATIVE;
 	distance = (_stepsPerRotation  * _moveDirection * 1.5);
 	_seekMode = HOMING_HOME;
-	moveRelative(distance);
+	MoveRelative(distance);
 }
 void RotatorClass::StartCalibrating()
 {
-	float diff;
-	long distance;
-
 	if (_isAtHome == false) return;
-	DBPrintln("Must be at home");
-	String msg;
-	diff = GetAngularDistance(GetAzimuth(), GetHomeAzimuth());
-	_moveDirection = MOVE_POSITIVE;
-	if (diff < 0) _moveDirection = MOVE_NEGATIVE;
 	_seekMode = CALIBRATION_MOVEOFF;
 	stepper.setCurrentPosition(0);
-	distance = (_stepsPerRotation  * _moveDirection * 1.5);
-	_moveOffDelay = millis() + 5000;
+	_moveOffUntil = millis() + 5000;
+	DebugPrint("Rotator move off from " + String(millis()) + " to " + String(_moveOffUntil));
 	_doStepsPerRotation = false;
-	moveRelative(distance);
-	DBPrintln("Calibration start, moving " + String(distance) + " " + String(_seekMode) + " Delay " + String((_moveOffDelay - millis())));
+	MoveRelative(_stepsPerRotation  * 1.5);
 }
-void RotatorClass::doCalibrate()
+void RotatorClass::Calibrate()
 {
 	static long stopDelay, homePositionEnd, currentPosition;
-	static bool lastSwitchState;
 
 	if (_seekMode > HOMING_HOME)
 	{
 		switch (_seekMode)
 		{
 		case(CALIBRATION_MOVEOFF):
-			if (millis() >= _moveOffDelay)
+			if (millis() >= _moveOffUntil)
 			{
-				DBPrintln("millis()= " + String(millis() + " > " + String(_moveOffDelay)));
+				DebugPrint("Rotator move off complete");
 				_seekMode = CALIBRATION_MEASURE;
-				lastSwitchState = false;
 			}
 			break;
 		case(CALIBRATION_MEASURE):
 			if (_isAtHome == true)
 			{
+				stepper.stop();
 				_seekMode = HOMING_NONE;
-				lastSwitchState = false;
-				homeHit();
+				_hasBeenHomed = true;
+				_SetToHomeAzimuth = true;
 				_doStepsPerRotation = true; // Once stopped, set SPR to stepper position and save to eeprom.
 			}
-			else
-				break;
+			break;
 		}
 	}
-}
-void RotatorClass::homeHit()
-{
-	stepper.stop();
-	_seekMode = HOMING_NONE;
-	_hasBeenHomed = true;
-	_doSync = true;
-	stop();
 }
 void RotatorClass::SetHomeAzimuth(float newHome)
 {
@@ -466,7 +459,7 @@ float RotatorClass::GetHomeAzimuth()
 {
 	return _homeAzimuth;
 }
-void RotatorClass::syncHome(float newAzimuth)
+void RotatorClass::SyncHome(float newAzimuth)
 {
 	float delta, currentAzimuth;
 
@@ -498,25 +491,21 @@ int	RotatorClass::GetSeekMode()
 {
 	return _seekMode;
 }
-void RotatorClass::SetSeekMode(int mode)
-{
-	_seekMode = (Seeks)mode;
-}
 #pragma endregion
 
 #pragma region "Positioning"
-long RotatorClass::azimuthToPosition(float azimuth)
+long RotatorClass::GetAzimuthToPosition(float azimuth)
 {
 	long newPosition;
 
 	newPosition = (float)_stepsPerRotation / (float)360 * azimuth;
 	return newPosition;
 }
-void RotatorClass::syncPosition(float newAzimuth)
+void RotatorClass::SyncPosition(float newAzimuth)
 {
 	long newPosition;
 
-	newPosition = azimuthToPosition(newAzimuth);
+	newPosition = GetAzimuthToPosition(newAzimuth);
 	stepper.setCurrentPosition(newPosition);
 	SaveToEEProm();
 }
@@ -526,10 +515,10 @@ long RotatorClass::GetPosition()
 	/// last sync position
 	long position;
 	position = stepper.currentPosition();
-	if (_seekMode < CALIBRATION_MOVEOFF)
+	if (_seekMode < CALIBRATION_MOVEOFF) 
 	{
-		if (position > _stepsPerRotation) position -= _stepsPerRotation;
-		if (position < 0) position += _stepsPerRotation;
+		while (position >= _stepsPerRotation) position -= _stepsPerRotation;
+		while (position < 0) position += _stepsPerRotation;
 	}
 	return position;
 }
@@ -553,7 +542,7 @@ void RotatorClass::SetPosition(long newPosition)
 	stepper.moveTo(newPosition);
 	return;
 }
-void RotatorClass::moveRelative(long howFar)
+void RotatorClass::MoveRelative(long howFar)
 {
 	// Use by Home and Calibrate
 	// Tells dome to rotate more than 360 degrees
@@ -597,7 +586,7 @@ void RotatorClass::SetAzimuth(float newHeading)
 	float newdelta;
 	currentHeading = GetAzimuth();
 	delta = GetAngularDistance(currentHeading, newHeading) * _stepsPerDegree;
-	moveRelative(delta);
+	MoveRelative(delta);
 }
 float RotatorClass::GetAzimuth()
 {
@@ -622,53 +611,86 @@ float RotatorClass::GetAzimuth()
 #pragma endregion
 
 #pragma region "Movement"
-void RotatorClass::run()
+void RotatorClass::Run()
 {
 	static bool wasRunning = false;
 	static long nextPeriodicReading;
 	long stepsFromZero;
 	int nextCheck;
 
-	wasRunning = stepper.run();
 	if (millis() > nextCheck)
 	{
 		nextCheck += 10;
 		ButtonCheck();
-
-		if (digitalRead(HOME_PIN) == 0)
-		{
-			if (_seekMode == HOMING_HOME)
-			{
-				homeHit();
-				_seekMode == HOMING_NONE;
-			}
-		}
 	}
+<<<<<<< HEAD
 
 	_isAtHome = false;
 	if (digitalRead(HOME_PIN) == 0) _isAtHome = true;
 
 	if (GetSeekMode() != 0) doCalibrate();
-
-
+=======
 	if (nextPeriodicReading < millis())
 	{
-		_volts = GetVolts();
+		_volts = ReadVolts();
 		nextPeriodicReading = millis() + 10000;
 	}
+	
+	_isAtHome = false; // default to not at home switch
 
-	if (stepper.run() == true) return;
+	if (_seekMode > HOMING_HOME) Calibrate();
+
+	if (digitalRead(HOME_PIN) == 0) DebugPrint("Rotator hit home switch");
+
+	if (stepper.run() == true)
+	{
+
+		wasRunning = true;
+		if (_seekMode == HOMING_HOME && digitalRead(HOME_PIN) == 0) // We're looking for home and found it
+		{
+			Stop();
+			_SetToHomeAzimuth = true; // Need to set current az to homeaz but not until rotator is stopped;
+			_seekMode = HOMING_NONE;
+			_hasBeenHomed = true;
+		}
+		return;
+	}
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
+
+	if (stepper.isRunning()) return;
+
+	// Won't get here if stepper is moving
+	if (digitalRead(HOME_PIN) == 0 ) // Not moving but we're at home
+	{
+<<<<<<< HEAD
+		_volts = GetVolts();
+		nextPeriodicReading = millis() + 10000;
+=======
+		_isAtHome = true;
+		if (_hasBeenHomed == false) // Just started up rotator so tell rotator its at home.
+		{
+			SyncPosition(_homeAzimuth); // Set the Azimuth to the home position
+			_hasBeenHomed = true; // We've been homed
+		}
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
+	}
 
 	if (wasRunning == true)
 	{
-		DBPrintln("Stopped!");
+		DebugPrint("Rotator stopped!");
 		_moveDirection = MOVE_NONE;
+<<<<<<< HEAD
 		_seekMode = HOMING_NONE;
+=======
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 
 		if (_doStepsPerRotation == true)
 		{
 			_stepsPerRotation = stepper.currentPosition();
+			SyncHome(_homeAzimuth);
 			SaveToEEProm();
+			_doStepsPerRotation = false;
+			Serial.print("t" + String(_stepsPerRotation) +"#");
 		}
 
 		stepsFromZero = GetPosition();
@@ -682,17 +704,22 @@ void RotatorClass::run()
 			while (stepsFromZero > _stepsPerRotation) stepsFromZero -= _stepsPerRotation;
 			stepper.setCurrentPosition(stepsFromZero);
 		}
-		if (_doSync == true)
+		if (_SetToHomeAzimuth == true)
 		{
+<<<<<<< HEAD
 			syncPosition(_homeAzimuth);
 			SaveToEEProm();
 			_doSync = false;
+=======
+			SyncPosition(_homeAzimuth);
+			_SetToHomeAzimuth = false;
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 		}
 		enableMotor(false);
 		wasRunning = false;
 	}
 }
-void RotatorClass::stop()
+void RotatorClass::Stop()
 {
 	// It takes approximately RunSpeed/3.95 steps to stop
 	// Use this to calculate a full step stopping position

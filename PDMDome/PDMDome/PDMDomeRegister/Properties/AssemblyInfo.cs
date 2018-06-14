@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PDM NexDome Driver")]
-[assembly: AssemblyDescription("PDMSoft")]
+[assembly: AssemblyTitle("PDM Test Application")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ASCOM Initiative")]
-[assembly: AssemblyProduct("PDome")]
+[assembly: AssemblyProduct("PDM")]
 [assembly: AssemblyCopyright("Copyright © ASCOM Initiative 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("6.2.0.0")]
-[assembly: AssemblyFileVersion("0.5.1.3")]
+[assembly: AssemblyFileVersion("6.2.0.0")]

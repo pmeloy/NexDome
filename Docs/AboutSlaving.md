@@ -6,7 +6,7 @@ Drivers have no awareness of other devices or even the application and cannot in
 
 An application example would be POTH Scope-Dome hub or Sequence Generator Pro. The application will be aware of all the hardware you set up inside and can command the devices or ask them for information.
 
-When a scope and dome are slaved together neither the scope nor the dome know anything about that it, slaving is entirely handled inside the application. In reality it is the application asking the scope where it is pointing then performing calculations to figure out where the dome should be pointing and commanding the dome to point there. Being slaved or not makes no difference to how the scope or dome operate.
+When a scope and dome are slaved together neither the scope nor the dome know anything about one another, slaving is entirely handled inside the client application. In reality it is the application asking the scope where it is pointing then performing calculations to figure out where the dome should be pointing and commanding the dome to point there. The drivers themselves have no idea what slaving is or whether or not it's active.
 
 This works well as long as the application is commanding the scope to move because then the application knows where the scope is (or will be) pointing at all times. If you use the scope hand controller to move the telescope it's a different story!
 

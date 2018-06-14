@@ -8,8 +8,8 @@
     <ProjectGuid>{D5207217-61C7-4E94-8097-91DBACE57D2A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ASCOM.PDMDome</RootNamespace>
-    <AssemblyName>ASCOM.PDMDome.Test</AssemblyName>
+    <RootNamespace>ASCOM.PDM</RootNamespace>
+    <AssemblyName>ASCOM.PDM.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

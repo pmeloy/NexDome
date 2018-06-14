@@ -35,7 +35,11 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
+<<<<<<< HEAD
 const String VERSION = "0.5.0.5";
+=======
+const String VERSION = "0.5.2.0";
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 
 #define Computer Serial
 String computerBuffer;
@@ -51,7 +55,11 @@ String wirelessBuffer;
 // serial may not be ready so debugging prints won't show. Also used
 // to make sure the XBee has started and configured itself before
 // trying to send any wireless messages.
-bool XBeeStarted = false;
+
+bool XBeeStarted = false, sentHello = false, isConfiguringWireless = false;
+int configStep;
+int sleepMode = 0, sleepPeriod = 300, sleepDelay = 30000;
+String ATString="";
 
 // Once booting is done and XBee is ready, broadcast a hello message
 // so a shutter knows you're around if it is already running. If not,
@@ -90,7 +98,7 @@ bool currentRainStatus = false;
 // meanings. Plus this lets me change the letters without changing code. Have
 // to make the same changes in the shutter and ASCOM but cut & paste makes that easy.
 */
-const String DEBUGStart = ""; // Come up with a good character to use after alphabetizing
+const String DEBUG_STATE_CMD			= "%"; // Get/Set debugging messages 0=off
 const String WIRELESS_DEBUG_COMMENT		= "B"; // Handy debug messages sent to Shutter which can serial print. Used directly, not in case statements
 const char ACCELERATION_ROTATOR_CMD		= 'e'; // Get/Set stepper acceleration
 const char ABORT_MOVE_CMD				= 'a'; // Tell everything to STOP!
@@ -102,8 +110,13 @@ const char HOMEAZ_ROTATOR_CMD			= 'i'; // Get/Set home position
 const char HOMESTATUS_ROTATOR_GET		= 'z'; // Get homed status
 const char MOVE_RELATIVE_ROTATOR_CMD	= 'b'; // Move relative - steps from current position +/-
 const char PARKAZ_ROTATOR_CMD			= 'l'; // Get/Set park azimuth
+<<<<<<< HEAD
 const char POSITION_ROTATOR_GET			= 'p'; // Get/Set step position
 const char RAIN_ROTATOR_CMD				= 'f'; // Get rain sensor state /Set rain check interval
+=======
+const char POSITION_ROTATOR_CMD			= 'p'; // Get/Set step position
+const char RAIN_ROTATOR_CMD				= 'f'; // Get or Set Rain Check Interval
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status 
 const char SEEKSTATE_GET				= 'd'; // None, homing, calibration steps.
 const char SLEW_ROTATOR_GET				= 'm'; // Get Slewing status/direction
@@ -122,7 +135,7 @@ const char HOMESTATUS_SHUTTER_GET		= 'Z'; // Get homed status (has it been close
 const char INACTIVE_SHUTTER_CMD			= 'X'; // Get/Set how long before shutter closes
 const char OPEN_SHUTTER_CMD				= 'O'; // Open the shutter
 const char POSITION_SHUTTER_GET			= 'P'; // Get step position
-const char RAIN_SHUTTER_GET				= 'F'; // Tell shutter if it'raining or not
+const char RAIN_SHUTTER_GET				= 'F'; // Get rain status (from client) or tell shutter it's raining (from Rotator)
 const char SPEED_SHUTTER_CMD			= 'R'; // Get/Set step rate (speed)
 const char REVERSED_SHUTTER_CMD			= 'Y'; // Get/Set stepper reversed status
 const char SLEEP_SHUTTER_CMD			= 'S'; // Get/Set radio sleep settings
@@ -145,13 +158,20 @@ void setup()
 {
 	Computer.begin(9600);
 	Wireless.begin(9600);
-	delay(2000);
+	delay(10000);
+
+
 }
 void loop()
 {
-	Rotator.run();
 
-	XBeeStartup();
+	if (XBeeStarted == false)
+	{
+		StartConfiguringWireless();
+		isConfiguringWireless = true;
+		XBeeStarted = true;
+	}
+	Rotator.Run();
 
 	CheckForCommands();
 
@@ -162,29 +182,47 @@ void loop()
 #pragma region Periodic and Helper functions
 
 //<SUMMARY>Start configuration routine then send Hello broadcast</SUMMARY>
-void XBeeStartup()
+void StartConfiguringWireless()
 {
-	if (XBeeStarted == false)
-	{
-		DBPrintln("Rain interval is " + String(Rotator.rainCheckInterval));
-		ConfigXBee();
-		XBeeStarted = true;
-	}
-	if (SentHello == false && XBeeStarted == true)	SendHello();
+	delay(1000);
+	Rotator.DebugPrint("Rotator sending +++");
+	isConfiguringWireless = true;
+	Wireless.print("+++");
+	delay(1000);
 }
 
-void ConfigXBee()
+void ConfigXBee(String result)
 {
-	delay(1000); // Guard time
-	Wireless.println("+++");
-	delay(1000); // Guard time
-	Wireless.println("ATCE0AP0SM0PL0CN");
+	if (configStep == 0)
+	{
+		ATString = "ATCE0,ID7734,AP0";
+		ATString += ",SM" + String(sleepMode, HEX);
+		ATString += ",SP" + String(sleepPeriod, HEX);
+		ATString += ",ST" + String(sleepDelay, HEX);
+		ATString += ",CN";
+		ATString.toUpperCase();
+		Rotator.DebugPrint("Rotator AT String " + ATString);
+		Wireless.println(ATString);
+	}
+	configStep++;
+
+	if (configStep < 8)
+	{
+		Rotator.DebugPrint("Rotator arg " + String(configStep) + ": " + result);
+	}
+	else
+	{
+		Rotator.DebugPrint("Rotator wireless Configured");
+		isConfiguringWireless = false;
+		configStep = 0;
+		SendHello();
+	}
 }
 
 // <SUMMARY>Broadcast that you exist</SUMMARY>
 void SendHello()
 {
-	DBPrintln("Sending Hello");
+	Rotator.DebugPrint("Rotator sending Hello");
 	Wireless.print(String(HELLO_CMD) + "#");
 	SentHello = true;
 }
@@ -202,7 +240,6 @@ void CheckForCommands()
 	}
 }
 
-
 //<SUMMARY>Tells shutter the rain sensor status</SUMMARY>
 void CheckForRain()
 {
@@ -211,9 +248,8 @@ void CheckForRain()
 	if (millis() > nextRainCheck)
 	{
 		currentRainStatus = Rotator.GetRainStatus();
-		String rainMessage = "It is " + String((currentRainStatus == true) ? "raining" : "not raining");
-		DBPrintln(rainMessage);
-		//Wireless.print(String(RAIN_SHUTTER_CMD) + String(currentRainStatus) + "#");
+		String rainMessage = "Rotator says " + String((currentRainStatus == true) ? "raining" : "not raining");
+		Rotator.DebugPrint(rainMessage);
 		nextRainCheck = millis() + (Rotator.rainCheckInterval * 1000);
 	}
 }
@@ -276,7 +312,7 @@ void ProcessSerialCommand()
 		localString = String(ABORT_MOVE_CMD);
 		serialMessage = localString;
 		wirelessMessage = localString;
-		Rotator.stop();
+		Rotator.Stop();
 		break;
 	case ACCELERATION_ROTATOR_CMD:
 		if (hasValue == true) Rotator.SetAcceleration(value.toInt());
@@ -306,7 +342,7 @@ void ProcessSerialCommand()
 		SendHello();
 		break;
 	case HOME_ROTATOR_CMD:
-		Rotator.startHoming();
+		Rotator.StartHoming();
 		serialMessage = String(HOME_ROTATOR_CMD);
 		break;
 	case HOMEAZ_ROTATOR_CMD:
@@ -324,7 +360,11 @@ void ProcessSerialCommand()
 		if (hasValue == true)
 		{
 			localLong = value.toInt();
+<<<<<<< HEAD
 			if (localLong > 0) Rotator.moveRelative(localLong);
+=======
+			Rotator.MoveRelative(localLong);
+>>>>>>> 493e7247a44baf44410c2b9574f0c232ae8c38fe
 		}
 		serialMessage = String(MOVE_RELATIVE_ROTATOR_CMD);
 		break;
@@ -348,11 +388,11 @@ void ProcessSerialCommand()
 	case POSITION_ROTATOR_GET:
 		serialMessage = String(POSITION_ROTATOR_GET) + String(Rotator.GetPosition());
 		break;
-	case RAIN_ROTATOR_CMD: // TODO: Have Shutter ask for rain status
+	case RAIN_ROTATOR_CMD:
 		if (hasValue == true)
 		{
 			localInt = value.toInt();
-			DBPrintln("Set rain timer to " + String(localInt));
+			Rotator.DebugPrint("Rotator set rain timer to " + String(localInt));
 			if (localInt < 0) localInt = 0;
 			Rotator.rainCheckInterval = localInt;
 		}
@@ -381,8 +421,8 @@ void ProcessSerialCommand()
 		serialMessage = String(SYNC_ROTATOR_CMD);
 		if (localFloat >= 0 && localFloat < 360)
 		{
-			Rotator.syncHome(localFloat);
-			Rotator.syncPosition(localFloat);
+			Rotator.SyncHome(localFloat);
+			Rotator.SyncPosition(localFloat);
 		}
 		else
 		{
@@ -397,7 +437,7 @@ void ProcessSerialCommand()
 		// value only needs infrequent updating. 
 		if (hasValue == true)
 		{
-			DBPrintln("Rotator LVC " + value);
+			Rotator.DebugPrint("Rotator cutoff " + value);
 			Rotator.SetLowVoltageCutoff(value.toInt());
 		}
 		serialMessage = String(VOLTS_ROTATOR_CMD) + String(Rotator.GetVoltString());
@@ -443,8 +483,7 @@ void ProcessSerialCommand()
 			serialMessage = String(POSITION_SHUTTER_GET) + String(RemoteShutter.position);
 			break;
 	case RAIN_SHUTTER_GET:
-		wirelessMessage = String(RAIN_SHUTTER_GET) + String((Rotator.GetRainStatus() == true) ? "1" : "0");
-		DBPrintln("Rain message");
+		serialMessage = String(RAIN_SHUTTER_GET) + String((currentRainStatus == true) ? "1" : "0");
 		break;
 	case REVERSED_SHUTTER_CMD:
 		localString = String(REVERSED_SHUTTER_CMD);
@@ -474,6 +513,7 @@ void ProcessSerialCommand()
 		serialMessage = localString + RemoteShutter.speed;
 		break;
 	case STATE_SHUTTER_GET:
+		Rotator.DebugPrint("Asked for shutter state");
 		serialMessage = String(STATE_SHUTTER_GET) + RemoteShutter.state;
 		break;
 	case STEPSPER_SHUTTER_CMD:
@@ -498,6 +538,7 @@ void ProcessSerialCommand()
 #pragma endregion
 
 	default:
+		serialMessage = "Unknown command:" + command;
 		break;
 	}
 
@@ -523,10 +564,16 @@ void ReceiveWireless()
 
 	if (wirelessCharacter == '\r' || wirelessCharacter == '\n' || wirelessCharacter == '#')
 	{
-		if (wirelessBuffer.equals("OK") == true) DBPrintln("OK received");
 		if (wirelessBuffer.length() > 0)
 		{
-			ProcessWireless();
+			if (isConfiguringWireless == true)
+			{
+				ConfigXBee(wirelessBuffer);
+			}
+			else
+			{
+				ProcessWireless();
+			}
 			wirelessBuffer = "";
 		}
 	}
@@ -551,17 +598,18 @@ void ProcessWireless()
 	{
 	case ACCELERATION_SHUTTER_CMD:
 		RemoteShutter.acceleration = value;
-		DBPrintln("Got acceleration " + value);
+		Rotator.DebugPrint("Rotator got acceleration from shutter" + value);
 		break;
 	case CALIBRATE_SHUTTER_CMD:
 		break;
 	case ELEVATION_SHUTTER_CMD:
-		DBPrintln("Got Elevation " + value);
+		Rotator.DebugPrint("Rotator got Elevation from shutter" + value);
 		RemoteShutter.elevation = value;
 		break;
 		// Shutter said hello, ask for all the basically static information
 		// Shutter sends the rest periodically without us asking.
 	case HELLO_CMD:
+		Rotator.DebugPrint("Rotator received Hello, asking for settings");
 		Wireless.print(String(ACCELERATION_SHUTTER_CMD) + "#");
 		Wireless.print(String(ELEVATION_SHUTTER_CMD) + "#");
 		Wireless.print(String(POSITION_SHUTTER_GET) + "#");
@@ -576,43 +624,50 @@ void ProcessWireless()
 	//case HOMESTATUS_SHUTTER_GET:
 	//	RemoteShutter.homedStatus = value;
 	//	break;
+	case OPEN_SHUTTER_CMD:
+		// return error for rain or voltage
+		break;
 	case POSITION_SHUTTER_GET:
-		DBPrintln("Got Position " + value);
+		Rotator.DebugPrint("Shutter position " + value);
 		RemoteShutter.position = value;
 		break;
 	case SPEED_SHUTTER_CMD:
-		DBPrintln("Got Speed " + value);
+		Rotator.DebugPrint("Shutter speed " + value);
 		RemoteShutter.speed = value;
 		break;
 	case RAIN_SHUTTER_GET:
 		wirelessMessage = String(RAIN_SHUTTER_GET) + String((Rotator.GetRainStatus() == true) ? "1" : "0");
-		DBPrintln("Rain message " + wirelessMessage);
+		Rotator.DebugPrint("Shutter rain status " + wirelessMessage);
 		break;
 	case REVERSED_SHUTTER_CMD:
-		DBPrintln("Got Reversed " + value);
+		Rotator.DebugPrint("Shutter reversed " + value);
 		RemoteShutter.reversed = value;
 		break;
 	case SLEEP_SHUTTER_CMD: // Sleep settings mode,period,delay
-		DBPrintln("Got Sleep " + value);
+		Rotator.DebugPrint("Shutter sleep setting" + value);
 		RemoteShutter.sleepSettings = value;
 		break;
 	case STATE_SHUTTER_GET: // Dome status
-		DBPrintln("Got Shutter State " + value);
+		Rotator.DebugPrint("Shutter state " + value);
 		RemoteShutter.state = value;
 		break;
 	case STEPSPER_SHUTTER_CMD:
-		DBPrintln("Got StepsPer " + value);
+		Rotator.DebugPrint("Shutter stepsPer " + value);
 		RemoteShutter.stepsPerStroke = value;
 		break;
 	case VERSION_SHUTTER_GET:
-		DBPrintln("Got Version " + value);
+		Rotator.DebugPrint("Shutter version " + value);
 		RemoteShutter.version = value;
 		break;
 	case VOLTS_SHUTTER_CMD: // Sending battery voltage and cutoff
-		DBPrintln("Got Volts " + value);
+		Rotator.DebugPrint("Shutter volts " + value);
 		RemoteShutter.volts = value;
 		break;
+	default:
+		Rotator.DebugPrint("Unknown command " + value);
+		break;
 	}
+
 	if (wirelessMessage.length() > 0)
 	{
 		Wireless.print(wirelessMessage + "#");

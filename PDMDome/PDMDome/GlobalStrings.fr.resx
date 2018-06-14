@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CancelText" xml:space="preserve">
+    <value>Annuler</value>
+    <comment>Cancel Button</comment>
+  </data>
+  <data name="CanFindHomeText" xml:space="preserve">
+    <value>Localisation du point initial</value>
+    <comment>Dome can find home checkbox</comment>
+  </data>
+  <data name="CanParkText" xml:space="preserve">
+    <value>Stationnement</value>
+    <comment>Dome can park</comment>
+  </data>
+  <data name="CanSetAltitudeText" xml:space="preserve">
+    <value>Réglage de l'altitude</value>
+    <comment>Shutter can set altitude</comment>
+  </data>
+  <data name="CanSetAzimuthText" xml:space="preserve">
+    <value>Réglage de l'azimut</value>
+    <comment>Shutter can set azimuth</comment>
+  </data>
+  <data name="CanSetParkText" xml:space="preserve">
+    <value>Réglage du point de stationnement</value>
+    <comment>Dome can set park position</comment>
+  </data>
+  <data name="CanSetShutterText" xml:space="preserve">
+    <value>Réglage de l'obturateur</value>
+    <comment>Can move shutter</comment>
+  </data>
+  <data name="CanSyncAzimuthText" xml:space="preserve">
+    <value>Synchronization de l'azimut</value>
+    <comment>Dome can sync to scope</comment>
+  </data>
+  <data name="CapabilitiesText" xml:space="preserve">
+    <value>Capacités</value>
+    <comment>Groupbox tile for the "Can" checkboxes</comment>
+  </data>
+  <data name="CloseText" xml:space="preserve">
+    <value>Fermer</value>
+    <comment>Button to close the shutter</comment>
+  </data>
+  <data name="DriverVersionText" xml:space="preserve">
+    <value>Version du pilote NexDome</value>
+    <comment>Title part of version display</comment>
+  </data>
+  <data name="RotatorText" xml:space="preserve">
+    <value>Rotateur</value>
+    <comment>The word for Rotator</comment>
+  </data>
+  <data name="SaveText" xml:space="preserve">
+    <value>Sauvegarder</value>
+    <comment>Button to save settings</comment>
+  </data>
+  <data name="SettingsText" xml:space="preserve">
+    <value>Réglages</value>
+    <comment>The word for settings</comment>
+  </data>
+  <data name="ShutterText" xml:space="preserve">
+    <value>Obturateur</value>
+    <comment>The word for shutter</comment>
+  </data>
+  <data name="VersionText" xml:space="preserve">
+    <value>Version</value>
+    <comment>The word for Version</comment>
+  </data>
+  <data name="AccelerationText" xml:space="preserve">
+    <value>Accélération</value>
+    <comment>The word for acceleration</comment>
+  </data>
+  <data name="AtHomeText" xml:space="preserve">
+    <value>Au point initial</value>
+    <comment>Dome is at home position</comment>
+  </data>
+  <data name="AtParkText" xml:space="preserve">
+    <value>Est stationné</value>
+    <comment>Words saying dome is at the park position</comment>
+  </data>
+  <data name="CloseFormText" xml:space="preserve">
+    <value>Fermer</value>
+    <comment>Button title for close form</comment>
+  </data>
+  <data name="CloseShutterText" xml:space="preserve">
+    <value>Fermer</value>
+    <comment>Title for button telling shutter to close</comment>
+  </data>
+  <data name="CutOffText" xml:space="preserve">
+    <value>Limite</value>
+    <comment>The word for Cut off</comment>
+  </data>
+  <data name="DoCalibrateText" xml:space="preserve">
+    <value>Calibration</value>
+    <comment>Words to tell dome to perform calibration</comment>
+  </data>
+  <data name="ErrorText" xml:space="preserve">
+    <value>Erreur</value>
+    <comment>Word for Error</comment>
+  </data>
+  <data name="FullTurnText" xml:space="preserve">
+    <value>Tour complet</value>
+    <comment>Words to command dome to do a complete rotation</comment>
+  </data>
+  <data name="GoHomeText" xml:space="preserve">
+    <value>Point initial</value>
+    <comment>Words to tell dome to go to home position</comment>
+  </data>
+  <data name="GoParkText" xml:space="preserve">
+    <value>Stationner</value>
+    <comment>Words to tell dome to go to parking position</comment>
+  </data>
+  <data name="GoToAzText" xml:space="preserve">
+    <value>Aller à cet azimut</value>
+    <comment>Words to command dome to go to an azimuth</comment>
+  </data>
+  <data name="GoToPosText" xml:space="preserve">
+    <value>Aller à cette position</value>
+    <comment>Words to tell dome to go to a stepper position</comment>
+  </data>
+  <data name="HasHomedText" xml:space="preserve">
+    <value>Est au point initial</value>
+    <comment>Dome has homed</comment>
+  </data>
+  <data name="HomeAndParkText" xml:space="preserve">
+    <value>Point initial et stationnement</value>
+    <comment>Title for the home and park groupbox</comment>
+  </data>
+  <data name="HomeStatusText" xml:space="preserve">
+    <value>Statut du point initial</value>
+    <comment>Title for box showing hot homed,homed and at home</comment>
+  </data>
+  <data name="HomeText" xml:space="preserve">
+    <value>Point initial</value>
+    <comment>The word for home position</comment>
+  </data>
+  <data name="LowText" xml:space="preserve">
+    <value>Bas</value>
+    <comment>The word for low as in the voltage is low</comment>
+  </data>
+  <data name="MaxSpeedText" xml:space="preserve">
+    <value>Vitesse maximale</value>
+    <comment>The words for Maximum speed</comment>
+  </data>
+  <data name="MotorSettingsText" xml:space="preserve">
+    <value>Paramètres du moteur</value>
+    <comment>Title for groupbox that holds the stepper motor settings</comment>
+  </data>
+  <data name="MovementText" xml:space="preserve">
+    <value>Mouvement</value>
+    <comment>Title for the groupbox with movement controls in it</comment>
+  </data>
+  <data name="NeverHomedText" xml:space="preserve">
+    <value>Non atteint</value>
+    <comment>Dome has not been homed</comment>
+  </data>
+  <data name="OpenShutterText" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>Title for button telling shutter to open</comment>
+  </data>
+  <data name="ParkText" xml:space="preserve">
+    <value>Stationner à</value>
+    <comment>The word for the dome's park position</comment>
+  </data>
+  <data name="RainWarnText" xml:space="preserve">
+    <value>PLUIE</value>
+    <comment>Word to indicate it's raining</comment>
+  </data>
+  <data name="ReversedText" xml:space="preserve">
+    <value>Inversé</value>
+    <comment>The word for reversed as in the dome direction is reversed</comment>
+  </data>
+  <data name="SeekHomeText" xml:space="preserve">
+    <value>Recherche du point initial</value>
+    <comment>Seeking home switch</comment>
+  </data>
+  <data name="SeekMeasuring" xml:space="preserve">
+    <value>Mesurage du Dome</value>
+    <comment>Measuring the dome in steps</comment>
+  </data>
+  <data name="SeekModeText" xml:space="preserve">
+    <value>Mode recherche</value>
+    <comment>Title for box showing dome's current action like none, finding home, measuring etc</comment>
+  </data>
+  <data name="SeekMoveOff" xml:space="preserve">
+    <value>Se déplace vers le point initial</value>
+    <comment>Moving off home switch</comment>
+  </data>
+  <data name="SeekNoneText" xml:space="preserve">
+    <value>Au repos</value>
+    <comment>Not seeking</comment>
+  </data>
+  <data name="SetText" xml:space="preserve">
+    <value>Régler</value>
+    <comment>The word for Set as in Set Value</comment>
+  </data>
+  <data name="ShutterClosedText" xml:space="preserve">
+    <value>Fermer</value>
+    <comment>Shutter is closed</comment>
+  </data>
+  <data name="ShutterClosingText" xml:space="preserve">
+    <value>En cours de fermeture</value>
+    <comment>Shutter is Closing</comment>
+  </data>
+  <data name="ShutterOpeningText" xml:space="preserve">
+    <value>En cours d'ouverture</value>
+    <comment>Shutter is Opening</comment>
+  </data>
+  <data name="ShutterOpenText" xml:space="preserve">
+    <value>Ouvert</value>
+    <comment>Shutter is open</comment>
+  </data>
+  <data name="ShutterUnknownText" xml:space="preserve">
+    <value>Inconnue</value>
+    <comment>Shutter position unknown</comment>
+  </data>
+  <data name="StepPerText" xml:space="preserve">
+    <value>Pas par Rotation</value>
+    <comment>The words for Steps Per as in Steps Per Rotation</comment>
+  </data>
+  <data name="StopText" xml:space="preserve">
+    <value>ARRÊTER</value>
+    <comment>Title for the big red STOP button</comment>
+  </data>
+  <data name="SyncAzText" xml:space="preserve">
+    <value>Synchro. Azimut</value>
+    <comment>Words to tell dome to sync with telescope</comment>
+  </data>
+  <data name="VoltagesBoxTitle" xml:space="preserve">
+    <value>Voltages</value>
+    <comment>Title for group box containing voltages display and setting</comment>
+  </data>
+  <data name="VoltageText" xml:space="preserve">
+    <value>Voltage</value>
+    <comment>The word for voltage</comment>
+  </data>
+  <data name="RotatorVersionText" xml:space="preserve">
+    <value>Version du Rotateur</value>
+  </data>
+  <data name="ShutterVersionText" xml:space="preserve">
+    <value>Version de l'obturateur</value>
+  </data>
+</root>
