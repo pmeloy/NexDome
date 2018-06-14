@@ -74,7 +74,7 @@ public:
 	int			rainCheckInterval; // in seconds, function  multiplies by 1000
 
 	// Debugging
-	byte		debugEnabled = 1;
+	byte		debugEnabled = 0;
 	void		DebugPrint(String);
 	// Getters
 	bool		GetRainStatus();
