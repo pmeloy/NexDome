@@ -105,7 +105,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ComportChooser.cs" />
+    <Compile Include="ComportChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ComportChooser.designer.cs">
       <DependentUpon>ComportChooser.cs</DependentUpon>
     </Compile>
