@@ -46,11 +46,15 @@ namespace ASCOM.PDM
             chkReversed.Text = GlobalStrings.ReversedText;
 
             gbxMovement.Text = GlobalStrings.MovementText;
-            lblRainWarn.Text = GlobalStrings.RainWarnText;
-
             btnOpenShutter.Text = GlobalStrings.OpenShutterText;
             btnCloseShutter.Text = GlobalStrings.CloseShutterText;
             btnSTOP.Text = GlobalStrings.StopText;
+
+            gbxRain.Text = GlobalStrings.RainBoxTitle;
+            lblRainState.Text = GlobalStrings.RainStateRainingText;
+            lblRainInterval.Text = GlobalStrings.RainIntervalText;
+            chkRainRequireTwice.Text = GlobalStrings.RainRequireTwiceText;
+            btnSetRainInterval.Text = GlobalStrings.SetText;
 
             btnCloseForm.Text = GlobalStrings.CloseFormText;
 
@@ -58,6 +62,7 @@ namespace ASCOM.PDM
             tbxMaxSpeed.Text = Dome.shutterMaxSpeed.ToString();
             tbxAcceleration.Text = Dome.shutterAcceleration.ToString();
             tbxStepsPerRotation.Text = Dome.shutterStepsPer.ToString();
+            tbxRainInterval.Text = Dome.rotatorRainInterval.ToString();
             chkReversed.Checked = Dome.shutterReversed;
         }
 
@@ -74,7 +79,7 @@ namespace ASCOM.PDM
             }
             else
             {
-                errorProvider1.SetError(tbxCutoff, "Invalid voltage");
+                errorProvider1.SetError(tbxCutoff, GlobalStrings.InvalidNumberText);
             }
         }
         private void btnMaxSpeed_Click(object sender, EventArgs e)
@@ -89,7 +94,7 @@ namespace ASCOM.PDM
             }
             else
             {
-                errorProvider1.SetError(tbxMaxSpeed, "Invalid value");
+                errorProvider1.SetError(tbxMaxSpeed, GlobalStrings.InvalidNumberText);
             }
         }
         private void btnAcceleration_Click(object sender, EventArgs e)
@@ -106,7 +111,7 @@ namespace ASCOM.PDM
             }
             else
             {
-                errorProvider1.SetError(tbxAcceleration, "Invalid value");
+                errorProvider1.SetError(tbxAcceleration, GlobalStrings.InvalidNumberText);
             }
 
         }
@@ -123,7 +128,7 @@ namespace ASCOM.PDM
             }
             else
             {
-                errorProvider1.SetError(tbxStepsPerRotation, "Invalid value");
+                errorProvider1.SetError(tbxStepsPerRotation, GlobalStrings.InvalidNumberText);
             }
 
         }
@@ -147,11 +152,25 @@ namespace ASCOM.PDM
         {
             myDome.OpenShutter();
         }
-
         private void btnClose_Click(object sender, EventArgs e)
         {
             myDome.CloseShutter();
         }
+
+        private void btnSetRainInterval_Click(object sender, EventArgs e)
+        {
+            int rainInterval = 0;
+            if (int.TryParse(tbxRainInterval.Text, out rainInterval) == true)
+            {
+                myDome.SendSerial(Dome.RAIN_ROTATOR_CMD + rainInterval.ToString(Dome.sourceCulture));
+                errorProvider1.SetError(tbxRainInterval, "");
+            }
+            else
+            {
+                errorProvider1.SetError(tbxRainInterval, GlobalStrings.InvalidNumberText);
+            }
+        }
+
         private void btnExit_Click(object sender, EventArgs e)
         {
             Close();
@@ -200,11 +219,15 @@ namespace ASCOM.PDM
             }
             if (Dome.isRaining == true)
             {
-                lblRainWarn.Visible = true;
+                lblRainState.Text = GlobalStrings.RainStateRainingText;
+                lblRainState.ForeColor = Color.White;
+                lblRainState.BackColor = Color.Red;
             }
             else
             {
-                lblRainWarn.Visible = false;
+                lblRainState.Text = GlobalStrings.RainStateNotRainingText;
+                lblRainState.ForeColor = SystemColors.ControlText;
+                lblRainState.BackColor = SystemColors.Control;
             }
             if ((int)Dome.domeShutterState == 4)
             {

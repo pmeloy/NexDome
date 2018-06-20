@@ -41,7 +41,7 @@
 //const int ATHOME = 1;
 
 const int HOME_PIN = 2;					// Also used for Shutter open status
-const int ENABLE_PIN = 10;		// Digital Output
+const int STEPPER_ENABLE_PIN = 10;		// Digital Output
 const int DIRECTION_PIN = 11;	// Digital Output
 const int STEP_PIN = 12;			// Digital Output
 const int BUTTON_CCW = 5;				// Digital Input
@@ -72,9 +72,10 @@ public:
 
 	RotatorClass();
 	int			rainCheckInterval; // in seconds, function  multiplies by 1000
+	bool		rainCheckTwice = false; // Seconds of rain sensor being on before we react. 
 
 	// Debugging
-	byte		debugEnabled = 0;
+	byte		debugEnabled = 1;
 	void		DebugPrint(String);
 	// Getters
 	bool		GetRainStatus();
@@ -134,9 +135,10 @@ private:
 		float		parkAzimuth;
 		int			cutoffVolts;
 		int			rainCheckInterval;
+		bool		rainCheckTwice;
 	} RotatorConfig;
 
-	const int	_signature = 8055;
+	const int	_signature = 8022;
 	const int	_eepromLocation = 10;
 	const long	_STEPSFORROTATION = 55100;
 
@@ -203,7 +205,7 @@ RotatorClass::RotatorClass()
 	pinMode(HOME_PIN, INPUT_PULLUP);
 	pinMode(STEP_PIN, OUTPUT);
 	pinMode(DIRECTION_PIN, OUTPUT);
-	pinMode(ENABLE_PIN, OUTPUT);
+	pinMode(STEPPER_ENABLE_PIN, OUTPUT);
 	pinMode(BUTTON_CCW, INPUT_PULLUP);
 	pinMode(BUTTON_CW, INPUT_PULLUP);
 	pinMode(RAIN_SENSOR_PIN, INPUT_PULLUP);
@@ -229,6 +231,7 @@ void RotatorClass::SaveToEEProm()
 	cfg.parkAzimuth = _parkAzimuth;
 	cfg.cutoffVolts = _cutOffVolts;
 	cfg.rainCheckInterval = rainCheckInterval;
+	cfg.rainCheckTwice = rainCheckTwice;
 
 	EEPROM.put(_eepromLocation, cfg);
 
@@ -259,6 +262,7 @@ bool RotatorClass::LoadFromEEProm()
 		_parkAzimuth = cfg.parkAzimuth;
 		_cutOffVolts = cfg.cutoffVolts;
 		rainCheckInterval = cfg.rainCheckInterval;
+		rainCheckTwice = cfg.rainCheckTwice;
 	}
 
 	SetMaxSpeed(_maxSpeed);
@@ -277,6 +281,7 @@ void RotatorClass::SetDefaultConfig()
 	_parkAzimuth = 0;
 	_cutOffVolts = 1220;
 	rainCheckInterval = 30; // In seconds, function will x 10
+	rainCheckTwice = false;
 
 }
 void RotatorClass::WipeConfig()
@@ -352,14 +357,46 @@ inline void RotatorClass::DebugPrint(String msg)
 }
 bool RotatorClass::GetRainStatus()
 {
-	return (digitalRead(RAIN_SENSOR_PIN) == 0);
+	static int rainCount = 0;
+	bool isRaining = false;
+	if (rainCheckTwice == false) rainCount = 1;
+
+	if (digitalRead(RAIN_SENSOR_PIN) == 1)
+	{
+		rainCount = 0;
+	}
+	else
+	{ 
+		if (digitalRead(RAIN_SENSOR_PIN) == 0) 
+		{
+			if (rainCount == 1)
+			{
+				isRaining = true;
+			}
+			else
+			{
+				rainCount = 1;
+			}
+		}
+	}
+	return isRaining;
 }
 #pragma endregion
 
 #pragma region "Stepper Related"
 void RotatorClass::enableMotor(bool newState)
 {
-	stepper.setEnablePin(newState);
+	if (newState == false)
+	{
+		digitalWrite(STEPPER_ENABLE_PIN, 1);
+		DebugPrint("Outputs disabled");
+	}
+	else
+	{
+		digitalWrite(STEPPER_ENABLE_PIN, 0);
+		DebugPrint("Outputs Enabled");
+	}
+
 }
 long RotatorClass::GetMaxSpeed()
 {
@@ -551,6 +588,7 @@ void RotatorClass::SetPosition(long newPosition)
 	{
 		_moveDirection = MOVE_NEGATIVE;
 	}
+	enableMotor(true);
 	stepper.moveTo(newPosition);
 	return;
 }

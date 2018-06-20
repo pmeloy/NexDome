@@ -277,8 +277,8 @@
     <value>Park</value>
     <comment>The word for the dome's park position</comment>
   </data>
-  <data name="RainWarnText" xml:space="preserve">
-    <value>RAIN</value>
+  <data name="RainStateRainingText" xml:space="preserve">
+    <value>RAINING</value>
     <comment>Word to indicate it's raining</comment>
   </data>
   <data name="ReversedText" xml:space="preserve">
@@ -355,5 +355,24 @@
   <data name="VoltageText" xml:space="preserve">
     <value>Voltage</value>
     <comment>The word for voltage</comment>
+  </data>
+  <data name="RainStateNotRainingText" xml:space="preserve">
+    <value>Not raining</value>
+  </data>
+  <data name="RainBoxTitle" xml:space="preserve">
+    <value>Rain Settings</value>
+    <comment>Title for group box</comment>
+  </data>
+  <data name="RainRequireTwiceText" xml:space="preserve">
+    <value>Require twice</value>
+    <comment>Title for rain delay box</comment>
+  </data>
+  <data name="InvalidNumberText" xml:space="preserve">
+    <value>Invalid number</value>
+    <comment>Message shown in error tooltip when numberic entry is invalid</comment>
+  </data>
+  <data name="RainIntervalText" xml:space="preserve">
+    <value>Interval</value>
+    <comment>Time between rain sensor checks</comment>
   </data>
 </root>

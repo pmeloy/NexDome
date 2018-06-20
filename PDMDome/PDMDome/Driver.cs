@@ -117,14 +117,14 @@ namespace ASCOM.PDM
         internal static double azimuth, rotatorHomeAz, rotatorParkAz;
         internal static bool atHome, atPark, isSlaved, rotatorReversed = false, isRaining = false;
         internal static string rotatorVersion;
-        internal static int rotatorSlewDirection, rotatorHomedStatus, rotatorSeekState, rotatorVoltage, rotatorCutoff;
+        internal static int rotatorSlewDirection, rotatorHomedStatus, rotatorSeekState, rotatorVoltage, rotatorCutoff, rotatorRainInterval;
 
         // Shutter values
         internal static string shutterVersion;
         internal static long shutterPosition, shutterStepsPer, shutterMaxSpeed, shutterAcceleration;
         internal static double altitude;
         internal static bool shutterReversed = false;
-        internal static int shutterHomedStatus, shutterVoltage, shutterCutoff;
+        internal static int shutterVoltage, shutterCutoff;
 
         #region Serial command character constants
         internal const string COMMENT_CMD = "%";
@@ -171,7 +171,10 @@ namespace ASCOM.PDM
 
         SerialPort  serialPort = new SerialPort();
 
-        string serialBuffer, serialString; // For holding serial data
+        string serialBuffer; // For holding serial data
+
+        internal static CultureInfo sourceCulture;
+        internal static NumberStyles numberStyle;
         #endregion
 
         /// <summary>
@@ -181,8 +184,13 @@ namespace ASCOM.PDM
         public Dome()
         {
             // For forcing locales so I can test different languages
-            //Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
-            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
+
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
+
+            //sourceCulture = CultureInfo.CreateSpecificCulture("en-US");
+            sourceCulture = CultureInfo.InvariantCulture;
+            numberStyle = NumberStyles.Number;
 
             tl = new TraceLogger("", "PDM");
             ReadProfile(); // Read device configuration from the ASCOM Profile store
@@ -510,7 +518,7 @@ namespace ASCOM.PDM
                         tl.LogMessage("Comment", value);
                         break;
                     case ACCELERATION_ROTATOR_CMD:
-                        if (long.TryParse(value,out rotatorAcceleration) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out rotatorAcceleration) == true)
                         {
                             LogMessage("Rotator Get", "Acceleration ({0})", rotatorAcceleration);
                         }
@@ -520,7 +528,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case ACCELERATION_SHUTTER_CMD:
-                        if (long.TryParse(value, out shutterAcceleration) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out shutterAcceleration) == true)
                         {
                             LogMessage("Shutter Get", "Acceleration ({0})", shutterAcceleration);
                         }
@@ -531,7 +539,7 @@ namespace ASCOM.PDM
 
                         break;
                     case HOMEAZ_ROTATOR_CMD:
-                        if (double.TryParse(value,out rotatorHomeAz) == true)
+                        if (double.TryParse(value, numberStyle, sourceCulture, out rotatorHomeAz) == true)
                         {
                             LogMessage("Rotator Get", "Home Azimuth ({0})", rotatorHomeAz);
                         }
@@ -541,7 +549,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case HOMED_ROTATOR_STATUS:
-                        if (int.TryParse(value, out rotatorHomedStatus) == false)
+                        if (int.TryParse(value, numberStyle, sourceCulture, out rotatorHomedStatus) == false)
                         {
                             LogMessage("Rotator Get", "Homed Status Invalid ({0})", value);
                         }
@@ -561,7 +569,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case PARKAZ_ROTATOR_CMD:
-                        if (double.TryParse(value, out rotatorParkAz) == true)
+                        if (double.TryParse(value, numberStyle, sourceCulture, out rotatorParkAz) == true)
                         {
                             LogMessage("Rotator Get", "Park Azimuth ({0})", rotatorParkAz);
                         }
@@ -574,7 +582,7 @@ namespace ASCOM.PDM
                         if (value.Equals("L") == false)
                         {
 
-                            if (long.TryParse(value, out rotatorPosition) == true)
+                            if (long.TryParse(value, numberStyle, sourceCulture, out rotatorPosition) == true)
                             {
                                 if (rotatorStepsPer > 0)
                                 {
@@ -594,7 +602,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case POSITION_SHUTTER_GET:
-                        if (long.TryParse(value, out shutterPosition) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out shutterPosition) == true)
                         {
                             if (shutterStepsPer > 0)
                             {
@@ -604,6 +612,16 @@ namespace ASCOM.PDM
                         else
                         {
                             LogMessage("Shutter Position", "Invalid ({0})", value);
+                        }
+                        break;
+                    case RAIN_ROTATOR_CMD:
+                        if (int.TryParse(value, numberStyle,sourceCulture, out rotatorRainInterval) == true)
+                        {
+                            LogMessage("Rotator Get", "Rain check interval ({0})", rotatorRainInterval);
+                        }
+                        else
+                        {
+                            LogMessage("Rotator Get", "Rain check interval invalid ({value})", value);
                         }
                         break;
                     case RAIN_ROTATOR_GET:
@@ -650,19 +668,19 @@ namespace ASCOM.PDM
                         }
                         break;
                     case SEEKSTATE_GET:
-                        if (int.TryParse(value, out rotatorSeekState) == false)
+                        if (int.TryParse(value, numberStyle, sourceCulture, out rotatorSeekState) == false)
                         {
                             LogMessage("Rotator Get", "Seek Status Invalid ({0})", value);
                         }
                         break;
                     case SLEW_ROTATOR_STATUS:
-                        if (int.TryParse(value, out rotatorSlewDirection) == false)
+                        if (int.TryParse(value, numberStyle, sourceCulture, out rotatorSlewDirection) == false)
                         {
                             LogMessage("Rotator Get", "Slewing Invalid ({0})", value);
                         }
                         break;
                     case SPEED_ROTATOR_CMD:
-                        if (long.TryParse(value, out rotatorMaxSpeed) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out rotatorMaxSpeed) == true)
                         {
                             LogMessage("Rotator Get", "Speed ({0})", rotatorMaxSpeed);
                         }
@@ -672,7 +690,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case SPEED_SHUTTER_CMD:
-                        if (long.TryParse(value, out shutterMaxSpeed) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out shutterMaxSpeed) == true)
                         {
                             LogMessage("Shutter Get", "Speed ({0})", shutterMaxSpeed);
                         }
@@ -683,7 +701,7 @@ namespace ASCOM.PDM
                         break;
                     case STATE_SHUTTER_GET:
                         LogMessage("ShutterState Get", "Value ({0})", value);
-                        if (int.TryParse(value,out localInt) == true)
+                        if (int.TryParse(value, numberStyle, sourceCulture, out localInt) == true)
                         {
                             domeShutterState = (ShutterState)localInt;
                             tl.LogMessage("ShutterState Received",localInt.ToString());
@@ -696,7 +714,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case STEPSPER_ROTATOR_CMD:
-                        if (long.TryParse(value, out rotatorStepsPer) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out rotatorStepsPer) == true)
                         {
                             LogMessage("Rotator Get", "Steps Per ({0})", rotatorStepsPer);
                         }
@@ -706,7 +724,7 @@ namespace ASCOM.PDM
                         }
                         break;
                     case STEPSPER_SHUTTER_CMD:
-                        if (long.TryParse(value, out shutterStepsPer) == true)
+                        if (long.TryParse(value, numberStyle, sourceCulture, out shutterStepsPer) == true)
                         {
                             //LogMessage("Shutter Get", "Steps Per ({0})", shutterStepsPer);
                         }
@@ -759,9 +777,9 @@ namespace ASCOM.PDM
                 result = true;
                 voltString = value.Substring(0, commaPosition);
                 cutoffString = value.Substring(commaPosition+1);
-                tryRes = int.TryParse(voltString, out volts);
+                tryRes = int.TryParse(voltString, numberStyle, sourceCulture, out volts);
                 if (tryRes == false) result = false;
-                tryRes = int.TryParse(cutoffString, out cutoff);
+                tryRes = int.TryParse(cutoffString, numberStyle, sourceCulture, out cutoff);
                 if (tryRes == false) result = false;
             }
             return result;
@@ -783,6 +801,7 @@ namespace ASCOM.PDM
             SendSerial(PARKAZ_ROTATOR_CMD);
             SendSerial(HOMED_ROTATOR_STATUS);
             SendSerial(SEEKSTATE_GET);
+            SendSerial(RAIN_ROTATOR_CMD);
 
             if (canSetShutter == true)
             {
@@ -1054,7 +1073,7 @@ namespace ASCOM.PDM
         {
             if (canPark == true)
             {
-                SendSerial(GOTO_ROTATOR_CMD + rotatorParkAz.ToString());
+                SendSerial(GOTO_ROTATOR_CMD + rotatorParkAz.ToString(sourceCulture));
                 tl.LogMessage("Rotator", "Go to Park");
             }
             else
@@ -1067,7 +1086,7 @@ namespace ASCOM.PDM
         {
             if (canSetPark == true)
             {
-                SendSerial(PARKAZ_ROTATOR_CMD + azimuth.ToString());
+                SendSerial(PARKAZ_ROTATOR_CMD + azimuth.ToString(sourceCulture));
                 LogMessage("Rotator SET", "Park at ({0})", azimuth);
             }
             else
@@ -1087,7 +1106,7 @@ namespace ASCOM.PDM
             {
                 if (rotatorVoltage > rotatorCutoff)
                 {
-                    SendSerial(GOTO_ROTATOR_CMD + Azimuth.ToString());
+                    SendSerial(GOTO_ROTATOR_CMD + Azimuth.ToString(sourceCulture));
                     LogMessage("Rotator", "Slew from ({0:0.00}) to ({1:0.00})",azimuth, Azimuth);
                 }
                 else
@@ -1106,7 +1125,7 @@ namespace ASCOM.PDM
         {
             if (CanSyncAzimuth == true)
             {
-                SendSerial(SYNC_ROTATOR_CMD + Azimuth.ToString());
+                SendSerial(SYNC_ROTATOR_CMD + Azimuth.ToString(sourceCulture));
                 LogMessage("Rotator","Sync to ({0})", Azimuth);
             }
             else

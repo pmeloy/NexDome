@@ -261,8 +261,8 @@
     <value>Aparca</value>
     <comment>The word for the dome's park position</comment>
   </data>
-  <data name="RainWarnText" xml:space="preserve">
-    <value>Iluvia</value>
+  <data name="RainStateRainingText" xml:space="preserve">
+    <value>Lloviendo</value>
     <comment>Word to indicate it's raining</comment>
   </data>
   <data name="ReversedText" xml:space="preserve">
@@ -348,5 +348,17 @@
   <data name="ShutterUnknownText" xml:space="preserve">
     <value>Desconocido</value>
     <comment>Shutter position unknown</comment>
+  </data>
+  <data name="RainBoxTitle" xml:space="preserve">
+    <value>Configuraciones de lluvia</value>
+    <comment>Words for rain settings box title</comment>
+  </data>
+  <data name="RainDelayText" xml:space="preserve">
+    <value>Retrasar</value>
+    <comment>Word for period of time before rain causes rain state to change</comment>
+  </data>
+  <data name="RainStateNotRainingText" xml:space="preserve">
+    <value>No está lloviendo</value>
+    <comment>Not raining</comment>
   </data>
 </root>

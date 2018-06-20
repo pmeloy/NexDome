@@ -313,6 +313,15 @@ namespace ASCOM.PDM {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid number.
+        /// </summary>
+        internal static string InvalidNumberText {
+            get {
+                return ResourceManager.GetString("InvalidNumberText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Low.
         /// </summary>
         internal static string LowText {
@@ -376,11 +385,47 @@ namespace ASCOM.PDM {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RAIN.
+        ///   Looks up a localized string similar to Rain Settings.
         /// </summary>
-        internal static string RainWarnText {
+        internal static string RainBoxTitle {
             get {
-                return ResourceManager.GetString("RainWarnText", resourceCulture);
+                return ResourceManager.GetString("RainBoxTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval.
+        /// </summary>
+        internal static string RainIntervalText {
+            get {
+                return ResourceManager.GetString("RainIntervalText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Require twice.
+        /// </summary>
+        internal static string RainRequireTwiceText {
+            get {
+                return ResourceManager.GetString("RainRequireTwiceText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not raining.
+        /// </summary>
+        internal static string RainStateNotRainingText {
+            get {
+                return ResourceManager.GetString("RainStateNotRainingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RAINING.
+        /// </summary>
+        internal static string RainStateRainingText {
+            get {
+                return ResourceManager.GetString("RainStateRainingText", resourceCulture);
             }
         }
         

@@ -49,7 +49,7 @@ String computerBuffer;
 #define Wireless Serial1
 String wirelessBuffer;
 
-const String version = "0.5.2.0";
+const String version = "0.5.2.2";
 
 // Stepper motor configuration
 #pragma endregion
@@ -67,6 +67,7 @@ enum HomeStatuses { HS_NONE, HS_SYNC, HS_DONE };
 
 #pragma region Command character constants
 // x_CMD is the comand itself, x_RES is the response character.
+const char ENABLE_OUTPUTS = '&';
 const char ABORT_CMD				= 'a';
 const char ACCELERATION_SHUTTER_CMD = 'E'; // Get/Set stepper acceleration
 const char CALIBRATE_SHUTTER_CMD	= 'L'; // Calibrate the shutter
@@ -243,6 +244,9 @@ void ProcessComputer(String buffer)
 
 	switch (command) // Uppercase is manual entry rather than rotator or ascom.
 	{
+	case ENABLE_OUTPUTS:
+		Shutter.EnableOutputs(value.equals("1"));
+		break;
 	case ABORT_CMD:
 		Shutter.Stop();
 		DBPrintln(String(ABORT_CMD));
@@ -308,6 +312,9 @@ void ProcessWireless(String buffer)
 	//DBPrintln("Cmd:" + String(command) + " :" + value);
 	switch (command)
 	{
+	case ENABLE_OUTPUTS:
+		Shutter.EnableOutputs(value.equals("1"));
+		break;
 	case WIRELESS_COMMENT:
 		DBPrintln("->DEBUG: " + String(command) + ":" + value);
 		break;
@@ -406,7 +413,7 @@ void ProcessWireless(String buffer)
 	case RAIN_INTERVAL_SET:
 		if (value.length() > 0)
 		{
-			Shutter.rainCheckInterval = value.toInt();
+			Shutter.SetRainInterval(value.toInt());
 			DBPrintln("Rain check interval set to " + value);
 		}
 		break;

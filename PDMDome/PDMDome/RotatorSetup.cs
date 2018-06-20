@@ -139,13 +139,13 @@ namespace ASCOM.PDM
             {
                 cutoff *= 100.0;
                 Dome.rotatorCutoff = (int)cutoff;
-                myDome.SendSerial(Dome.VOLTS_ROTATOR_CMD + Dome.rotatorCutoff.ToString());
+                myDome.SendSerial(Dome.VOLTS_ROTATOR_CMD + Dome.rotatorCutoff.ToString(Dome.sourceCulture));
                 Dome.LogMessage("Rotator SET", "CutOff Voltage ({0})", Dome.rotatorCutoff);
                 errorProvider1.SetError(tbxCutoff, "");
             }
             else
             {
-                errorProvider1.SetError(tbxCutoff, "Invalid voltage");
+                errorProvider1.SetError(tbxCutoff, GlobalStrings.InvalidNumberText);
             }
         }
         private void btnMaxSpeed_Click(object sender, EventArgs e)
@@ -154,13 +154,13 @@ namespace ASCOM.PDM
             if (long.TryParse(tbxMaxSpeed.Text, out value) == true)
             {
                 Dome.rotatorMaxSpeed = value;
-                myDome.SendSerial(Dome.SPEED_ROTATOR_CMD + value.ToString());
+                myDome.SendSerial(Dome.SPEED_ROTATOR_CMD + value.ToString(Dome.sourceCulture));
                 errorProvider1.SetError(tbxMaxSpeed, "");
                 Dome.LogMessage("Rotator SET", "Max Speed ({0})", value);
             }
             else
             {
-                errorProvider1.SetError(tbxMaxSpeed, "Invalid value");
+                errorProvider1.SetError(tbxMaxSpeed, GlobalStrings.InvalidNumberText);
             }
         }
         private void btnAcceleration_Click(object sender, EventArgs e)
@@ -170,14 +170,14 @@ namespace ASCOM.PDM
             if (long.TryParse(tbxAcceleration.Text, out value) == true)
             {
                 Dome.rotatorAcceleration = value;
-                myDome.SendSerial(Dome.ACCELERATION_ROTATOR_CMD + value.ToString());
+                myDome.SendSerial(Dome.ACCELERATION_ROTATOR_CMD + value.ToString(Dome.sourceCulture));
                 errorProvider1.SetError(tbxAcceleration, "");
                 Dome.LogMessage("Rotator SET", "Acceleration ({0})", value);
 
             }
             else
             {
-                errorProvider1.SetError(tbxAcceleration, "Invalid value");
+                errorProvider1.SetError(tbxAcceleration, GlobalStrings.InvalidNumberText);
             }
 
         }
@@ -189,13 +189,13 @@ namespace ASCOM.PDM
             {
                 Dome.rotatorStepsPer = value;
                 _stepsPer = value;
-                myDome.SendSerial(Dome.STEPSPER_ROTATOR_CMD + value.ToString());
+                myDome.SendSerial(Dome.STEPSPER_ROTATOR_CMD + value.ToString(Dome.sourceCulture));
                 errorProvider1.SetError(tbxStepsPerRotation, "");
                 Dome.LogMessage("Rotator SET", "Steps Per Rotation ({0})", value);
             }
             else
             {
-                errorProvider1.SetError(tbxStepsPerRotation, "Invalid value");
+                errorProvider1.SetError(tbxStepsPerRotation, GlobalStrings.InvalidNumberText);
             }
 
         }
@@ -217,7 +217,7 @@ namespace ASCOM.PDM
             if (double.TryParse(tbxHomeAz.Text, out az) == true)
             {
                 Dome.rotatorHomeAz = az;
-                myDome.SendSerial(Dome.HOMEAZ_ROTATOR_CMD + az.ToString());
+                myDome.SendSerial(Dome.HOMEAZ_ROTATOR_CMD + az.ToString(Dome.sourceCulture));
                 Dome.LogMessage("Rotator SET", "Home Azimuth ({0})", az);
             }
             else
@@ -231,7 +231,7 @@ namespace ASCOM.PDM
             if (double.TryParse(tbxParkAz.Text, out az) == true)
             {
                 Dome.rotatorParkAz = az;
-                myDome.SendSerial(Dome.PARKAZ_ROTATOR_CMD + az.ToString());
+                myDome.SendSerial(Dome.PARKAZ_ROTATOR_CMD + az.ToString(Dome.sourceCulture));
                 Dome.LogMessage("Rotator SET", "Park Azimuth ({0})", az);
             }
             else
@@ -275,7 +275,7 @@ namespace ASCOM.PDM
         }
         private void btnFullTurn_Click(object sender, EventArgs e)
         {
-            myDome.SendSerial(Dome.MOVERELATIVE_ROTATOR_CMD + (Dome.rotatorStepsPer - 1).ToString());
+            myDome.SendSerial(Dome.MOVERELATIVE_ROTATOR_CMD + (Dome.rotatorStepsPer - 1).ToString(Dome.sourceCulture));
             
         }
         private void btnGoToPos_Click(object sender, EventArgs e)
@@ -283,7 +283,7 @@ namespace ASCOM.PDM
             long pos;
             if (long.TryParse(tbxGotoPos.Text, out pos))
             {
-                myDome.SendSerial(Dome.POSITION_ROTATOR_CMD + pos.ToString());
+                myDome.SendSerial(Dome.POSITION_ROTATOR_CMD + pos.ToString(Dome.sourceCulture));
                 errorProvider1.SetError(tbxGotoPos, "");
                 Dome.LogMessage("Rotator SET", "Go to position ({0})", pos);
                 tbxGotoPos.Text = "";
@@ -344,7 +344,7 @@ namespace ASCOM.PDM
                 lblLowWarn.Visible = false;
             }
             lblPosition.Text = Dome.rotatorPosition.ToString();
-            lblAzimuth.Text = Dome.azimuth.ToString();
+            lblAzimuth.Text = Dome.azimuth.ToString("0,0.00");
             lblHomedState.Text = HomedText(Dome.rotatorHomedStatus);
             lblSeekMode.Text = SeekText(Dome.rotatorSeekState);
             if (Dome.rotatorHomedStatus == (int)HomeStatuses.ATHOME)

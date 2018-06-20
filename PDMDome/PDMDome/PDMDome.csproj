@@ -79,6 +79,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Driver.cs" />
+    <Compile Include="GlobalStrings.fr-CA.Designer.cs">
+      <DependentUpon>GlobalStrings.fr-CA.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="GlobalStrings.fr.Designer.cs">
       <DependentUpon>GlobalStrings.fr.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -131,6 +136,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GlobalStrings.fr-CA.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GlobalStrings.fr-CA.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="GlobalStrings.fr.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>GlobalStrings.fr.Designer.cs</LastGenOutput>

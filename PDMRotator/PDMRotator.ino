@@ -35,7 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-const String VERSION = "0.5.2.0";
+const String VERSION = "0.5.2.2";
 
 #define Computer Serial
 String computerBuffer;
@@ -108,6 +108,7 @@ const char MOVE_RELATIVE_ROTATOR_CMD	= 'b'; // Move relative - steps from curren
 const char PARKAZ_ROTATOR_CMD			= 'l'; // Get/Set park azimuth
 const char POSITION_ROTATOR_CMD			= 'p'; // Get/Set step position
 const char RAIN_ROTATOR_CMD				= 'f'; // Get or Set Rain Check Interval
+const char RAIN_ROTATOR_TWICE_CMD		= 'j'; // Get/Set Rain check requires to hits
 const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status 
 const char SEEKSTATE_GET				= 'd'; // None, homing, calibration steps.
 const char SLEW_ROTATOR_GET				= 'm'; // Get Slewing status/direction
@@ -126,6 +127,7 @@ const char HOMESTATUS_SHUTTER_GET		= 'Z'; // Get homed status (has it been close
 const char INACTIVE_SHUTTER_CMD			= 'X'; // Get/Set how long before shutter closes
 const char OPEN_SHUTTER_CMD				= 'O'; // Open the shutter
 const char POSITION_SHUTTER_GET			= 'P'; // Get step position
+const char RAIN_INTERVAL_SET			= 'I'; // Tell shutter how often to ask rotator about rain
 const char RAIN_SHUTTER_GET				= 'F'; // Get rain status (from client) or tell shutter it's raining (from Rotator)
 const char SPEED_SHUTTER_CMD			= 'R'; // Get/Set step rate (speed)
 const char REVERSED_SHUTTER_CMD			= 'Y'; // Get/Set stepper reversed status
@@ -389,6 +391,17 @@ void ProcessSerialCommand()
 			serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
 		}
 		break;
+	case RAIN_ROTATOR_TWICE_CMD:
+		if (value.length() > 0)
+		{
+			Rotator.rainCheckTwice = value.equals("1");
+		}
+		else
+		{
+			serialMessage = String(RAIN_ROTATOR_TWICE_CMD) + String(Rotator.rainCheckTwice);
+			Rotator.DebugPrint(serialMessage);
+		}
+		break;
 	case RAIN_ROTATOR_CMD:
 		if (hasValue == true)
 		{
@@ -396,6 +409,7 @@ void ProcessSerialCommand()
 			Rotator.DebugPrint("Rotator set rain timer to " + String(localInt));
 			if (localInt < 0) localInt = 0;
 			Rotator.rainCheckInterval = localInt;
+			wirelessMessage = String(RAIN_INTERVAL_SET) + String(localInt);
 		}
 		serialMessage = String(RAIN_ROTATOR_CMD) + String(Rotator.rainCheckInterval);
 		break;
@@ -514,7 +528,6 @@ void ProcessSerialCommand()
 		serialMessage = localString + RemoteShutter.speed;
 		break;
 	case STATE_SHUTTER_GET:
-		Rotator.DebugPrint("Asked for shutter state");
 		serialMessage = String(STATE_SHUTTER_GET) + RemoteShutter.state;
 		break;
 	case STEPSPER_SHUTTER_CMD:

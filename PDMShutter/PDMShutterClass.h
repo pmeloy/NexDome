@@ -33,7 +33,7 @@
 
 #pragma region Debug Printing
 // Debug printing, uncomment #define DEBUG to enable
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DBPrint(x) Serial.print(x)
 #define DBPrintln(x) Serial.println(x)
@@ -110,7 +110,9 @@ public:
 	void		GotoPosition(long);
 	void		GotoAltitude(float);
 	void		MoveRelative(long);
+	void		SetRainInterval(int);
 
+	void		EnableOutputs(bool);
 	void		Run();
 	void		Stop();
 
@@ -133,7 +135,7 @@ private:
 		uint16_t	jogStart; // milliseconds before triggering "sticky" move
 		uint16_t	jogMax; // milliseconds after which "sticky" expires
 		bool		eStopEnabled;
-	};
+	}; Configuration config;
 
 	const int		_eepromLocation = 100;
 	const int		_eePromSignature = 4752;
@@ -201,6 +203,8 @@ ShutterClass::ShutterClass()
 	ReadEEProm();
 	SetAcceleration(_acceleration);
 	SetMaxSpeed(_maxSpeed);
+	stepper.setEnablePin(STEPPER_ENABLE_PIN);
+	EnableOutputs(false);
 
 }
 
@@ -427,6 +431,19 @@ String		ShutterClass::GetVoltString()
 }
 
 // Setters
+void		ShutterClass::EnableOutputs(bool newState) 
+{
+	if (newState == false)
+	{
+		digitalWrite(STEPPER_ENABLE_PIN, 1);
+		DBPrintln("Outputs disabled");
+	}
+	else
+	{
+		digitalWrite(STEPPER_ENABLE_PIN, 0);
+		DBPrintln("Outputs Enabled");
+	}
+}
 void		ShutterClass::SetAcceleration(uint16_t accel)
 {
 	_acceleration = accel;
@@ -479,7 +496,12 @@ void		ShutterClass::GotoPosition(long newPos)
 		_shutterState = CLOSING;
 		doMove = true;
 	}
-	if (doMove == true) stepper.moveTo(newPos);
+	if (doMove == true)
+	{
+
+		EnableOutputs(true);
+		stepper.moveTo(newPos);
+	}
 }
 void		ShutterClass::GotoAltitude(float newAlt)
 {
@@ -488,7 +510,13 @@ void		ShutterClass::GotoAltitude(float newAlt)
 }
 void		ShutterClass::MoveRelative(long amount)
 {
+	EnableOutputs(true);
 	stepper.move(amount);
+}
+inline void ShutterClass::SetRainInterval(int newInterval)
+{
+	rainCheckInterval = newInterval;
+	WriteEEProm();
 }
 void		ShutterClass::Run()
 {
@@ -560,6 +588,7 @@ void		ShutterClass::Run()
 		_lastButtonPressed = 0;
 		wasRunning = false;
 		hitSwitch = false;
+		EnableOutputs(false);
 	}
 }
 void		ShutterClass::Stop()

@@ -16,7 +16,7 @@ void setup()
 {
   Computer.begin(9600);
   Wireless.begin(9600);
-  delay(1100);
+  delay(20000);
   StartConfigWireless(READ);
 
 }
@@ -29,7 +29,7 @@ void loop()
     Computer.println("Available commands:");
     Computer.println("    'rc' Read configuration from XBee");
     Computer.println("    're' Reset XBee to factory defaults");
-    Computer.println("    'id<value>' Set identity number e.g. id5555");
+    Computer.println("    'id<value>' Set identity number e.g. id7734");
     Computer.println("    'wc' Write configuration to XBee");
     introDone = true;
   }
