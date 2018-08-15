@@ -27,14 +27,12 @@
 #endif
 
 
-//#define DEBUG
-//#ifdef DEBUG
-//#define DBPrint(x) Serial.print(x)
-//#define DebugPrint(x) Serial.println(x)
-//#else
-//#define DBPrint(x)
-//#define DebugPrint(x)
-//#endif // DEBUG
+#define DEBUG
+#ifdef DEBUG
+#define DBPrint(x) Serial.println(x)
+#else
+#define DBPrint(x)
+#endif // DEBUG
 
 //const int NEVER_HOMED = -1;
 //const int HOMED = 0;
@@ -71,12 +69,8 @@ public:
 	};
 
 	RotatorClass();
-	int			rainCheckInterval; // in seconds, function  multiplies by 1000
-	bool		rainCheckTwice = false; // Seconds of rain sensor being on before we react. 
 
-	// Debugging
-	byte		debugEnabled = 1;
-	void		DebugPrint(String);
+	bool		radioIsConfigured = false;
 	// Getters
 	bool		GetRainStatus();
 	int			GetLowVoltageCutoff();
@@ -88,6 +82,9 @@ public:
 	long		GetMaxSpeed();
 	long		GetAcceleration();
 	long		GetStepsPerRotation();
+	byte		GetRainAction();
+	int			GetRainCheckInterval();
+	bool		GetRainCheckTwice();
 	bool		GetReversed();
 	float		GetAzimuth();
 	float		GetHomeAzimuth();
@@ -107,6 +104,8 @@ public:
 	void		SetRainInterval(uint16_t);
 	void		SetReversed(bool reversed);
 	void		SetHomeAzimuth(float);
+	void		SetRainAction(byte);
+	void		SetCheckRainTwice(bool);
 
 	// Movers
 	void		MoveRelative(long steps);
@@ -120,6 +119,7 @@ public:
 	void		Calibrate();
 	void		SyncPosition(float);
 	void		SyncHome(float);
+	void		SaveToEEProm();
 
 
 private:
@@ -136,12 +136,17 @@ private:
 		int			cutoffVolts;
 		int			rainCheckInterval;
 		bool		rainCheckTwice;
+		byte		rainAction;
+		bool		radioIsConfigured;
 	} RotatorConfig;
 
-	const int	_signature = 8022;
+	const int	_signature = 822;
 	const int	_eepromLocation = 10;
 	const long	_STEPSFORROTATION = 55100;
 
+	int			_rainCheckInterval; // in seconds, function  multiplies by 1000
+	bool		_rainCheckTwice;
+	byte		_rainAction;
 
 	// Stepper motor DongZheng Motor Co.
 	// 2.5V 2.8A 1:15 1.8D/step
@@ -189,7 +194,6 @@ private:
 
 	void		ButtonCheck();
 
-	void		SaveToEEProm();
 	bool		LoadFromEEProm();
 	void		SetDefaultConfig();
 	void		WipeConfig();
@@ -230,13 +234,13 @@ void RotatorClass::SaveToEEProm()
 	cfg.homeAzimuth = _homeAzimuth;
 	cfg.parkAzimuth = _parkAzimuth;
 	cfg.cutoffVolts = _cutOffVolts;
-	cfg.rainCheckInterval = rainCheckInterval;
-	cfg.rainCheckTwice = rainCheckTwice;
-
+	cfg.rainCheckInterval = _rainCheckInterval;
+	cfg.rainCheckTwice = _rainCheckTwice;
+	cfg.rainAction = _rainAction;
+	cfg.radioIsConfigured = radioIsConfigured;
 	EEPROM.put(_eepromLocation, cfg);
 
 }
-
 bool RotatorClass::LoadFromEEProm()
 {
 	RotatorConfiguration cfg;
@@ -261,8 +265,10 @@ bool RotatorClass::LoadFromEEProm()
 		_homeAzimuth = cfg.homeAzimuth;
 		_parkAzimuth = cfg.parkAzimuth;
 		_cutOffVolts = cfg.cutoffVolts;
-		rainCheckInterval = cfg.rainCheckInterval;
-		rainCheckTwice = cfg.rainCheckTwice;
+		_rainCheckInterval = cfg.rainCheckInterval;
+		_rainCheckTwice = cfg.rainCheckTwice;
+		_rainAction = cfg.rainAction;
+		radioIsConfigured = cfg.radioIsConfigured;
 	}
 
 	SetMaxSpeed(_maxSpeed);
@@ -280,26 +286,22 @@ void RotatorClass::SetDefaultConfig()
 	_homeAzimuth = 0;
 	_parkAzimuth = 0;
 	_cutOffVolts = 1220;
-	rainCheckInterval = 30; // In seconds, function will x 10
-	rainCheckTwice = false;
+	_rainCheckInterval = 30; // In seconds, function will x 10
+	_rainCheckTwice = false;
+	_rainAction = 0;
+	radioIsConfigured = false;
 
-}
-void RotatorClass::WipeConfig()
-{
-	RotatorConfiguration cfg;
-	memset(&cfg, 0, sizeof(cfg));
-	EEPROM.put(_eepromLocation, cfg);
 }
 
 int	RotatorClass::ReadVolts()
 {
-	int volts;
+	float calc;
 
-	volts = analogRead(VOLTAGE_MONITOR_PIN);
-	volts = volts / 2;
-	volts = volts * 3;
-	_volts = volts;
-	return volts;
+	calc = analogRead(VOLTAGE_MONITOR_PIN);
+	calc = calc / 2;
+	calc = calc * 3;
+	_volts = (int)calc;
+	return (int)calc;
 }
 void RotatorClass::SetLowVoltageCutoff(int lowVolts)
 {
@@ -348,18 +350,11 @@ void RotatorClass::ButtonCheck()
 		lastButtonPressed = whichButtonPressed = 0;
 	}
 }
-inline void RotatorClass::DebugPrint(String msg)
-{
-	if (debugEnabled == 1)
-	{
-		Serial.print("%" + msg + "#");
-	}
-}
 bool RotatorClass::GetRainStatus()
 {
 	static int rainCount = 0;
 	bool isRaining = false;
-	if (rainCheckTwice == false) rainCount = 1;
+	if (_rainCheckTwice == false) rainCount = 1;
 
 	if (digitalRead(RAIN_SENSOR_PIN) == 1)
 	{
@@ -381,6 +376,16 @@ bool RotatorClass::GetRainStatus()
 	}
 	return isRaining;
 }
+inline void RotatorClass::SetRainInterval(uint16_t interval)
+{
+	_rainCheckInterval = interval;
+	SaveToEEProm();
+}
+inline void RotatorClass::SetCheckRainTwice(bool state)
+{
+	_rainCheckTwice = state;
+	SaveToEEProm();
+}
 #pragma endregion
 
 #pragma region "Stepper Related"
@@ -389,12 +394,10 @@ void RotatorClass::enableMotor(bool newState)
 	if (newState == false)
 	{
 		digitalWrite(STEPPER_ENABLE_PIN, 1);
-		DebugPrint("Outputs disabled");
 	}
 	else
 	{
 		digitalWrite(STEPPER_ENABLE_PIN, 0);
-		DebugPrint("Outputs Enabled");
 	}
 
 }
@@ -404,7 +407,6 @@ long RotatorClass::GetMaxSpeed()
 }
 void RotatorClass::SetMaxSpeed(long newSpeed)
 {
-	DebugPrint("Rotator set max speed to " + String(newSpeed));
 	_maxSpeed = newSpeed;
 	stepper.setMaxSpeed(newSpeed);
 	SaveToEEProm();
@@ -415,7 +417,6 @@ long RotatorClass::GetAcceleration()
 }
 void RotatorClass::SetAcceleration(long newAccel)
 {
-	DebugPrint("Rotator set acceleration to " + String(newAccel));
 	_acceleration = newAccel;
 	stepper.setAcceleration(newAccel);
 	SaveToEEProm();
@@ -434,15 +435,22 @@ long RotatorClass::GetStepsPerRotation()
 {
 	return _stepsPerRotation;
 }
+inline byte RotatorClass::GetRainAction()
+{
+	return _rainAction;
+}
+inline int RotatorClass::GetRainCheckInterval()
+{
+	return _rainCheckInterval;
+}
+inline bool RotatorClass::GetRainCheckTwice()
+{
+	return _rainCheckTwice;
+}
 void RotatorClass::SetStepsPerRotation(long newCount)
 {
 	_stepsPerDegree = (float)newCount / 360.0;
 	_stepsPerRotation = newCount;
-	SaveToEEProm();
-}
-inline void RotatorClass::SetRainInterval(uint16_t interval)
-{
-	rainCheckInterval = interval;
 	SaveToEEProm();
 }
 #pragma endregion
@@ -467,7 +475,6 @@ void RotatorClass::StartCalibrating()
 	_seekMode = CALIBRATION_MOVEOFF;
 	stepper.setCurrentPosition(0);
 	_moveOffUntil = millis() + 5000;
-	DebugPrint("Rotator move off from " + String(millis()) + " to " + String(_moveOffUntil));
 	_doStepsPerRotation = false;
 	MoveRelative(_stepsPerRotation  * 1.5);
 }
@@ -482,7 +489,6 @@ void RotatorClass::Calibrate()
 		case(CALIBRATION_MOVEOFF):
 			if (millis() >= _moveOffUntil)
 			{
-				DebugPrint("Rotator move off complete");
 				_seekMode = CALIBRATION_MEASURE;
 			}
 			break;
@@ -504,6 +510,13 @@ void RotatorClass::SetHomeAzimuth(float newHome)
 	_homeAzimuth = newHome;
 	SaveToEEProm();
 }
+
+inline void RotatorClass::SetRainAction(byte value)
+{
+	_rainAction = value;
+	SaveToEEProm();
+}
+
 float RotatorClass::GetHomeAzimuth()
 {
 	return _homeAzimuth;
@@ -672,6 +685,7 @@ void RotatorClass::Run()
 	{
 		nextCheck += 10;
 		ButtonCheck();
+		
 	}
 	if (nextPeriodicReading < millis())
 	{
@@ -682,8 +696,6 @@ void RotatorClass::Run()
 	_isAtHome = false; // default to not at home switch
 
 	if (_seekMode > HOMING_HOME) Calibrate();
-
-	if (digitalRead(HOME_PIN) == 0) DebugPrint("Rotator hit home switch");
 
 	if (stepper.run() == true)
 	{
@@ -714,7 +726,6 @@ void RotatorClass::Run()
 
 	if (wasRunning == true)
 	{
-		DebugPrint("Rotator stopped!");
 		_moveDirection = MOVE_NONE;
 
 		if (_doStepsPerRotation == true)
@@ -723,7 +734,6 @@ void RotatorClass::Run()
 			SyncHome(_homeAzimuth);
 			SaveToEEProm();
 			_doStepsPerRotation = false;
-			Serial.print("t" + String(_stepsPerRotation) +"#");
 		}
 
 		stepsFromZero = GetPosition();

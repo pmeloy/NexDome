@@ -48,11 +48,10 @@ const uint8_t	STEPPER_ENABLE_PIN = 10;
 const uint8_t	STEPPER_DIRECTION_PIN = 11;
 const uint8_t	STEPPER_STEP_PIN = 12;
 
-const int	CLOSED_PIN = 2;
-const int	OPENED_PIN = 3;
+const int		CLOSED_PIN = 2;
+const int		OPENED_PIN = 3;
 const uint8_t	BUTTON_OPEN = 5;
 const uint8_t	BUTTON_CLOSE = 6;
-const uint8_t	ESTOP_PIN = 14;
 
 AccelStepper stepper(AccelStepper::DRIVER, STEPPER_STEP_PIN, STEPPER_DIRECTION_PIN);
 #pragma endregion
@@ -66,12 +65,8 @@ public:
 
 	enum ShutterStates { OPEN, CLOSED, OPENING, CLOSING, ERROR };
 
-	bool		present = false;
-
 	bool		wasRunning = false;
 	bool		sendUpdates = false;
-
-	bool		isConfiguringWireless = false;
 
 	long int	rainCheckInterval;
 
@@ -79,10 +74,8 @@ public:
 	float		PositionToAltitude(long);
 	long		AltitudeToPosition(float);
 
-	// Wireless functions
-	void		StartWirelessConfig();
-	void		ChangeSleepSettings(String);
-	void		ConfigXBee(String);
+	bool		radioIsConfigured = false;
+	bool	isConfiguringWireless = false;
 
 	// Getters
 	int32_t		GetAcceleration();
@@ -111,10 +104,14 @@ public:
 	void		GotoAltitude(float);
 	void		MoveRelative(long);
 	void		SetRainInterval(int);
+	byte		GetVoltsClose();
+	void		SetVoltsClose(byte);
 
 	void		EnableOutputs(bool);
 	void		Run();
 	void		Stop();
+	void		ReadEEProm();
+	void		WriteEEProm();
 
 
 private:
@@ -128,17 +125,16 @@ private:
 		uint64_t	stepsPerStroke;
 		uint16_t	acceleration;
 		uint16_t	maxSpeed;
-		uint8_t		stepMode;
+//		uint8_t		stepMode;
 		uint8_t		reversed;
 		uint16_t	cutoffVolts;
+		byte		voltsClose;
 		long int	rainCheckInterval;
-		uint16_t	jogStart; // milliseconds before triggering "sticky" move
-		uint16_t	jogMax; // milliseconds after which "sticky" expires
-		bool		eStopEnabled;
+		bool		radioIsConfigured;
 	}; Configuration config;
 
 	const int		_eepromLocation = 100;
-	const int		_eePromSignature = 4752;
+	const int		_eePromSignature = 2000;
 
 	byte			_sleepMode = 0;
 	uint16_t		_sleepPeriod = 300;
@@ -146,33 +142,26 @@ private:
 	String			_ATString;
 	int				_configStep;
 
-	bool			_hasClosed = false;
 	uint16_t		_acceleration;
 	uint16_t		_maxSpeed;
 	bool			_reversed;
-	uint8_t			_closedPin;
-	uint8_t			_openedPin;
-	uint8_t			_enablePin;
-	uint8_t			_eStopPin;
-	bool			_eStopEnabled;
+//	uint8_t			_closedPin;
+//	uint8_t			_openedPin;
+//	uint8_t			_enablePin;
 
 	uint16_t		_volts;
 	uint64_t		_batteryCheckInterval = 120000;
 	uint16_t		_cutoffVolts = 1220;
-
-	uint16_t		_jogStart;
-	uint16_t		_jogMax;
+	byte			_voltsClose = 0;
 
 	uint8_t			_lastButtonPressed;
 
 	ShutterStates	_shutterState = ERROR;
 	uint64_t		_stepsPerStroke;
-	uint8_t			_stepMode;
+//	uint8_t			_stepMode;
 
 
 	float		MeasureVoltage();
-	void		ReadEEProm();
-	void		WriteEEProm();
 	void		DefaultEEProm();
 };
 
@@ -185,9 +174,8 @@ private:
 ShutterClass::ShutterClass()
 {
 	ReadEEProm();
-	_openedPin = OPENED_PIN;
-	_closedPin = CLOSED_PIN;
-	_eStopPin = ESTOP_PIN;
+	//_openedPin = OPENED_PIN;
+	//_closedPin = CLOSED_PIN;
 
 	pinMode(CLOSED_PIN, INPUT_PULLUP);
 	pinMode(OPENED_PIN, INPUT_PULLUP);
@@ -196,8 +184,6 @@ ShutterClass::ShutterClass()
 	pinMode(STEPPER_ENABLE_PIN, OUTPUT);
 	pinMode(BUTTON_OPEN, INPUT_PULLUP);
 	pinMode(BUTTON_CLOSE, INPUT_PULLUP);
-	pinMode(ESTOP_PIN, INPUT);
-
 	pinMode(VOLTAGE_MONITOR_PIN, INPUT);
 
 	ReadEEProm();
@@ -217,13 +203,11 @@ void		ShutterClass::DefaultEEProm()
 	_stepsPerStroke = 885000;
 	_acceleration = 7000;
 	_maxSpeed = 5000;
-	_stepMode = 8;
 	_reversed = false;
 	_cutoffVolts = 1220;
+	_voltsClose = 0;
 	rainCheckInterval = 30000;
-	_eStopEnabled = false;
-	_jogStart = 1000;
-	_jogMax = 3000;
+	radioIsConfigured = false;
 }
 void		ShutterClass::ReadEEProm()
 {
@@ -244,12 +228,10 @@ void		ShutterClass::ReadEEProm()
 	_stepsPerStroke = cfg.stepsPerStroke;
 	_acceleration	= cfg.acceleration;
 	_maxSpeed		= cfg.maxSpeed;
-	_stepMode		= cfg.stepMode;
 	_cutoffVolts	= cfg.cutoffVolts;
+	_voltsClose		= cfg.voltsClose;
 	rainCheckInterval = cfg.rainCheckInterval;
-	_eStopEnabled	= cfg.eStopEnabled;
-	_jogStart		= cfg.jogStart;
-	_jogMax			= cfg.jogMax;
+	radioIsConfigured = cfg.radioIsConfigured;
 }
 void		ShutterClass::WriteEEProm()
 {
@@ -263,12 +245,11 @@ void		ShutterClass::WriteEEProm()
 	cfg.stepsPerStroke	= _stepsPerStroke;
 	cfg.acceleration	= _acceleration;
 	cfg.maxSpeed		= _maxSpeed;
-	cfg.stepMode		= _stepMode;
+//	cfg.stepMode		= _stepMode;
 	cfg.cutoffVolts		= _cutoffVolts;
+	cfg.voltsClose		= _voltsClose;
 	cfg.rainCheckInterval = rainCheckInterval;
-	cfg.eStopEnabled	= _eStopEnabled;
-	cfg.jogStart		= _jogStart;
-	cfg.jogMax			= _jogMax;
+	cfg.radioIsConfigured = radioIsConfigured;
 
 	EEPROM.put(_eepromLocation, cfg);
 	DBPrintln("Wrote sig of " + String(cfg.signature));
@@ -305,13 +286,13 @@ void		ShutterClass::DoButtons()
 }
 float		ShutterClass::MeasureVoltage()
 {
-	int volts;
+	int volts, adc;
+	float calc;
 
-	volts = analogRead(VOLTAGE_MONITOR_PIN);
-	volts = volts / 2;
-	volts = volts * 3;
-	DBPrintln("Voltage is " + String(volts));
-	_volts = volts;
+	adc = analogRead(VOLTAGE_MONITOR_PIN);
+	DBPrintln("ADC returns " + String(adc));
+	calc = adc * 3.0 * (5.0 / 1023.0);
+	_volts = volts = calc * 100;
 	return volts;
 }
 
@@ -331,58 +312,6 @@ float		ShutterClass::PositionToAltitude(long pos)
 }
 
 // Wireless Functions
-void		ShutterClass::StartWirelessConfig()
-{
-	delay(1000);
-	DBPrintln("Sending +++");
-	isConfiguringWireless = true;
-	Wireless.print("+++");
-	delay(1000);
-}
-inline void ShutterClass::ChangeSleepSettings(String values)
-{
-	int start, index;
-	uint16_t temp;
-	DBPrintln("Was sent " + values);
-
-	index = values.indexOf(',');
-	_sleepMode = values.substring(0, index).toInt();
-
-	start = index + 1;
-	index = values.indexOf(',', index + 1);
-	_sleepPeriod = values.substring(start, index).toInt();
-
-	start = index + 1;
-	_sleepDelay = values.substring(start).toInt();
-	DBPrintln("Vars set to " + String(_sleepMode) + "," + String(_sleepPeriod) + "," + String(_sleepDelay));
-	WriteEEProm();
-	ReadEEProm();
-}
-inline void ShutterClass::ConfigXBee(String result)
-{
-	if (_configStep == 0)
-	{
-		_ATString = "ATCE0,ID7734,AP0";
-		_ATString += ",SM" + String(_sleepMode, HEX);
-		_ATString += ",SP" + String(_sleepPeriod, HEX);
-		_ATString += ",ST" + String(_sleepDelay, HEX);
-		_ATString += ",CN";
-		_ATString.toUpperCase();
-		DBPrintln("AT String " + _ATString);
-		Wireless.println(_ATString);
-	}
-	_configStep++;
-
-	if (_configStep < 8)
-	{
-		DBPrintln("Arg " + String(_configStep) + ": " + result);
-	}
-	else
-	{
-		DBPrintln("Wireless Configured");
-		isConfiguringWireless = false;
-	}
-}
 
 // Getters
 int32_t		ShutterClass::GetAcceleration()
@@ -517,6 +446,15 @@ inline void ShutterClass::SetRainInterval(int newInterval)
 {
 	rainCheckInterval = newInterval;
 	WriteEEProm();
+}
+inline void ShutterClass::SetVoltsClose(byte value)
+{
+	_voltsClose = value;
+	WriteEEProm();
+}
+inline byte ShutterClass::GetVoltsClose()
+{
+	return _voltsClose;
 }
 void		ShutterClass::Run()
 {

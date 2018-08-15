@@ -6,7 +6,7 @@
 AppID=PDM NexDome Driver
 AppName=ASCOM PDM Dome Driver
 AppVerName=ASCOM PDM Dome Driver
-AppVersion=0.5.2.2
+AppVersion=0.5.2.3
 AppPublisher=Patrick Meloy <pat.meloy@netbistro.com>
 AppPublisherURL=mailto:pat.meloy@netbistro.com
 AppSupportURL=http://tech.groups.yahoo.com/group/ASCOM-Talk/

@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>432, 408</value>
+    <value>422, 480</value>
   </data>
   <data name="btnClose.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 23</value>
@@ -145,7 +145,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnClose.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="&gt;&gt;chkReversed.Name" xml:space="preserve">
     <value>chkReversed</value>
@@ -268,7 +268,7 @@
     <value>9</value>
   </data>
   <data name="gbxMotorSettings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 89</value>
+    <value>12, 190</value>
   </data>
   <data name="gbxMotorSettings.Size" type="System.Drawing.Size, System.Drawing">
     <value>194, 167</value>
@@ -289,7 +289,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;gbxMotorSettings.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="chkReversed.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -784,10 +784,10 @@
     <value>19</value>
   </data>
   <data name="gbxMovement.Location" type="System.Drawing.Point, System.Drawing">
-    <value>222, 12</value>
+    <value>212, 42</value>
   </data>
   <data name="gbxMovement.Size" type="System.Drawing.Size, System.Drawing">
-    <value>266, 390</value>
+    <value>266, 351</value>
   </data>
   <data name="gbxMovement.TabIndex" type="System.Int32, mscorlib">
     <value>48</value>
@@ -805,7 +805,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;gbxMovement.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="lblAtPark.Location" type="System.Drawing.Point, System.Drawing">
     <value>171, 14</value>
@@ -1414,7 +1414,7 @@
     <value>5</value>
   </data>
   <data name="gbxVoltages.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 12</value>
+    <value>12, 113</value>
   </data>
   <data name="gbxVoltages.Size" type="System.Drawing.Size, System.Drawing">
     <value>194, 71</value>
@@ -1435,7 +1435,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;gbxVoltages.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="lblLowWarn.Location" type="System.Drawing.Point, System.Drawing">
     <value>123, 16</value>
@@ -1669,7 +1669,7 @@
     <value>5</value>
   </data>
   <data name="gbxHomeandPark.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 262</value>
+    <value>12, 363</value>
   </data>
   <data name="gbxHomeandPark.Size" type="System.Drawing.Size, System.Drawing">
     <value>194, 97</value>
@@ -1690,7 +1690,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;gbxHomeandPark.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="lblHomePosTitle.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1855,7 +1855,217 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>501, 443</value>
+    <value>491, 515</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.Name" xml:space="preserve">
+    <value>lblAutoCloseAction</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.Parent" xml:space="preserve">
+    <value>gbxAutoClose</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.Name" xml:space="preserve">
+    <value>cbxRainAction</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.Parent" xml:space="preserve">
+    <value>gbxAutoClose</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="gbxAutoClose.Location" type="System.Drawing.Point, System.Drawing">
+    <value>212, 399</value>
+  </data>
+  <data name="gbxAutoClose.Size" type="System.Drawing.Size, System.Drawing">
+    <value>266, 61</value>
+  </data>
+  <data name="gbxAutoClose.TabIndex" type="System.Int32, mscorlib">
+    <value>54</value>
+  </data>
+  <data name="gbxAutoClose.Text" xml:space="preserve">
+    <value>Auto Close Action</value>
+  </data>
+  <data name="&gt;&gt;gbxAutoClose.Name" xml:space="preserve">
+    <value>gbxAutoClose</value>
+  </data>
+  <data name="&gt;&gt;gbxAutoClose.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxAutoClose.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxAutoClose.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="chkRainRequireTwice.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkRainRequireTwice.Location" type="System.Drawing.Point, System.Drawing">
+    <value>81, 71</value>
+  </data>
+  <data name="chkRainRequireTwice.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="chkRainRequireTwice.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 17</value>
+  </data>
+  <data name="chkRainRequireTwice.TabIndex" type="System.Int32, mscorlib">
+    <value>55</value>
+  </data>
+  <data name="chkRainRequireTwice.Text" xml:space="preserve">
+    <value>Require twice</value>
+  </data>
+  <data name="chkRainRequireTwice.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;chkRainRequireTwice.Name" xml:space="preserve">
+    <value>chkRainRequireTwice</value>
+  </data>
+  <data name="&gt;&gt;chkRainRequireTwice.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;chkRainRequireTwice.Parent" xml:space="preserve">
+    <value>gbxRain</value>
+  </data>
+  <data name="&gt;&gt;chkRainRequireTwice.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblRainInterval.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblRainInterval.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 47</value>
+  </data>
+  <data name="lblRainInterval.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 13</value>
+  </data>
+  <data name="lblRainInterval.TabIndex" type="System.Int32, mscorlib">
+    <value>54</value>
+  </data>
+  <data name="lblRainInterval.Text" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="&gt;&gt;lblRainInterval.Name" xml:space="preserve">
+    <value>lblRainInterval</value>
+  </data>
+  <data name="&gt;&gt;lblRainInterval.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRainInterval.Parent" xml:space="preserve">
+    <value>gbxRain</value>
+  </data>
+  <data name="&gt;&gt;lblRainInterval.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tbxRainInterval.Location" type="System.Drawing.Point, System.Drawing">
+    <value>66, 43</value>
+  </data>
+  <data name="tbxRainInterval.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 20</value>
+  </data>
+  <data name="tbxRainInterval.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="tbxRainInterval.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tbxRainInterval.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Center</value>
+  </data>
+  <data name="&gt;&gt;tbxRainInterval.Name" xml:space="preserve">
+    <value>tbxRainInterval</value>
+  </data>
+  <data name="&gt;&gt;tbxRainInterval.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbxRainInterval.Parent" xml:space="preserve">
+    <value>gbxRain</value>
+  </data>
+  <data name="&gt;&gt;tbxRainInterval.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblRainState.Location" type="System.Drawing.Point, System.Drawing">
+    <value>54, 18</value>
+  </data>
+  <data name="lblRainState.Size" type="System.Drawing.Size, System.Drawing">
+    <value>118, 19</value>
+  </data>
+  <data name="lblRainState.TabIndex" type="System.Int32, mscorlib">
+    <value>53</value>
+  </data>
+  <data name="lblRainState.Text" xml:space="preserve">
+    <value>RAINING</value>
+  </data>
+  <data name="lblRainState.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;lblRainState.Name" xml:space="preserve">
+    <value>lblRainState</value>
+  </data>
+  <data name="&gt;&gt;lblRainState.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRainState.Parent" xml:space="preserve">
+    <value>gbxRain</value>
+  </data>
+  <data name="&gt;&gt;lblRainState.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="btnSetRainInterval.Location" type="System.Drawing.Point, System.Drawing">
+    <value>111, 42</value>
+  </data>
+  <data name="btnSetRainInterval.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 23</value>
+  </data>
+  <data name="btnSetRainInterval.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="btnSetRainInterval.Text" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="&gt;&gt;btnSetRainInterval.Name" xml:space="preserve">
+    <value>btnSetRainInterval</value>
+  </data>
+  <data name="&gt;&gt;btnSetRainInterval.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSetRainInterval.Parent" xml:space="preserve">
+    <value>gbxRain</value>
+  </data>
+  <data name="&gt;&gt;btnSetRainInterval.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="gbxRain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="gbxRain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>194, 95</value>
+  </data>
+  <data name="gbxRain.TabIndex" type="System.Int32, mscorlib">
+    <value>53</value>
+  </data>
+  <data name="gbxRain.Text" xml:space="preserve">
+    <value>Rain</value>
+  </data>
+  <data name="&gt;&gt;gbxRain.Name" xml:space="preserve">
+    <value>gbxRain</value>
+  </data>
+  <data name="&gt;&gt;gbxRain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbxRain.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbxRain.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>
@@ -1880,5 +2090,67 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="lblAutoCloseAction.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblAutoCloseAction.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lblAutoCloseAction.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 22</value>
+  </data>
+  <data name="lblAutoCloseAction.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 26</value>
+  </data>
+  <data name="lblAutoCloseAction.TabIndex" type="System.Int32, mscorlib">
+    <value>59</value>
+  </data>
+  <data name="lblAutoCloseAction.Text" xml:space="preserve">
+    <value>Rain or Low shutter
+voltage action
+</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.Name" xml:space="preserve">
+    <value>lblAutoCloseAction</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.Parent" xml:space="preserve">
+    <value>gbxAutoClose</value>
+  </data>
+  <data name="&gt;&gt;lblAutoCloseAction.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cbxRainAction.Items" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="cbxRainAction.Items1" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="cbxRainAction.Items2" xml:space="preserve">
+    <value>Park</value>
+  </data>
+  <data name="cbxRainAction.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 25</value>
+  </data>
+  <data name="cbxRainAction.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 21</value>
+  </data>
+  <data name="cbxRainAction.TabIndex" type="System.Int32, mscorlib">
+    <value>58</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.Name" xml:space="preserve">
+    <value>cbxRainAction</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.Parent" xml:space="preserve">
+    <value>gbxAutoClose</value>
+  </data>
+  <data name="&gt;&gt;cbxRainAction.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
 </root>

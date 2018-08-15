@@ -538,6 +538,15 @@ namespace ASCOM.PDM {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close when low.
+        /// </summary>
+        internal static string ShutterCloseLowText {
+            get {
+                return ResourceManager.GetString("ShutterCloseLowText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Closing.
         /// </summary>
         internal static string ShutterClosingText {

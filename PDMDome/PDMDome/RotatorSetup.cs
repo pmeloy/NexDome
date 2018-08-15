@@ -79,14 +79,24 @@ namespace ASCOM.PDM
 
             lblAtPark.Text = GlobalStrings.AtParkText;
 
+            gbxRain.Text = GlobalStrings.RainBoxTitle;
+            lblRainState.Text = GlobalStrings.RainStateRainingText;
+            lblRainInterval.Text = GlobalStrings.RainIntervalText;
+            chkRainRequireTwice.Text = GlobalStrings.RainRequireTwiceText;
+            btnSetRainInterval.Text = GlobalStrings.SetText;
+            tbxRainInterval.Text = Dome.rotatorRainInterval.ToString();
+            chkRainRequireTwice.Checked = Dome.rainSensorTwice;
+            cbxRainAction.SelectedIndex = Dome.rotatorRainAction;
+
+
             tbxCutoff.Text = (Dome.rotatorCutoff / 100.0).ToString("0,0.00");
             tbxMaxSpeed.Text = Dome.rotatorMaxSpeed.ToString();
             tbxAcceleration.Text = Dome.rotatorAcceleration.ToString();
             _stepsPer = Dome.rotatorStepsPer;
             tbxStepsPerRotation.Text = _stepsPer.ToString();
             chkReversed.Checked = Dome.rotatorReversed;
-            tbxHomeAz.Text = Dome.rotatorHomeAz.ToString();
-            tbxParkAz.Text = Dome.rotatorParkAz.ToString();
+            tbxHomeAz.Text = Dome.rotatorHomeAz.ToString("0,0.00");
+            tbxParkAz.Text = Dome.rotatorParkAz.ToString("0,0.00");
             lblSeekMode.Text = SeekText(Dome.rotatorSeekState);
             lblHomedState.Text = HomedText(Dome.rotatorHomedStatus);
         }
@@ -137,6 +147,7 @@ namespace ASCOM.PDM
             double cutoff;
             if (double.TryParse(tbxCutoff.Text, out cutoff) == true)
             {
+                tbxCutoff.Text = cutoff.ToString("0,0.00");
                 cutoff *= 100.0;
                 Dome.rotatorCutoff = (int)cutoff;
                 myDome.SendSerial(Dome.VOLTS_ROTATOR_CMD + Dome.rotatorCutoff.ToString(Dome.sourceCulture));
@@ -216,6 +227,7 @@ namespace ASCOM.PDM
             double az;
             if (double.TryParse(tbxHomeAz.Text, out az) == true)
             {
+                tbxHomeAz.Text = az.ToString("0,0.00");
                 Dome.rotatorHomeAz = az;
                 myDome.SendSerial(Dome.HOMEAZ_ROTATOR_CMD + az.ToString(Dome.sourceCulture));
                 Dome.LogMessage("Rotator SET", "Home Azimuth ({0})", az);
@@ -230,6 +242,7 @@ namespace ASCOM.PDM
             double az;
             if (double.TryParse(tbxParkAz.Text, out az) == true)
             {
+                tbxParkAz.Text = az.ToString("0,0.00");
                 Dome.rotatorParkAz = az;
                 myDome.SendSerial(Dome.PARKAZ_ROTATOR_CMD + az.ToString(Dome.sourceCulture));
                 Dome.LogMessage("Rotator SET", "Park Azimuth ({0})", az);
@@ -275,7 +288,7 @@ namespace ASCOM.PDM
         }
         private void btnFullTurn_Click(object sender, EventArgs e)
         {
-            myDome.SendSerial(Dome.MOVERELATIVE_ROTATOR_CMD + (Dome.rotatorStepsPer - 1).ToString(Dome.sourceCulture));
+            myDome.SendSerial(Dome.MOVE_RELATIVE_ROTATOR_CMD + (Dome.rotatorStepsPer - 1).ToString(Dome.sourceCulture));
             
         }
         private void btnGoToPos_Click(object sender, EventArgs e)
@@ -311,12 +324,12 @@ namespace ASCOM.PDM
         }
         private void btnRotateCCW_MouseDown(object sender, MouseEventArgs e)
         {
-            myDome.SendSerial(Dome.MOVERELATIVE_ROTATOR_CMD + "-250000");
+            myDome.SendSerial(Dome.MOVE_RELATIVE_ROTATOR_CMD + "-250000");
             Dome.tl.LogMessage("Rotator SET", "Move Relative -250000");
         }
         private void btnRotateCW_MouseDown(object sender, MouseEventArgs e)
         {
-            myDome.SendSerial(Dome.MOVERELATIVE_ROTATOR_CMD + "250000");
+            myDome.SendSerial(Dome.MOVE_RELATIVE_ROTATOR_CMD + "250000");
             Dome.tl.LogMessage("Rotator SET", "Move Relative +250000");
             lblMultiStatus.Text = ">>>";
         }
@@ -330,7 +343,46 @@ namespace ASCOM.PDM
             Close();
         }
 
+        private void btnSetRainInterval_Click(object sender, EventArgs e)
+        {
+            int rainInterval = 0;
+            if (int.TryParse(tbxRainInterval.Text, out rainInterval) == true)
+            {
+                myDome.SendSerial(Dome.RAIN_ROTATOR_CMD + rainInterval.ToString(Dome.sourceCulture));
+                errorProvider1.SetError(tbxRainInterval, "");
+            }
+            else
+            {
+                errorProvider1.SetError(tbxRainInterval, GlobalStrings.InvalidNumberText);
+            }
+        }
+
+        private void chkRainRequireTwice_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isLoading == false)
+            {
+                Dome.rainSensorTwice = chkRainRequireTwice.Checked;
+                Dome.LogMessage("Rotator Get", "Require rain twice ({0})", Dome.rainSensorTwice.ToString());
+                if (Dome.rainSensorTwice == true)
+                {
+                    myDome.SendSerial(Dome.RAIN_ROTATOR_TWICE_CMD + "1");
+                }
+                else
+                {
+                    myDome.SendSerial(Dome.RAIN_ROTATOR_TWICE_CMD + "0");
+                }
+            }
+        }
+
         #endregion
+
+        private void cbxRainAction_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoading == true) return;
+            Dome.rotatorRainAction = cbxRainAction.SelectedIndex;
+            Dome.LogMessage("Rotator SET", "Rain action ({0})", Dome.rotatorRainAction);
+            myDome.SendSerial(Dome.RAIN_ROTATOR_ACTION + Dome.rotatorRainAction.ToString(Dome.sourceCulture));
+        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -384,6 +436,19 @@ namespace ASCOM.PDM
             {
                 lblAtPark.Visible = false;
             }
+            if (Dome.isRaining == true)
+            {
+                lblRainState.Text = GlobalStrings.RainStateRainingText;
+                lblRainState.ForeColor = Color.White;
+                lblRainState.BackColor = Color.Red;
+            }
+            else
+            {
+                lblRainState.Text = GlobalStrings.RainStateNotRainingText;
+                lblRainState.ForeColor = SystemColors.ControlText;
+                lblRainState.BackColor = SystemColors.Control;
+            }
+
         }
 
     }

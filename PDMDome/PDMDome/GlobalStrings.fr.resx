@@ -368,4 +368,8 @@
     <value>Intervalle</value>
     <comment>Time between rain sensor checks</comment>
   </data>
+  <data name="ShutterCloseLowText" xml:space="preserve">
+    <value>Fermer quand il est bas</value>
+    <comment>Text saying shutter will close</comment>
+  </data>
 </root>

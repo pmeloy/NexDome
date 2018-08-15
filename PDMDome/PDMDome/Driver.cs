@@ -115,40 +115,42 @@ namespace ASCOM.PDM
         //Rotator values
         internal static long rotatorPosition, rotatorStepsPer, rotatorMaxSpeed, rotatorAcceleration;
         internal static double azimuth, rotatorHomeAz, rotatorParkAz;
-        internal static bool atHome, atPark, isSlaved, rotatorReversed = false, isRaining = false;
+        internal static bool atHome, atPark, isSlaved, rotatorReversed = false, isRaining = false, rainSensorTwice = false;
         internal static string rotatorVersion;
-        internal static int rotatorSlewDirection, rotatorHomedStatus, rotatorSeekState, rotatorVoltage, rotatorCutoff, rotatorRainInterval;
+        internal static int rotatorSlewDirection, rotatorHomedStatus, rotatorSeekState, rotatorVoltage, rotatorCutoff, rotatorRainInterval, rotatorRainAction;
 
         // Shutter values
         internal static string shutterVersion;
         internal static long shutterPosition, shutterStepsPer, shutterMaxSpeed, shutterAcceleration;
         internal static double altitude;
-        internal static bool shutterReversed = false;
+        internal static bool shutterReversed = false, shutterCloseOnLowVoltage = false;
         internal static int shutterVoltage, shutterCutoff;
 
         #region Serial command character constants
         internal const string COMMENT_CMD = "%";
-        internal const string ACCELERATION_ROTATOR_CMD = "e"; // Get/Set stepper acceleration
-        internal const string ABORT_MOVE_CMD = "a"; // Tell everything to STOP!
-        internal const string CALIBRATE_ROTATOR_CMD = "c"; // Calibrate the dome
-        internal const string ERROR_ROTATOR_AZ = "o"; // Azimuth error when I finally implement it
-        internal const string GOTO_ROTATOR_CMD = "g"; // Get/set dome azimuth
-        internal const string HELLO_CMD = "H";
-        internal const string HOME_ROTATOR_CMD = "h"; // Home the dome
-        internal const string HOMEAZ_ROTATOR_CMD = "i"; // Get/Set home position
-        internal const string HOMED_ROTATOR_STATUS = "z"; // Get homed status
-        internal const string MOVERELATIVE_ROTATOR_CMD = "b"; // Move relative - steps from current position +/-
-        internal const string PARKAZ_ROTATOR_CMD = "l"; // Get/Set park azimuth
-        internal const string POSITION_ROTATOR_CMD = "p"; // Get/Set step position
-        internal const string RAIN_ROTATOR_CMD = "f"; // Get rain sensor state
-        internal const string SPEED_ROTATOR_CMD = "r"; // Get/Set step rate (speed)
-        internal const string REVERSED_ROTATOR_CMD = "y"; // Get/Set stepper reversed status 
-        internal const string SEEKSTATE_GET = "d"; // Get seek mode (homing, calibrating etc)
-        internal const string SLEW_ROTATOR_STATUS = "m"; // Get Slewing status/direction
-        internal const string STEPSPER_ROTATOR_CMD = "t"; // GetSteps per rotation
-        internal const string SYNC_ROTATOR_CMD = "s"; // Sync to telescope
-        internal const string VERSION_ROTATOR_GET = "v"; // Get Version string
-        internal const string VOLTS_ROTATOR_CMD = "k"; // Get volts and get/set cutoff
+        internal const string ACCELERATION_ROTATOR_CMD  = "e"; // Get/Set stepper acceleration
+        internal const string ABORT_MOVE_CMD            = "a"; // Tell everything to STOP!
+        internal const string CALIBRATE_ROTATOR_CMD     = "c"; // Calibrate the dome
+        internal const string ERROR_ROTATOR_AZ          = "o"; // Azimuth error when I finally implement it
+        internal const string GOTO_ROTATOR_CMD          = "g"; // Get/set dome azimuth
+        internal const string HELLO_CMD                 = "H";
+        internal const string HOME_ROTATOR_CMD          = "h"; // Home the dome
+        internal const string HOMEAZ_ROTATOR_CMD        = "i"; // Get/Set home position
+        internal const string HOMED_ROTATOR_STATUS      = "z"; // Get homed status
+        internal const string MOVE_RELATIVE_ROTATOR_CMD  = "b"; // Move relative - steps from current position +/-
+        internal const string PARKAZ_ROTATOR_CMD        = "l"; // Get/Set park azimuth
+        internal const string POSITION_ROTATOR_CMD      = "p"; // Get/Set step position
+        internal const string RAIN_ROTATOR_ACTION       = "n";
+        internal const string RAIN_ROTATOR_CMD          = "f"; // Get rain sensor state
+        internal const string RAIN_ROTATOR_TWICE_CMD    = "j"; // Get/Set rain sensor needs to positives to trigger
+        internal const string SPEED_ROTATOR_CMD         = "r"; // Get/Set step rate (speed)
+        internal const string REVERSED_ROTATOR_CMD      = "y"; // Get/Set stepper reversed status 
+        internal const string SEEKSTATE_GET             = "d"; // Get seek mode (homing, calibrating etc)
+        internal const string SLEW_ROTATOR_STATUS       = "m"; // Get Slewing status/direction
+        internal const string STEPSPER_ROTATOR_CMD      = "t"; // GetSteps per rotation
+        internal const string SYNC_ROTATOR_CMD          = "s"; // Sync to telescope
+        internal const string VERSION_ROTATOR_GET       = "v"; // Get Version string
+        internal const string VOLTS_ROTATOR_CMD         = "k"; // Get volts and get/set cutoff
 
         internal const string ACCELERATION_SHUTTER_CMD = "E"; // Get/Set stepper acceleration
         internal const string CAL_SHUTTER_CMD = "L"; // Calibrate the shutter
@@ -165,6 +167,7 @@ namespace ASCOM.PDM
         internal const string STEPSPER_SHUTTER_CMD = "T"; // Get/Set steps per stroke
         internal const string VERSION_SHUTTER_GET = "V"; // Get version string
         internal const string VOLTS_SHUTTER_CMD = "K"; // Get volts and get/set cutoff
+        internal const string LOWCLOSE_SHUTTER_CMD = "B"; // Get/Set close shutter on low voltage setting
         #endregion
 
         List<string> serialMessageList;
@@ -185,8 +188,8 @@ namespace ASCOM.PDM
         {
             // For forcing locales so I can test different languages
 
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
-            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
+            //Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fr");
+            //Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
 
             //sourceCulture = CultureInfo.CreateSpecificCulture("en-US");
             sourceCulture = CultureInfo.InvariantCulture;
@@ -554,6 +557,12 @@ namespace ASCOM.PDM
                             LogMessage("Rotator Get", "Homed Status Invalid ({0})", value);
                         }
                         break;
+                    case MOVE_RELATIVE_ROTATOR_CMD:
+                        if (value.Equals("L") == true)
+                        {
+                            tl.LogMessage("Rotator SET", "Abort, low voltage");
+                        }
+                        break;
                     case OPEN_SHUTTER_CMD:
                         if (value.Equals("R") == true)
                         {
@@ -614,6 +623,17 @@ namespace ASCOM.PDM
                             LogMessage("Shutter Position", "Invalid ({0})", value);
                         }
                         break;
+                    case RAIN_ROTATOR_ACTION:
+                        if (int.TryParse(value, numberStyle, sourceCulture, out rotatorRainAction) == true)
+                        {
+                            LogMessage("Rotator Get", "Rain action ({0})", rotatorRainAction);
+                            if (rotatorRainAction > 2) rotatorRainAction = 0;
+                        }
+                        else
+                        {
+                            LogMessage("Rotator Get", "Rain action invalid ({0})", value);
+                        }
+                        break;
                     case RAIN_ROTATOR_CMD:
                         if (int.TryParse(value, numberStyle,sourceCulture, out rotatorRainInterval) == true)
                         {
@@ -634,6 +654,10 @@ namespace ASCOM.PDM
                             isRaining = false;
                         }
                         LogMessage("Rotator Get", "Raining = ({0})", value);
+                        break;
+                    case RAIN_ROTATOR_TWICE_CMD:
+                        rainSensorTwice = (value.Equals("1"));
+                        LogMessage("Rotator Get", "Rain sensor twice ({0})", value);
                         break;
                     case REVERSED_ROTATOR_CMD:
                         if (value.Equals("0") == true)
@@ -700,12 +724,9 @@ namespace ASCOM.PDM
                         }
                         break;
                     case STATE_SHUTTER_GET:
-                        LogMessage("ShutterState Get", "Value ({0})", value);
                         if (int.TryParse(value, numberStyle, sourceCulture, out localInt) == true)
                         {
                             domeShutterState = (ShutterState)localInt;
-                            tl.LogMessage("ShutterState Received",localInt.ToString());
-          
                             if (localInt < 0 || localInt > 4) LogMessage("Shutter Get", "State invalud ({0})", localInt);
                         }
                         else
@@ -757,6 +778,10 @@ namespace ASCOM.PDM
                             LogMessage("Shutter Voltage", "({0})", value);
                         }
                         break;
+                    case LOWCLOSE_SHUTTER_CMD:
+                        shutterCloseOnLowVoltage = (value.Equals("1"));
+                        LogMessage("Shutter Get", "Close on low voltage ({0})", shutterCloseOnLowVoltage.ToString());
+                        break;
                     default:
                         tl.LogMessage("Unknown command", command + ":" + value);
                         break;
@@ -802,6 +827,8 @@ namespace ASCOM.PDM
             SendSerial(HOMED_ROTATOR_STATUS);
             SendSerial(SEEKSTATE_GET);
             SendSerial(RAIN_ROTATOR_CMD);
+            SendSerial(RAIN_ROTATOR_TWICE_CMD);
+            SendSerial(RAIN_ROTATOR_ACTION);
 
             if (canSetShutter == true)
             {
@@ -814,6 +841,8 @@ namespace ASCOM.PDM
                 SendSerial(SPEED_SHUTTER_CMD);
                 SendSerial(ACCELERATION_SHUTTER_CMD);
                 SendSerial(REVERSED_SHUTTER_CMD);
+                SendSerial(LOWCLOSE_SHUTTER_CMD);
+
             }
         }
         #endregion

@@ -20,23 +20,24 @@
 
 /*
 ** Basic operation
-** On startup the shutter sends messages to the rotator with all the relevant data such as acceleration, timeouts, etc. Rotator also
-** asks for this information if it's powered up after the shutter and missed the information.
+** Communications between the rotator and shutter are generally kept at a minimum with the only constant communication being periodic
+** rain sensor checks. The driver talks to the rotator and the rotator will pass on any shutter commands to the shutter over wireless.
+** Changing shutter settings from the driver usually initiates a one-way message to the shutter with the new setting. Since this has
+** to pass through the rotator the rotator will store the value and the shutter doesn't have to respond to the rotator.
+** 
+** When the shutter gets a movement command it will start updating the rotator once per second until the move is complete. That way the
+** rotator doesn't have to ask for the values, cutting down on the number of messages going back and forth.
 **
-** From there it just sits doing nothing until a command is received. Rather than have the rotator ask for updates, shutter will simply
-** spew out updates to changing values while it is moving so the rotator is never out of sync with what the shutter is doing. This may
-** sound like a lot of traffic but the values are pretty much all short strings so it doesn't even approach the limit of 9600 baud.
+** On startup the shutter sends a Hello message over wireless. If the rotator is present it will ask the shutter for all the settings.
+**
+** If the rotator is powered up after the shutter then the rotator will send out a Hello message and if the shutter is powered up they
+** will initiate the data exchange.
 **
 ** One of the drawbacks of a "dumb" stepper driver is that if the Arduino is doing something else the stepper is not updated causing
 ** it to try and stop during a move. This doesn't last long but it does create a noticable "tick" sound. Each time it ticks there is 
 ** extra stress on the motor and gearing so reducing the ticking by not having to receive lots of update requests as well as sending
 ** them is a good thing.
 **
-** I'm also going to attempt to stagger the sending over the interval period rather than all in one scan which may eliminate the ticking.
-**
-** The rotator stores all received data in its RemoteShutter object and applications poll it rather than the shutter. This scheme lets
-** the shutter be completely dormant until it receives a command, allowing its radio to sleep. I'll also look into putting the arduino
-** to sleep which would save a lot more power.
 */
 
 #include <AccelStepper.h>
@@ -44,43 +45,25 @@
 #include "PDMShutterClass.h"
 
 #define Computer Serial
-String computerBuffer;
+String serialBuffer;
 
 #define Wireless Serial1
 String wirelessBuffer;
 
-const String version = "0.5.2.2";
-
-// Stepper motor configuration
-#pragma endregion
-
-
-#pragma region Global Enums
-
-
-//<SUMMARY>Possible states the shutter could be in - default SS_ERROR at startup</SUMMARY>
-
-//<SUMMARY>Whether the shutter has homeded and gone full stroke</SUMMARY>
-enum HomeStatuses { HS_NONE, HS_SYNC, HS_DONE };
+const String version = "2.0.0.0";
 
 #pragma endregion
 
 #pragma region Command character constants
-// x_CMD is the comand itself, x_RES is the response character.
-const char ENABLE_OUTPUTS = '&';
 const char ABORT_CMD				= 'a';
 const char ACCELERATION_SHUTTER_CMD = 'E'; // Get/Set stepper acceleration
-const char CALIBRATE_SHUTTER_CMD	= 'L'; // Calibrate the shutter
 const char CLOSE_SHUTTER_CMD		= 'C'; // Close shutter
-const char ENDSWITCH_STATUS_GET		= 'W'; // 4-None, 0-OPEN,1-CLOSED
 const char ELEVATION_SHUTTER_CMD	= 'G'; // Get/Set altitude
 const char HELLO_CMD				= 'H'; // Let rotator know we're here
-const char HASCLOSED_SHUTTER_GET	= 'Z'; // Has to be closed before the shutter knows where it is
-const char INACTIVE_SHUTTER_CMD		= 'X'; // Get/Set how long before shutter closes
 const char OPEN_SHUTTER_CMD			= 'O'; // Open the shutter
 const char POSITION_SHUTTER_GET		= 'P'; // Get step position
 const char RAIN_INTERVAL_SET		= 'I'; // Tell us how long between checks in seconds
-const char RAIN_SHUTTER_GET			= 'F'; // Rotator telling us if it's raining or not
+const char RAIN_ROTATOR_GET			= 'F'; // Rotator telling us if it's raining or not
 const char SLEEP_SHUTTER_CMD		= 'S'; // Get/Set radio sleep settings
 const char SPEED_SHUTTER_CMD		= 'R'; // Get/Set step rate (speed)
 const char REVERSED_SHUTTER_CMD		= 'Y'; // Get/Set stepper reversed status
@@ -88,16 +71,21 @@ const char STATE_SHUTTER_GET		= 'M'; // Get shutter state
 const char STEPSPER_SHUTTER_CMD		= 'T'; // Get/Set steps per stroke
 const char VERSION_SHUTTER_GET		= 'V'; // Get version string
 const char VOLTS_SHUTTER_CMD		= 'K'; // Get volts and get/set cutoff
-const char WIRELESS_COMMENT			= 'B'; // Print comment over serial
+const char VOLTSCLOSE_SHUTTER_CMD	= 'B';
+
 #pragma endregion
 
 
 ShutterClass Shutter = ShutterClass();
-//XBeeClass XBee = XBeeClass();
+
+
+int configStep = 0;
+String ATString = "";
 
 bool SentHello = false, XbeeStarted = false;
 bool isRaining = false;
 
+unsigned long delayUntil;
 unsigned long nextUpdateTime, nextStepTime;
 unsigned long updateInterval, stepInterval;
 unsigned long nextVoltageUpdate, voltUpdateInterval = 5000;
@@ -110,46 +98,66 @@ void setup()
 	Wireless.begin(9600);
 	updateInterval = 1000;
 	stepInterval = 100;
-	delay(10000);
+	delayUntil = millis() + 20000;
+	DBPrintln("Waiting for communications setup");
 }
 
 void loop()
 {
 
-	if (XbeeStarted == false)
-	{
-		DBPrintln("Wait for serial devices to start");
-		Shutter.StartWirelessConfig();
-		XbeeStarted = true;
-	}
-	if (SentHello == false && Shutter.isConfiguringWireless == false) SendHello();
-	
-	if (Computer.available() > 0) ReceiveComputer();
+	//if (XbeeStarted == true && SentHello == false) SendHello();
+	if (millis() < delayUntil) return;
+	if (Computer.available() > 0) ReceiveSerial();
 
 	if (Wireless.available()) ReceiveWireless();
+
+	if (XbeeStarted == false)
+	{
+		if (Shutter.radioIsConfigured == false && Shutter.isConfiguringWireless == false)
+		{
+			DBPrintln("Wait for serial devices to start");
+			StartWirelessConfig();
+			delay(2000);
+		}
+		else if (Shutter.radioIsConfigured == true)
+		{
+			XbeeStarted = true;
+			SendHello();
+			DBPrintln("Radio started");
+		}
+	}
+
 	
 	if (millis() > nextUpdateTime && (Shutter.sendUpdates == true || doFinalUpdate == true)) UpdateRotator();
 
-	if (Shutter.isConfiguringWireless == false) RainCheck();
+	if (Shutter.isConfiguringWireless == false && SentHello == true)
+	{
+		if (Shutter.rainCheckInterval > 0) 
+		{
+			RainCheck();
+		}
+	}
+
 
 	Shutter.DoButtons();
 	Shutter.Run();
 }
 
-
 ///<SUMMARY>
-///Send all data to rotator every second but stagger the messages over the second.
+///Send all data to rotator every second but stagger the messages over that second.
 ///</SUMMARY>
-// Run through this once per second when the stepper is (or was) running. Shutter.sendUpdates is set to true
-// in Shutter.run() if the motor is moving and set to false at the end of UpdateRotator.
-// It's entirely possible for the motor to stop part way through the update steps which would mean the next time around
-// no updates would be sent even though the data is different from what was already sent to the rotator. To prevent this
-// the sendUpdates state is stored at the start of the update steps and checked at the end. If they are different then
-// doFinalUpdate is set to true so the update cycle will run one final time even though the motor is stopped.
+/* Run through this once per second when the stepper is (or was) running. 
+** Shutter.sendUpdates is set to true when a movement command is received and set to false
+** in Shutter.run() if the motor is stopped.
+** It's entirely possible for the motor to stop part way through the update steps which would mean the next time around
+** no updates would be sent even though the data is different from what was already sent to the rotator. To prevent this
+** the sendUpdates state is stored at the start of the update steps and checked at the end. If they are different then
+** doFinalUpdate is set to true so the update cycle will run one final time even though the motor is stopped.
+*/
 
 void UpdateRotator()
 {
-	static bool sentState, sentElevation, sentPosition, runningAtaStart;
+	static bool sentState, sentPosition, runningAtaStart;
 
 	runningAtaStart = Shutter.sendUpdates; // Store motion state to comparison at end
 
@@ -170,13 +178,13 @@ void UpdateRotator()
 	}
 
 	//TODO: Not ready yet - when handbox is done finish this up
-	if (sentElevation == false)
-	{
-		Wireless.print(String(ELEVATION_SHUTTER_CMD) + String(Shutter.GetElevation()) + "#");
-		sentElevation = true;
-		nextStepTime = millis() + stepInterval;
-		return;
-	}
+	//if (sentElevation == false)
+	//{
+	//	Wireless.print(String(ELEVATION_SHUTTER_CMD) + String(Shutter.GetElevation()) + "#");
+	//	sentElevation = true;
+	//	nextStepTime = millis() + stepInterval;
+	//	return;
+	//}
 
 	if (sentPosition == false)
 	{
@@ -188,7 +196,7 @@ void UpdateRotator()
 
 	nextUpdateTime = millis() + updateInterval;
 
-	sentState = sentElevation = sentPosition = false; // Reset the bools for the next cycle
+	sentState = sentPosition = false; // Reset the bools for the next cycle
 	Shutter.sendUpdates = false;
 	if (runningAtaStart != Shutter.sendUpdates) // See if motor stopped after update steps started
 	{
@@ -199,95 +207,91 @@ void UpdateRotator()
 		doFinalUpdate = false;
 	}
 }
+
+#pragma region XBeeRoutines
+void StartWirelessConfig()
+{
+	Shutter.isConfiguringWireless = true;
+	delay(1000);
+	DBPrintln("Sending +++");
+	Wireless.print("+++");
+	delay(1000);
+}
+inline void ConfigXBee(String result)
+{
+	if (configStep == 0)
+	{
+		ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
+		DBPrintln("AT String " + ATString);
+		Wireless.println(ATString);
+	}
+	DBPrintln("Result " + String(configStep) + ":" + result);
+	if (configStep > 5)
+	{
+		Shutter.isConfiguringWireless = false;
+		DBPrintln("Wireless Configured");
+		Shutter.radioIsConfigured = true;
+		XbeeStarted = true;
+		Shutter.WriteEEProm();
+		delay(2000);
+	}
+	configStep++;
+
+}
+
 void SendHello()
 {
 	DBPrintln("Sending hello");
-	Wireless.println("H#");
+	delay(1000);
+	Wireless.println(String(HELLO_CMD) + "#");
 	SentHello = true;
 }
+
+#pragma endregion
 void RainCheck()
 {
 	if (millis() > nextRainCheck)
 	{
 		DBPrintln("Asking for rain status");
-		Wireless.print(String(RAIN_SHUTTER_GET) + "#");
+		Wireless.print(String(RAIN_ROTATOR_GET) + "#");
 		nextRainCheck = millis() + Shutter.rainCheckInterval;
 	}
 }
-#pragma region Computer Communications
-void ReceiveComputer()
+#pragma region Communications
+void ReceiveSerial()
 {
 	char character = Computer.read();
 
 	if (character == '\r' || character == '\n')
 	{
 		// End of message
-		if (computerBuffer.length() > 0)
+		if (serialBuffer.length() > 0)
 		{
-			ProcessWireless(computerBuffer);
-			computerBuffer = "";
+			ProcessMessages(serialBuffer);
+			serialBuffer = "";
 		}
 	}
 	else
 	{
-		computerBuffer += String(character);
+		serialBuffer += String(character);
 	}
 }
-void ProcessComputer(String buffer)
-{
-	char command;
-	String serialMessage, value;
-
-	command = buffer.charAt(0);
-	value = buffer.substring(1);
-	value.trim();
-
-	switch (command) // Uppercase is manual entry rather than rotator or ascom.
-	{
-	case ENABLE_OUTPUTS:
-		Shutter.EnableOutputs(value.equals("1"));
-		break;
-	case ABORT_CMD:
-		Shutter.Stop();
-		DBPrintln(String(ABORT_CMD));
-		break;
-	case ELEVATION_SHUTTER_CMD:
-		DBPrintln(String(Shutter.GetElevation()));
-		break;
-	case HELLO_CMD:
-		SendHello();
-		break;
-	case STEPSPER_SHUTTER_CMD:
-		Computer.println("T " + String((long)Shutter.GetStepsPerStroke()));
-		break;
-	case STATE_SHUTTER_GET:
-		DBPrintln("M" + String(Shutter.GetState()));
-		break;
-	case SLEEP_SHUTTER_CMD:
-//		XBee.CreateATString(value);
-		break;
-	// From manual entry
-	default:
-		break;
-	}
-}
-#pragma endregion
-
-#pragma region Wireless Communications
 void ReceiveWireless()
 {
 	char character = Wireless.read();
+
 	if (character == '\r' || character == '\n' || character == '#')
 	{
 		if (wirelessBuffer.length() > 0)
 		{
-			if (Shutter.isConfiguringWireless == true) 
+			if (Shutter.isConfiguringWireless == true)
 			{
-				Shutter.ConfigXBee(wirelessBuffer);
+				DBPrint("Configuring");
+				ConfigXBee(wirelessBuffer);
 			}
 			else
 			{
-				ProcessWireless(wirelessBuffer);
+				ProcessMessages(wirelessBuffer);
 			}
 			wirelessBuffer = "";
 		}
@@ -297,7 +301,7 @@ void ReceiveWireless()
 		wirelessBuffer += String(character);
 	}
 }
-void ProcessWireless(String buffer)
+void ProcessMessages(String buffer)
 {
 	float localFloat;
 	int32_t local32;
@@ -307,17 +311,17 @@ void ProcessWireless(String buffer)
 	char command;
 
 	
+	if (buffer.equals("OK") == true) 
+	{
+		DBPrint("Buffer == OK");
+		return;
+	}
 	command = buffer.charAt(0); // If "H" the second letter says what it's from. We only care if it's "R", the rotator.
 	value = buffer.substring(1); // Payload if the command has data.
-	//DBPrintln("Cmd:" + String(command) + " :" + value);
+	DBPrintln("<<< Command:" + String(command) + " Value:" + value);
+
 	switch (command)
 	{
-	case ENABLE_OUTPUTS:
-		Shutter.EnableOutputs(value.equals("1"));
-		break;
-	case WIRELESS_COMMENT:
-		DBPrintln("->DEBUG: " + String(command) + ":" + value);
-		break;
 	case ACCELERATION_SHUTTER_CMD:
 		if (value.length() > 0) 
 		{
@@ -326,16 +330,12 @@ void ProcessWireless(String buffer)
 			Shutter.SetAcceleration(local32);
 		}
 		wirelessMessage = String(ACCELERATION_SHUTTER_CMD) + String(Shutter.GetAcceleration());
-		DBPrintln(wirelessMessage);
+		DBPrintln("Acceleration is " + String(Shutter.GetAcceleration()));
 		break;
 	case ABORT_CMD:
 		// Rotator update will be through UpdateRotator
 		DBPrintln("STOP!");
 		Shutter.Stop();
-		break;
-	case CALIBRATE_SHUTTER_CMD:
-		DBPrintln("Calibrate");
-		//todo: Add calibration routine and flag to stop all other commands except abort until it's finished.
 		break;
 	case CLOSE_SHUTTER_CMD:
 		// Rotator update will be through UpdateRotator
@@ -345,41 +345,6 @@ void ProcessWireless(String buffer)
 			Shutter.Close();
 		}
 		wirelessMessage = String(STATE_SHUTTER_GET) + String(Shutter.GetState());
-		break;
-	case ENDSWITCH_STATUS_GET:
-		wirelessMessage = String(ENDSWITCH_STATUS_GET) + String(Shutter.GetEndSwitchStatus());
-		DBPrintln("End switch status is " + String(Shutter.GetEndSwitchStatus()));
-		break;
-	case ELEVATION_SHUTTER_CMD:
-		// Rotator update will be through UpdateRotator
-		// Send only error messages
-		wirelessMessage = String(ELEVATION_SHUTTER_CMD);
-		if (value.length() > 0)
-		{
-			DBPrint("Goto: " + value);
-			localFloat = value.toFloat();
-			if (isRaining == true)
-			{
-				wirelessMessage += "OR";
-			}
-			else if (Shutter.GetVoltsAreLow() == true)
-			{
-				wirelessMessage = "OL";
-			}
-			else if (localFloat < 0.0 || localFloat > 90.0)
-			{
-				wirelessMessage = "OO";
-			}
-			else
-			{
-				Shutter.GotoAltitude(localFloat);
-			}
-		}
-		else
-		{
-			wirelessMessage += String(Shutter.GetElevation());
-		}
-		DBPrintln(wirelessMessage);
 		break;
 	case HELLO_CMD:
 		DBPrintln("Rotator says hello!");
@@ -416,8 +381,12 @@ void ProcessWireless(String buffer)
 			Shutter.SetRainInterval(value.toInt());
 			DBPrintln("Rain check interval set to " + value);
 		}
+		else
+		{
+			DBPrintln("Rain check interval " + String(Shutter.rainCheckInterval));
+		}
 		break;
-	case RAIN_SHUTTER_GET:
+	case RAIN_ROTATOR_GET:
 		local16 = value.toInt();
 		if (local16 == 1)
 		{
@@ -479,6 +448,17 @@ void ProcessWireless(String buffer)
 		wirelessMessage = "K" + Shutter.GetVoltString();
 		DBPrintln(wirelessMessage);
 		break;
+	case VOLTSCLOSE_SHUTTER_CMD:
+		if (value.length() > 0)
+		{
+			Shutter.SetVoltsClose(value.toInt());
+		}
+		else
+		{
+			wirelessMessage = String(VOLTSCLOSE_SHUTTER_CMD) + String(Shutter.GetVoltsClose());
+			DBPrintln("Close on low voltage " + String(Shutter.GetVoltsClose()));
+		}
+		break;
 	default:
 		DBPrintln("Unknown command " + String(command));
 		break;
@@ -486,6 +466,7 @@ void ProcessWireless(String buffer)
 
 	if (wirelessMessage.length() > 0)
 	{
+		DBPrintln(">>> Sending " + wirelessMessage);
 		Wireless.println(wirelessMessage +"#");
 	}
 }

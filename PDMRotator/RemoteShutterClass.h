@@ -50,6 +50,7 @@ public:
 	// ASCOM checks version and if it's blank then shutter doesn't exist
 	String	version = "";
 	String	volts = "";
+	String voltsClose = "";
 
 	RemoteShutterClass();
 	void SetState(int);
@@ -61,5 +62,5 @@ RemoteShutterClass::RemoteShutterClass()
 }
 void RemoteShutterClass::SetState(int newState)
 {
-	state =(ShutterStates)newState;
+	state = (ShutterStates)newState;
 }

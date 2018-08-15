@@ -79,11 +79,22 @@
             this.tbxParkAz = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.gbxRain = new System.Windows.Forms.GroupBox();
+            this.chkRainRequireTwice = new System.Windows.Forms.CheckBox();
+            this.lblRainInterval = new System.Windows.Forms.Label();
+            this.tbxRainInterval = new System.Windows.Forms.TextBox();
+            this.lblRainState = new System.Windows.Forms.Label();
+            this.btnSetRainInterval = new System.Windows.Forms.Button();
+            this.gbxAutoClose = new System.Windows.Forms.GroupBox();
+            this.lblAutoCloseAction = new System.Windows.Forms.Label();
+            this.cbxRainAction = new System.Windows.Forms.ComboBox();
             this.gbxMotorSettings.SuspendLayout();
             this.gbxMovement.SuspendLayout();
             this.gbxVoltages.SuspendLayout();
             this.gbxHomeandPark.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
+            this.gbxRain.SuspendLayout();
+            this.gbxAutoClose.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnClose
@@ -431,11 +442,78 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // gbxRain
+            // 
+            this.gbxRain.Controls.Add(this.chkRainRequireTwice);
+            this.gbxRain.Controls.Add(this.lblRainInterval);
+            this.gbxRain.Controls.Add(this.tbxRainInterval);
+            this.gbxRain.Controls.Add(this.lblRainState);
+            this.gbxRain.Controls.Add(this.btnSetRainInterval);
+            resources.ApplyResources(this.gbxRain, "gbxRain");
+            this.gbxRain.Name = "gbxRain";
+            this.gbxRain.TabStop = false;
+            // 
+            // chkRainRequireTwice
+            // 
+            resources.ApplyResources(this.chkRainRequireTwice, "chkRainRequireTwice");
+            this.chkRainRequireTwice.Name = "chkRainRequireTwice";
+            this.chkRainRequireTwice.UseVisualStyleBackColor = true;
+            // 
+            // lblRainInterval
+            // 
+            resources.ApplyResources(this.lblRainInterval, "lblRainInterval");
+            this.lblRainInterval.Name = "lblRainInterval";
+            // 
+            // tbxRainInterval
+            // 
+            resources.ApplyResources(this.tbxRainInterval, "tbxRainInterval");
+            this.tbxRainInterval.Name = "tbxRainInterval";
+            // 
+            // lblRainState
+            // 
+            this.lblRainState.BackColor = System.Drawing.Color.Red;
+            this.lblRainState.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblRainState.ForeColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.lblRainState, "lblRainState");
+            this.lblRainState.Name = "lblRainState";
+            // 
+            // btnSetRainInterval
+            // 
+            resources.ApplyResources(this.btnSetRainInterval, "btnSetRainInterval");
+            this.btnSetRainInterval.Name = "btnSetRainInterval";
+            this.btnSetRainInterval.UseVisualStyleBackColor = true;
+            this.btnSetRainInterval.Click += new System.EventHandler(this.btnSetRainInterval_Click);
+            // 
+            // gbxAutoClose
+            // 
+            this.gbxAutoClose.Controls.Add(this.lblAutoCloseAction);
+            this.gbxAutoClose.Controls.Add(this.cbxRainAction);
+            resources.ApplyResources(this.gbxAutoClose, "gbxAutoClose");
+            this.gbxAutoClose.Name = "gbxAutoClose";
+            this.gbxAutoClose.TabStop = false;
+            // 
+            // lblAutoCloseAction
+            // 
+            resources.ApplyResources(this.lblAutoCloseAction, "lblAutoCloseAction");
+            this.lblAutoCloseAction.Name = "lblAutoCloseAction";
+            // 
+            // cbxRainAction
+            // 
+            this.cbxRainAction.FormattingEnabled = true;
+            this.cbxRainAction.Items.AddRange(new object[] {
+            resources.GetString("cbxRainAction.Items"),
+            resources.GetString("cbxRainAction.Items1"),
+            resources.GetString("cbxRainAction.Items2")});
+            resources.ApplyResources(this.cbxRainAction, "cbxRainAction");
+            this.cbxRainAction.Name = "cbxRainAction";
+            // 
             // RotatorSetup
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ControlBox = false;
+            this.Controls.Add(this.gbxAutoClose);
+            this.Controls.Add(this.gbxRain);
             this.Controls.Add(this.gbxHomeandPark);
             this.Controls.Add(this.gbxVoltages);
             this.Controls.Add(this.gbxMovement);
@@ -454,6 +532,10 @@
             this.gbxHomeandPark.ResumeLayout(false);
             this.gbxHomeandPark.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
+            this.gbxRain.ResumeLayout(false);
+            this.gbxRain.PerformLayout();
+            this.gbxAutoClose.ResumeLayout(false);
+            this.gbxAutoClose.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -508,5 +590,14 @@
         private System.Windows.Forms.TextBox tbxCutoff;
         private System.Windows.Forms.Label lblLowWarn;
         private System.Windows.Forms.Label lblAtPark;
+        private System.Windows.Forms.GroupBox gbxRain;
+        private System.Windows.Forms.CheckBox chkRainRequireTwice;
+        private System.Windows.Forms.Label lblRainInterval;
+        private System.Windows.Forms.TextBox tbxRainInterval;
+        private System.Windows.Forms.Label lblRainState;
+        private System.Windows.Forms.Button btnSetRainInterval;
+        private System.Windows.Forms.GroupBox gbxAutoClose;
+        private System.Windows.Forms.Label lblAutoCloseAction;
+        private System.Windows.Forms.ComboBox cbxRainAction;
     }
 }

@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.gbxVoltages = new System.Windows.Forms.GroupBox();
+            this.chkCloseImmediate = new System.Windows.Forms.CheckBox();
             this.lblLowWarn = new System.Windows.Forms.Label();
             this.tbxCutoff = new System.Windows.Forms.TextBox();
             this.btnSetCutoff = new System.Windows.Forms.Button();
@@ -56,21 +57,18 @@
             this.btnCloseForm = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.lblRainState = new System.Windows.Forms.Label();
-            this.gbxRain = new System.Windows.Forms.GroupBox();
-            this.chkRainRequireTwice = new System.Windows.Forms.CheckBox();
-            this.lblRainInterval = new System.Windows.Forms.Label();
-            this.tbxRainInterval = new System.Windows.Forms.TextBox();
-            this.btnSetRainInterval = new System.Windows.Forms.Button();
+            this.lblRainWarn = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.gbxVoltages.SuspendLayout();
             this.gbxMotorSettings.SuspendLayout();
             this.gbxMovement.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
-            this.gbxRain.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbxVoltages
             // 
+            this.gbxVoltages.Controls.Add(this.chkCloseImmediate);
             this.gbxVoltages.Controls.Add(this.lblLowWarn);
             this.gbxVoltages.Controls.Add(this.tbxCutoff);
             this.gbxVoltages.Controls.Add(this.btnSetCutoff);
@@ -79,10 +77,22 @@
             this.gbxVoltages.Controls.Add(this.lblVoltageTitle);
             this.gbxVoltages.Location = new System.Drawing.Point(12, 12);
             this.gbxVoltages.Name = "gbxVoltages";
-            this.gbxVoltages.Size = new System.Drawing.Size(179, 71);
+            this.gbxVoltages.Size = new System.Drawing.Size(179, 98);
             this.gbxVoltages.TabIndex = 51;
             this.gbxVoltages.TabStop = false;
             this.gbxVoltages.Text = "Voltage";
+            // 
+            // chkCloseImmediate
+            // 
+            this.chkCloseImmediate.AutoSize = true;
+            this.chkCloseImmediate.Location = new System.Drawing.Point(9, 72);
+            this.chkCloseImmediate.Name = "chkCloseImmediate";
+            this.chkCloseImmediate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkCloseImmediate.Size = new System.Drawing.Size(124, 17);
+            this.chkCloseImmediate.TabIndex = 49;
+            this.chkCloseImmediate.Text = "Close on low voltage";
+            this.chkCloseImmediate.UseVisualStyleBackColor = true;
+            this.chkCloseImmediate.CheckedChanged += new System.EventHandler(this.chkCloseImmediate_CheckedChanged);
             // 
             // lblLowWarn
             // 
@@ -155,7 +165,7 @@
             this.gbxMotorSettings.Controls.Add(this.tbxStepsPerRotation);
             this.gbxMotorSettings.Controls.Add(this.btnStepsPerRotation);
             this.gbxMotorSettings.Controls.Add(this.lblStepsPerTitle);
-            this.gbxMotorSettings.Location = new System.Drawing.Point(12, 89);
+            this.gbxMotorSettings.Location = new System.Drawing.Point(12, 116);
             this.gbxMotorSettings.Name = "gbxMotorSettings";
             this.gbxMotorSettings.Size = new System.Drawing.Size(179, 181);
             this.gbxMotorSettings.TabIndex = 50;
@@ -261,9 +271,9 @@
             this.gbxMovement.Controls.Add(this.btnSTOP);
             this.gbxMovement.Controls.Add(this.btnCloseShutter);
             this.gbxMovement.Controls.Add(this.btnOpenShutter);
-            this.gbxMovement.Location = new System.Drawing.Point(197, 12);
+            this.gbxMovement.Location = new System.Drawing.Point(197, 81);
             this.gbxMovement.Name = "gbxMovement";
-            this.gbxMovement.Size = new System.Drawing.Size(179, 178);
+            this.gbxMovement.Size = new System.Drawing.Size(179, 216);
             this.gbxMovement.TabIndex = 52;
             this.gbxMovement.TabStop = false;
             this.gbxMovement.Text = "Movement";
@@ -271,7 +281,7 @@
             // lblStatus
             // 
             this.lblStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblStatus.Location = new System.Drawing.Point(29, 44);
+            this.lblStatus.Location = new System.Drawing.Point(29, 52);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(122, 19);
             this.lblStatus.TabIndex = 49;
@@ -280,7 +290,7 @@
             // lblAltitude
             // 
             this.lblAltitude.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblAltitude.Location = new System.Drawing.Point(65, 70);
+            this.lblAltitude.Location = new System.Drawing.Point(65, 81);
             this.lblAltitude.Name = "lblAltitude";
             this.lblAltitude.Size = new System.Drawing.Size(51, 19);
             this.lblAltitude.TabIndex = 48;
@@ -290,7 +300,7 @@
             // 
             this.btnSTOP.BackColor = System.Drawing.Color.Red;
             this.btnSTOP.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSTOP.Location = new System.Drawing.Point(29, 121);
+            this.btnSTOP.Location = new System.Drawing.Point(29, 154);
             this.btnSTOP.Name = "btnSTOP";
             this.btnSTOP.Size = new System.Drawing.Size(122, 51);
             this.btnSTOP.TabIndex = 32;
@@ -300,7 +310,7 @@
             // 
             // btnCloseShutter
             // 
-            this.btnCloseShutter.Location = new System.Drawing.Point(53, 92);
+            this.btnCloseShutter.Location = new System.Drawing.Point(53, 113);
             this.btnCloseShutter.Name = "btnCloseShutter";
             this.btnCloseShutter.Size = new System.Drawing.Size(75, 23);
             this.btnCloseShutter.TabIndex = 2;
@@ -321,7 +331,7 @@
             // btnCloseForm
             // 
             this.btnCloseForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCloseForm.Location = new System.Drawing.Point(303, 329);
+            this.btnCloseForm.Location = new System.Drawing.Point(303, 305);
             this.btnCloseForm.Name = "btnCloseForm";
             this.btnCloseForm.Size = new System.Drawing.Size(75, 23);
             this.btnCloseForm.TabIndex = 49;
@@ -339,79 +349,36 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // lblRainState
+            // lblRainWarn
             // 
-            this.lblRainState.BackColor = System.Drawing.Color.Red;
-            this.lblRainState.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblRainState.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblRainState.Location = new System.Drawing.Point(54, 18);
-            this.lblRainState.Name = "lblRainState";
-            this.lblRainState.Size = new System.Drawing.Size(118, 19);
-            this.lblRainState.TabIndex = 53;
-            this.lblRainState.Text = "RAINING";
-            this.lblRainState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblRainWarn.BackColor = System.Drawing.Color.Red;
+            this.lblRainWarn.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblRainWarn.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.lblRainWarn.Location = new System.Drawing.Point(28, 30);
+            this.lblRainWarn.Name = "lblRainWarn";
+            this.lblRainWarn.Size = new System.Drawing.Size(122, 19);
+            this.lblRainWarn.TabIndex = 53;
+            this.lblRainWarn.Text = "RAINING";
+            this.lblRainWarn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblRainWarn.Visible = false;
             // 
-            // gbxRain
+            // groupBox1
             // 
-            this.gbxRain.Controls.Add(this.chkRainRequireTwice);
-            this.gbxRain.Controls.Add(this.lblRainInterval);
-            this.gbxRain.Controls.Add(this.tbxRainInterval);
-            this.gbxRain.Controls.Add(this.lblRainState);
-            this.gbxRain.Controls.Add(this.btnSetRainInterval);
-            this.gbxRain.Location = new System.Drawing.Point(197, 196);
-            this.gbxRain.Name = "gbxRain";
-            this.gbxRain.Size = new System.Drawing.Size(179, 104);
-            this.gbxRain.TabIndex = 52;
-            this.gbxRain.TabStop = false;
-            this.gbxRain.Text = "Rain";
-            // 
-            // chkRainRequireTwice
-            // 
-            this.chkRainRequireTwice.AutoSize = true;
-            this.chkRainRequireTwice.Location = new System.Drawing.Point(6, 73);
-            this.chkRainRequireTwice.Name = "chkRainRequireTwice";
-            this.chkRainRequireTwice.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkRainRequireTwice.Size = new System.Drawing.Size(91, 17);
-            this.chkRainRequireTwice.TabIndex = 55;
-            this.chkRainRequireTwice.Text = "Require twice";
-            this.chkRainRequireTwice.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkRainRequireTwice.UseVisualStyleBackColor = true;
-            // 
-            // lblRainInterval
-            // 
-            this.lblRainInterval.AutoSize = true;
-            this.lblRainInterval.Location = new System.Drawing.Point(6, 47);
-            this.lblRainInterval.Name = "lblRainInterval";
-            this.lblRainInterval.Size = new System.Drawing.Size(42, 13);
-            this.lblRainInterval.TabIndex = 54;
-            this.lblRainInterval.Text = "Interval";
-            // 
-            // tbxRainInterval
-            // 
-            this.tbxRainInterval.Location = new System.Drawing.Point(66, 43);
-            this.tbxRainInterval.Name = "tbxRainInterval";
-            this.tbxRainInterval.Size = new System.Drawing.Size(39, 20);
-            this.tbxRainInterval.TabIndex = 43;
-            this.tbxRainInterval.Text = "0";
-            this.tbxRainInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // btnSetRainInterval
-            // 
-            this.btnSetRainInterval.Location = new System.Drawing.Point(111, 42);
-            this.btnSetRainInterval.Name = "btnSetRainInterval";
-            this.btnSetRainInterval.Size = new System.Drawing.Size(61, 23);
-            this.btnSetRainInterval.TabIndex = 43;
-            this.btnSetRainInterval.Text = "Set";
-            this.btnSetRainInterval.UseVisualStyleBackColor = true;
-            this.btnSetRainInterval.Click += new System.EventHandler(this.btnSetRainInterval_Click);
+            this.groupBox1.Controls.Add(this.lblRainWarn);
+            this.groupBox1.Location = new System.Drawing.Point(198, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(178, 64);
+            this.groupBox1.TabIndex = 54;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Rain Status";
             // 
             // ShutterSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(390, 364);
+            this.ClientSize = new System.Drawing.Size(390, 340);
             this.ControlBox = false;
-            this.Controls.Add(this.gbxRain);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnCloseForm);
             this.Controls.Add(this.gbxMovement);
             this.Controls.Add(this.gbxVoltages);
@@ -427,8 +394,7 @@
             this.gbxMotorSettings.PerformLayout();
             this.gbxMovement.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
-            this.gbxRain.ResumeLayout(false);
-            this.gbxRain.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -462,11 +428,8 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.GroupBox gbxRain;
-        private System.Windows.Forms.TextBox tbxRainInterval;
-        private System.Windows.Forms.Label lblRainState;
-        private System.Windows.Forms.Button btnSetRainInterval;
-        private System.Windows.Forms.Label lblRainInterval;
-        private System.Windows.Forms.CheckBox chkRainRequireTwice;
+        private System.Windows.Forms.CheckBox chkCloseImmediate;
+        private System.Windows.Forms.Label lblRainWarn;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
