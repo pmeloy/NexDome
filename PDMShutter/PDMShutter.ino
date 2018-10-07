@@ -413,9 +413,11 @@ void ProcessMessages(String buffer)
 		DBPrintln(wirelessMessage);
 		break;
 	case SPEED_SHUTTER_CMD:
-		local32 = value.toInt();
-		DBPrintln("Set speed to " + value);
-		if (local32 > 0) Shutter.SetMaxSpeed(value.toInt());
+		if (value.length() > 0) {
+			local32 = value.toInt();
+			DBPrintln("Set speed to " + value);
+			if (local32 > 0) Shutter.SetMaxSpeed(value.toInt());
+		}
 		wirelessMessage = String(SPEED_SHUTTER_CMD) + String(Shutter.GetMaxSpeed());
 		DBPrintln(wirelessMessage);
 		break;
@@ -424,10 +426,12 @@ void ProcessMessages(String buffer)
 		DBPrintln(wirelessMessage);
 		break;
 	case STEPSPER_SHUTTER_CMD:
-		local32 = value.toInt();
-		if (local32 > 0)
-		{
-			Shutter.SetStepsPerStroke(local32);
+		if (value.length() > 0) {
+			local32 = value.toInt();
+			if (local32 > 0)
+			{
+				Shutter.SetStepsPerStroke(local32);
+			}
 		}
 		else 
 		{
