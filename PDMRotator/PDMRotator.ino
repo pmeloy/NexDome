@@ -203,7 +203,8 @@ void ConfigXBee(String result)
 {
 	if (configStep == 0)
 	{
-		ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
+		// configure as coordinator
+		ATString = "ATCE1,ID7734,AP0,SM0,RO0,WR,CN";
 		Wireless.println(ATString);
 		DBPrint(ATString);
 	}
@@ -309,6 +310,9 @@ void ProcessSerialCommand()
 	// payload has data (better one comparison here than many in code. Even though
 	// it's still executed just once per loop.
 	if (value.length() > 0) hasValue = true;
+
+	serialMessage = "";
+	wirelessMessage = "";
 
 	// Grouped by Rotator and Shutter then put in alphabetical order
 	switch (command)
@@ -638,6 +642,9 @@ void ProcessWireless()
 	value = wirelessBuffer.substring(1);
 	if (value.length() > 0) hasValue = true;
 	//DBPrint("<<< Received:" + String(command) + " Value: " + value);
+	serialMessage = "";
+	wirelessMessage = "";
+
 	switch (command)
 	{
 	case ACCELERATION_SHUTTER_CMD:
