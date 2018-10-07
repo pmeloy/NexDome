@@ -233,14 +233,13 @@ void SendHello()
 //<SUMMARY>Check for Serial and Wireless data</SUMMARY>
 void CheckForCommands()
 {
-	// process wireless first to avoid conflict when shutter ask for rain status
-	if (Wireless.available())
-	{
-		ReceiveWireless();
-	}
 	if (Computer.available())
 	{
 		ReceiveComputer();
+	}
+	if (Wireless.available())
+	{
+		ReceiveWireless();
 	}
 }
 
