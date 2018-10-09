@@ -24,7 +24,7 @@
 ** rain sensor checks. The driver talks to the rotator and the rotator will pass on any shutter commands to the shutter over wireless.
 ** Changing shutter settings from the driver usually initiates a one-way message to the shutter with the new setting. Since this has
 ** to pass through the rotator the rotator will store the value and the shutter doesn't have to respond to the rotator.
-** 
+**
 ** When the shutter gets a movement command it will start updating the rotator once per second until the move is complete. That way the
 ** rotator doesn't have to ask for the values, cutting down on the number of messages going back and forth.
 **
@@ -34,7 +34,7 @@
 ** will initiate the data exchange.
 **
 ** One of the drawbacks of a "dumb" stepper driver is that if the Arduino is doing something else the stepper is not updated causing
-** it to try and stop during a move. This doesn't last long but it does create a noticable "tick" sound. Each time it ticks there is 
+** it to try and stop during a move. This doesn't last long but it does create a noticable "tick" sound. Each time it ticks there is
 ** extra stress on the motor and gearing so reducing the ticking by not having to receive lots of update requests as well as sending
 ** them is a good thing.
 **
@@ -127,12 +127,12 @@ void loop()
 		}
 	}
 
-	
+
 	if (millis() > nextUpdateTime && (Shutter.sendUpdates == true || doFinalUpdate == true)) UpdateRotator();
 
 	if (Shutter.isConfiguringWireless == false && SentHello == true)
 	{
-		if (Shutter.rainCheckInterval > 0) 
+		if (Shutter.rainCheckInterval > 0)
 		{
 			RainCheck();
 		}
@@ -146,7 +146,7 @@ void loop()
 ///<SUMMARY>
 ///Send all data to rotator every second but stagger the messages over that second.
 ///</SUMMARY>
-/* Run through this once per second when the stepper is (or was) running. 
+/* Run through this once per second when the stepper is (or was) running.
 ** Shutter.sendUpdates is set to true when a movement command is received and set to false
 ** in Shutter.run() if the motor is stopped.
 ** It's entirely possible for the motor to stop part way through the update steps which would mean the next time around
@@ -169,7 +169,7 @@ void UpdateRotator()
 
 	if (nextStepTime > millis()) return;
 
-	if (sentState == false) 
+	if (sentState == false)
 	{
 		Wireless.print(String(STATE_SHUTTER_GET) + String(Shutter.GetState()) + "#");
 		sentState = true;
@@ -221,7 +221,8 @@ inline void ConfigXBee(String result)
 {
 	if (configStep == 0)
 	{
-		ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
+//		ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
+		ATString = "ATCE0,ID7734,AP0,SM0,WR,CN";
 		DBPrintln("AT String " + ATString);
 		Wireless.println(ATString);
 	}
@@ -310,8 +311,8 @@ void ProcessMessages(String buffer)
 	String value, computerMessage="", wirelessMessage="";
 	char command;
 
-	
-	if (buffer.equals("OK") == true) 
+
+	if (buffer.equals("OK") == true)
 	{
 		DBPrint("Buffer == OK");
 		return;
@@ -323,7 +324,7 @@ void ProcessMessages(String buffer)
 	switch (command)
 	{
 	case ACCELERATION_SHUTTER_CMD:
-		if (value.length() > 0) 
+		if (value.length() > 0)
 		{
 			DBPrintln("Set acceleration to " + value);
 			local32 = value.toInt();
@@ -368,7 +369,7 @@ void ProcessMessages(String buffer)
 		{
 			if (Shutter.GetState() != Shutter.OPEN) Shutter.Open();
 		}
-		
+
 		break;
 	case POSITION_SHUTTER_GET:
 		 //Rotator update will be through UpdateRotator
@@ -433,7 +434,7 @@ void ProcessMessages(String buffer)
 				Shutter.SetStepsPerStroke(local32);
 			}
 		}
-		else 
+		else
 		{
 			DBPrintln("Get Steps " + String(Shutter.GetStepsPerStroke()));
 		}
