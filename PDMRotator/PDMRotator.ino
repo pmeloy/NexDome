@@ -203,9 +203,9 @@ void ConfigXBee(String result)
 {
 	if (configStep == 0)
 	{
-		// configure as coordinator
-//		ATString = "ATCE1,ID7734,AP0,SM0,RO0,WR,CN";
-		ATString = "ATCE1,ID7734,AP0,SM0,WR,CN";
+		// ATString = "ATCE1,ID7734,AP0,SM0,RO0,WR,CN";
+		// CE1 for coordinator, rotation MY is 0,
+		ATString = "ATCE1,ID7734,CH0C,MY0,DH0,DLFFFF,AP0,SM0,WR,CN";
 		Wireless.println(ATString);
 		DBPrint(ATString);
 	}

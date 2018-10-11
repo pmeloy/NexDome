@@ -221,8 +221,9 @@ inline void ConfigXBee(String result)
 {
 	if (configStep == 0)
 	{
-//		ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
-		ATString = "ATCE0,ID7734,AP0,SM0,WR,CN";
+		// ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
+		//  CE0 for end device, shutter MY is 1
+		ATString = "ATCE0,ID7734,CH0C,MY1,DH0,DLFFFF,AP0,SM0,WR,CN";
 		DBPrintln("AT String " + ATString);
 		Wireless.println(ATString);
 	}
