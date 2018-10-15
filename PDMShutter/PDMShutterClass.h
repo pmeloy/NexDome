@@ -149,6 +149,7 @@ private:
 //	uint8_t			_openedPin;
 //	uint8_t			_enablePin;
 
+	float				adcConvert;
 	uint16_t		_volts;
 	uint64_t		_batteryCheckInterval = 120000;
 	uint16_t		_cutoffVolts = 1220;
@@ -161,7 +162,7 @@ private:
 //	uint8_t			_stepMode;
 
 
-	float		MeasureVoltage();
+	int		MeasureVoltage();
 	void		DefaultEEProm();
 };
 
@@ -173,6 +174,7 @@ private:
 
 ShutterClass::ShutterClass()
 {
+	adcConvert = 3.0 * (5.0 / 1023.0) * 100;
 	ReadEEProm();
 	//_openedPin = OPENED_PIN;
 	//_closedPin = CLOSED_PIN;
@@ -284,16 +286,16 @@ void		ShutterClass::DoButtons()
 		lastButtonPressed = whichButtonPressed = 0;
 	}
 }
-float		ShutterClass::MeasureVoltage()
+
+int  ShutterClass::MeasureVoltage()
 {
-	int volts, adc;
+	int adc;
 	float calc;
 
 	adc = analogRead(VOLTAGE_MONITOR_PIN);
 	DBPrintln("ADC returns " + String(adc));
-	calc = adc * 3.0 * (5.0 / 1023.0);
-	_volts = volts = calc * 100;
-	return volts;
+	calc = adc * adcConvert;
+	return int(calc);
 }
 
 // Helper functions
@@ -360,7 +362,7 @@ String		ShutterClass::GetVoltString()
 }
 
 // Setters
-void		ShutterClass::EnableOutputs(bool newState) 
+void		ShutterClass::EnableOutputs(bool newState)
 {
 	if (newState == false)
 	{
@@ -503,7 +505,7 @@ void		ShutterClass::Run()
 	if (nextBatteryCheck < millis() && isConfiguringWireless == false)
 	{
 		DBPrintln("Measuring Battery");
-		MeasureVoltage();
+		_volts = MeasureVoltage();
 		Wireless.println("K" + GetVoltString());
 		if (firstBatteryCheck == true)
 		{
