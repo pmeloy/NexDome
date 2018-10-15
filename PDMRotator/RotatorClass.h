@@ -27,7 +27,7 @@
 #endif
 
 
-#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define DBPrint(x) Serial.println(x)
 #else
@@ -176,7 +176,7 @@ private:
 	long		_stepsPerRotation;
 	float		_stepsPerDegree;
 	unsigned long	_moveOffUntil;
-	
+
 
 	// movement
 	const int	MOVE_NEGATIVE = -1;
@@ -361,8 +361,8 @@ bool RotatorClass::GetRainStatus()
 		rainCount = 0;
 	}
 	else
-	{ 
-		if (digitalRead(RAIN_SENSOR_PIN) == 0) 
+	{
+		if (digitalRead(RAIN_SENSOR_PIN) == 0)
 		{
 			if (rainCount == 1)
 			{
@@ -577,7 +577,7 @@ long RotatorClass::GetPosition()
 	/// last sync position
 	long position;
 	position = stepper.currentPosition();
-	if (_seekMode < CALIBRATION_MOVEOFF) 
+	if (_seekMode < CALIBRATION_MOVEOFF)
 	{
 		while (position >= _stepsPerRotation) position -= _stepsPerRotation;
 		while (position < 0) position += _stepsPerRotation;
@@ -685,14 +685,14 @@ void RotatorClass::Run()
 	{
 		nextCheck += 10;
 		ButtonCheck();
-		
+
 	}
 	if (nextPeriodicReading < millis())
 	{
 		_volts = ReadVolts();
 		nextPeriodicReading = millis() + 10000;
 	}
-	
+
 	_isAtHome = false; // default to not at home switch
 
 	if (_seekMode > HOMING_HOME) Calibrate();

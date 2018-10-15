@@ -1,14 +1,14 @@
 /*
 * PDM NexDome Rotation kit firmware. NOT compatible with original NexDome ASCOM driver.
 *
-* Copyright © 2018 Patrick Meloy
+* Copyright ï¿½ 2018 Patrick Meloy
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
-*  files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy,
+*  files (the ï¿½Softwareï¿½), to deal in the Software without restriction, including without limitation the rights to use, copy,
 *  modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
 *  is furnished to do so, subject to the following conditions:
 *  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 *
-*  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+*  THE SOFTWARE IS PROVIDED ï¿½AS ISï¿½, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
 *  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 *  OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -110,7 +110,7 @@ const char POSITION_ROTATOR_CMD			= 'p'; // Get/Set step position
 const char RAIN_ROTATOR_ACTION			= 'n'; // Get/Set action when rain sensor triggered none, home, park
 const char RAIN_ROTATOR_CMD				= 'f'; // Get or Set Rain Check Interval
 const char RAIN_ROTATOR_TWICE_CMD		= 'j'; // Get/Set Rain check requires to hits
-const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status 
+const char REVERSED_ROTATOR_CMD			= 'y'; // Get/Set stepper reversed status
 const char SEEKSTATE_GET				= 'd'; // None, homing, calibration steps.
 const char SLEW_ROTATOR_GET				= 'm'; // Get Slewing status/direction
 const char SPEED_ROTATOR_CMD			= 'r'; // Get/Set step rate (speed)
@@ -203,7 +203,9 @@ void ConfigXBee(String result)
 {
 	if (configStep == 0)
 	{
-		ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
+		// ATString = "ATCE1,ID7734,AP0,SM0,RO0,WR,CN";
+		// CE1 for coordinator, rotation MY is 0,
+		ATString = "ATCE1,ID7734,CH0C,MY0,DH0,DLFFFF,AP0,SM0,WR,CN";
 		Wireless.println(ATString);
 		DBPrint(ATString);
 	}
@@ -310,13 +312,16 @@ void ProcessSerialCommand()
 	// it's still executed just once per loop.
 	if (value.length() > 0) hasValue = true;
 
+	serialMessage = "";
+	wirelessMessage = "";
+
 	// Grouped by Rotator and Shutter then put in alphabetical order
 	switch (command)
 	{
 #pragma region Rotator commands
 	case ABORT_MOVE_CMD:
 		localString = String(ABORT_MOVE_CMD);
-		//serialMessage = localString;
+		serialMessage = localString;
 		wirelessMessage = localString;
 		Rotator.Stop();
 		break;
@@ -325,14 +330,11 @@ void ProcessSerialCommand()
 		{
 			Rotator.SetAcceleration(value.toInt());
 		}
-		else
-		{
-			serialMessage = String(ACCELERATION_ROTATOR_CMD) + String(Rotator.GetAcceleration());
-		}
+		serialMessage = String(ACCELERATION_ROTATOR_CMD) + String(Rotator.GetAcceleration());
 		break;
 	case CALIBRATE_ROTATOR_CMD:
 		Rotator.StartCalibrating();
-		//serialMessage = String(CALIBRATE_ROTATOR_CMD);
+		serialMessage = String(CALIBRATE_ROTATOR_CMD);
 		break;
 	case ERROR_AZ_ROTATOR_GET:
 		// todo: See if azimuth error is needed (when passing home switch check to see if the
@@ -352,9 +354,11 @@ void ProcessSerialCommand()
 		break;
 	case HELLO_CMD:
 		SendHello();
+		serialMessage = String(HELLO_CMD);
 		break;
 	case HOME_ROTATOR_CMD:
 		Rotator.StartHoming();
+		serialMessage = String(HOME_ROTATOR_CMD);
 		break;
 	case HOMEAZ_ROTATOR_CMD:
 		if (hasValue == true)
@@ -375,7 +379,7 @@ void ProcessSerialCommand()
 				localLong = value.toInt();
 				Rotator.MoveRelative(localLong);
 			}
-			else 
+			else
 			{
 				serialMessage = String(MOVE_RELATIVE_ROTATOR_CMD) + "L";
 			}
@@ -383,27 +387,29 @@ void ProcessSerialCommand()
 		break;
 	case PARKAZ_ROTATOR_CMD:
 		// Get/Set Park Azumith
+		serialMessage = String("");
 		localString = String(PARKAZ_ROTATOR_CMD);
 		if (hasValue == true)
 		{
 			localFloat = value.toFloat();
-			if ((localFloat >= 0) && (localFloat < 360))
-			{
+			if ((localFloat >= 0) && (localFloat < 360)) {
 				Rotator.SetParkAzimuth(localFloat);
 			}
-			else
-			{
+			else {
 				serialMessage = localString + "E";
 			}
 		}
-		if (serialMessage.length() == 0) serialMessage = localString + String(Rotator.GetParkAzimuth());
+		if (serialMessage.length() == 0) {
+			serialMessage = localString + String(Rotator.GetParkAzimuth());
+		}
 		break;
 	case POSITION_ROTATOR_CMD:
 		if (value.length() > 0)
 		{
-			if (Rotator.GetVoltsAreLow() == false) 
+			if (Rotator.GetVoltsAreLow() == false)
 			{
 				Rotator.SetPosition(value.toInt());
+				serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
 			}
 			else
 			{
@@ -420,20 +426,14 @@ void ProcessSerialCommand()
 		{
 			Rotator.SetRainAction(value.toInt());
 		}
-		else
-		{
-			serialMessage = String(RAIN_ROTATOR_ACTION) + String(Rotator.GetRainAction());
-		}
+		serialMessage = String(RAIN_ROTATOR_ACTION) + String(Rotator.GetRainAction());
 		break;
 	case RAIN_ROTATOR_TWICE_CMD:
 		if (value.length() > 0)
 		{
-			Rotator.SetRainInterval(value.equals("1"));
+			Rotator.SetCheckRainTwice(value.equals("1"));
 		}
-		else
-		{
-			serialMessage = String(RAIN_ROTATOR_TWICE_CMD) + String(Rotator.GetRainCheckTwice());
-		}
+		serialMessage = String(RAIN_ROTATOR_TWICE_CMD) + String(Rotator.GetRainCheckTwice());
 		break;
 	case RAIN_ROTATOR_CMD:
 		if (hasValue == true)
@@ -469,13 +469,14 @@ void ProcessSerialCommand()
 		{
 			Rotator.SyncHome(localFloat);
 			Rotator.SyncPosition(localFloat);
+			serialMessage = String(SYNC_ROTATOR_CMD) + String(Rotator.GetPosition());
 		}
 		break;
 	case VERSION_ROTATOR_GET:
 		serialMessage = String(VERSION_ROTATOR_GET) + VERSION;
 		break;
 	case VOLTS_ROTATOR_CMD:
-		// value only needs infrequent updating. 
+		// value only needs infrequent updating.
 		if (hasValue == true)
 		{
 			Rotator.SetLowVoltageCutoff(value.toInt());
@@ -498,6 +499,7 @@ void ProcessSerialCommand()
 	case CLOSE_SHUTTER_CMD:
 		localString = String(CLOSE_SHUTTER_CMD);
 		wirelessMessage = localString;
+		serialMessage = localString;
 		break;
 	//case ELEVATION_SHUTTER_CMD:
 	//		localString = String(ELEVATION_SHUTTER_CMD);
@@ -512,6 +514,7 @@ void ProcessSerialCommand()
 		localString = String(OPEN_SHUTTER_CMD);
 		wirelessMessage = localString;
 		//RemoteShutter.state = RemoteShutter.OPENING;
+		serialMessage = localString;
 		break;
 	case POSITION_SHUTTER_GET:
 			serialMessage = String(POSITION_SHUTTER_GET) + String(RemoteShutter.position);
@@ -640,6 +643,9 @@ void ProcessWireless()
 	value = wirelessBuffer.substring(1);
 	if (value.length() > 0) hasValue = true;
 	//DBPrint("<<< Received:" + String(command) + " Value: " + value);
+	serialMessage = "";
+	wirelessMessage = "";
+
 	switch (command)
 	{
 	case ACCELERATION_SHUTTER_CMD:
@@ -651,12 +657,12 @@ void ProcessWireless()
 		Wireless.print(String(STATE_SHUTTER_GET) + "#");
 		Wireless.print(String(STATE_SHUTTER_GET) + "#");
 		Wireless.print(String(STATE_SHUTTER_GET) + "#");
+		Wireless.print(String(VERSION_SHUTTER_GET) + "#");
 		Wireless.print(String(REVERSED_SHUTTER_CMD) + "#");
 		Wireless.print(String(STEPSPER_SHUTTER_CMD) + "#");
 		Wireless.print(String(SPEED_SHUTTER_CMD) + "#");
-		Wireless.print(String(POSITION_SHUTTER_GET) + "#");
 		Wireless.print(String(ACCELERATION_SHUTTER_CMD) + "#");
-		Wireless.print(String(VERSION_SHUTTER_GET) + "#");
+		Wireless.print(String(POSITION_SHUTTER_GET) + "#");
 		Wireless.print(String(VOLTS_SHUTTER_CMD) + "#");
 		Wireless.print(String(VOLTSCLOSE_SHUTTER_CMD) + "#");
 		break;
