@@ -478,10 +478,7 @@ void		ShutterClass::Run()
 	// is opened.
 	// Make both switches effectively one circuit so DIYers can use just one circuit
 	// Determines opened or closed by the direction of travel before a switch was hit
-	if (stepper.isRunning() == true)
-	{
-		if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING && hitSwitch == false)
-		{
+	if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING && hitSwitch == false) {
 			hitSwitch = true;
 			doSync = true;
 			_shutterState = CLOSED;
@@ -489,13 +486,15 @@ void		ShutterClass::Run()
 			DBPrintln("Hit closed switch");
 
 		}
-		if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false)
-		{
+
+		if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false) {
 			hitSwitch = true;
 			_shutterState = OPEN;
 			stepper.stop();
 			DBPrintln("Hit opened switch");
 		}
+
+	if (stepper.isRunning() == true) {
 		wasRunning = true;
 		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
 	}

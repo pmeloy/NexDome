@@ -205,7 +205,7 @@ void ConfigXBee(String result)
 	{
 		// ATString = "ATCE1,ID7734,AP0,SM0,RO0,WR,CN";
 		// CE1 for coordinator, rotation MY is 0,
-		ATString = "ATCE1,ID7734,CH0C,MY0,DH0,DLFFFF,AP0,SM0,WR,CN";
+		ATString = "ATCE1,ID7734,CH0C,MY0,DH0,DLFFFF,AP0,SM0,WR,BD7,CN";
 		Wireless.println(ATString);
 		DBPrint(ATString);
 	}
@@ -213,6 +213,8 @@ void ConfigXBee(String result)
 
 	if (configStep > 5)
 	{
+		// switch to 115200
+		Wireless.begin(115200);
 		DBPrint("Config finished");
 		isConfiguringWireless = false;
 		Rotator.radioIsConfigured = true;
