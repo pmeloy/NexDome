@@ -609,26 +609,30 @@ void ProcessSerialCommand()
 #pragma region Wireless Communications
 void ReceiveWireless()
 {
-	char wirelessCharacter = Wireless.read();
+	char wirelessCharacter;
+	// read as much as possible in one call to ReceiveWireless()
+	while(Wireless.available()) {
+		wirelessCharacter= Wireless.read();
 
-	if (wirelessCharacter == '\r' || wirelessCharacter == '\n' || wirelessCharacter == '#')
-	{
-		if (wirelessBuffer.length() > 0)
+		if (wirelessCharacter == '\r' || wirelessCharacter == '\n' || wirelessCharacter == '#')
 		{
-			if (isConfiguringWireless == true)
+			if (wirelessBuffer.length() > 0)
 			{
-				ConfigXBee(wirelessBuffer);
+				if (isConfiguringWireless == true)
+				{
+					ConfigXBee(wirelessBuffer);
+				}
+				else
+				{
+					ProcessWireless();
+				}
+				wirelessBuffer = "";
 			}
-			else
-			{
-				ProcessWireless();
-			}
-			wirelessBuffer = "";
 		}
-	}
-	else
-	{
-		wirelessBuffer += String(wirelessCharacter);
+		else
+		{
+			wirelessBuffer += String(wirelessCharacter);
+		}
 	}
 }
 void ProcessWireless()

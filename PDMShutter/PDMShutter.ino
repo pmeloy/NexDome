@@ -280,30 +280,36 @@ void ReceiveSerial()
 		serialBuffer += String(character);
 	}
 }
+
 void ReceiveWireless()
 {
-	char character = Wireless.read();
+	char character;
+	// read as much as possible in one call to ReceiveWireless()
+	while(Wireless.available()) {
+		character = Wireless.read();
 
-	if (character == '\r' || character == '\n' || character == '#')
-	{
-		if (wirelessBuffer.length() > 0)
+		if (character == '\r' || character == '\n' || character == '#')
 		{
-			if (Shutter.isConfiguringWireless == true)
+			if (wirelessBuffer.length() > 0)
 			{
-				DBPrint("Configuring");
-				ConfigXBee(wirelessBuffer);
+				if (Shutter.isConfiguringWireless == true)
+				{
+					DBPrint("Configuring");
+					ConfigXBee(wirelessBuffer);
+				}
+				else
+				{
+					ProcessMessages(wirelessBuffer);
+				}
+				wirelessBuffer = "";
 			}
-			else
-			{
-				ProcessMessages(wirelessBuffer);
-			}
-			wirelessBuffer = "";
+		}
+		else
+		{
+			wirelessBuffer += String(character);
 		}
 	}
-	else
-	{
-		wirelessBuffer += String(character);
-	}
+
 }
 void ProcessMessages(String buffer)
 {
