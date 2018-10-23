@@ -34,9 +34,27 @@
 #define DBPrint(x)
 #endif // DEBUG
 
-//const int NEVER_HOMED = -1;
-//const int HOMED = 0;
-//const int ATHOME = 1;
+typedef struct RotatorConfiguration {
+	int			signature;
+	long		maxSpeed;
+	long		acceleration;
+	long		stepsPerRotation;
+	bool		reversed;
+	float		homeAzimuth;
+	float		parkAzimuth;
+	int			cutoffVolts;
+	int			rainCheckInterval;
+	bool		rainCheckTwice;
+	byte		rainAction;
+	bool		radioIsConfigured;
+} RotatorConfig;
+
+enum HomeStatuses { NEVER_HOMED, HOMED, ATHOME };
+enum Seeks { HOMING_NONE, // Not homing or calibrating
+				HOMING_HOME, // Homing
+				CALIBRATION_MOVEOFF, // Ignore home until we've moved off while measuring the dome.
+				CALIBRATION_MEASURE // Measuring dome until home hit again.
+};
 
 const int HOME_PIN = 2;					// Also used for Shutter open status
 const int STEPPER_ENABLE_PIN = 10;		// Digital Output
@@ -54,19 +72,6 @@ class RotatorClass
 {
 
 public:
-	enum HomeStatuses
-	{
-		NEVER_HOMED,
-		HOMED,
-		ATHOME
-	};
-	enum Seeks
-	{
-		HOMING_NONE, // Not homing or calibrating
-		HOMING_HOME, // Homing
-		CALIBRATION_MOVEOFF, // Ignore home until we've moved off while measuring the dome.
-		CALIBRATION_MEASURE // Measuring dome until home hit again.
-	};
 
 	RotatorClass();
 
@@ -124,22 +129,6 @@ public:
 
 private:
 
-	typedef struct RotatorConfiguration
-	{
-		int			signature;
-		long		maxSpeed;
-		long		acceleration;
-		long		stepsPerRotation;
-		bool		reversed;
-		float		homeAzimuth;
-		float		parkAzimuth;
-		int			cutoffVolts;
-		int			rainCheckInterval;
-		bool		rainCheckTwice;
-		byte		rainAction;
-		bool		radioIsConfigured;
-	} RotatorConfig;
-
 	const int	_signature = 822;
 	const int	_eepromLocation = 10;
 	const long	_STEPSFORROTATION = 55100;
@@ -185,7 +174,7 @@ private:
 	int			_moveDirection;
 
 	// Power values
-	float		adcConvert;
+	float		__adcConvert;
 	int			_volts;
 	int			_cutOffVolts;
 	int			ReadVolts();
@@ -206,7 +195,7 @@ private:
 
 RotatorClass::RotatorClass()
 {
-	adcConvert = 3.0 * (5.0 / 1023.0) * 100;
+	__adcConvert = 3.0 * (5.0 / 1023.0) * 100;
 	LoadFromEEProm();
 	pinMode(HOME_PIN, INPUT_PULLUP);
 	pinMode(STEP_PIN, OUTPUT);
@@ -301,7 +290,7 @@ int	RotatorClass::ReadVolts()
 	float calc;
 
 	adc = analogRead(VOLTAGE_MONITOR_PIN);
-	calc = adc * adcConvert;
+	calc = adc * __adcConvert;
 	return int(calc);
 }
 void RotatorClass::SetLowVoltageCutoff(int lowVolts)

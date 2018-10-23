@@ -43,6 +43,23 @@
 #endif // DEBUG
 #pragma endregion
 
+typedef struct Configuration {
+		int			signature;
+		byte		sleepMode;
+		uint16_t	sleepPeriod;
+		uint16_t	sleepDelay;
+		uint64_t	stepsPerStroke;
+		uint16_t	acceleration;
+		uint16_t	maxSpeed;
+//		uint8_t		stepMode;
+		uint8_t		reversed;
+		uint16_t	cutoffVolts;
+		byte		voltsClose;
+		long int	rainCheckInterval;
+		bool		radioIsConfigured;
+}; Configuration config;
+
+
 #pragma region AccelStepper Setup
 const uint8_t	STEPPER_ENABLE_PIN = 10;
 const uint8_t	STEPPER_DIRECTION_PIN = 11;
@@ -60,10 +77,10 @@ AccelStepper stepper(AccelStepper::DRIVER, STEPPER_STEP_PIN, STEPPER_DIRECTION_P
 class ShutterClass
 {
 public:
+	enum ShutterStates { OPEN, CLOSED, OPENING, CLOSING, ERROR };
+
 	// Constructor
 	ShutterClass();
-
-	enum ShutterStates { OPEN, CLOSED, OPENING, CLOSING, ERROR };
 
 	bool		wasRunning = false;
 	bool		sendUpdates = false;
@@ -116,23 +133,6 @@ public:
 
 private:
 
-	typedef struct Configuration
-	{
-		int			signature;
-		byte		sleepMode;
-		uint16_t	sleepPeriod;
-		uint16_t	sleepDelay;
-		uint64_t	stepsPerStroke;
-		uint16_t	acceleration;
-		uint16_t	maxSpeed;
-//		uint8_t		stepMode;
-		uint8_t		reversed;
-		uint16_t	cutoffVolts;
-		byte		voltsClose;
-		long int	rainCheckInterval;
-		bool		radioIsConfigured;
-	}; Configuration config;
-
 	const int		_eepromLocation = 100;
 	const int		_eePromSignature = 2000;
 
@@ -149,7 +149,7 @@ private:
 //	uint8_t			_openedPin;
 //	uint8_t			_enablePin;
 
-	float				adcConvert;
+	float				_adcConvert;
 	uint16_t		_volts;
 	uint64_t		_batteryCheckInterval = 120000;
 	uint16_t		_cutoffVolts = 1220;
@@ -174,7 +174,7 @@ private:
 
 ShutterClass::ShutterClass()
 {
-	adcConvert = 3.0 * (5.0 / 1023.0) * 100;
+	_adcConvert = 3.0 * (5.0 / 1023.0) * 100;
 	ReadEEProm();
 	//_openedPin = OPENED_PIN;
 	//_closedPin = CLOSED_PIN;
@@ -294,7 +294,7 @@ int  ShutterClass::MeasureVoltage()
 
 	adc = analogRead(VOLTAGE_MONITOR_PIN);
 	DBPrintln("ADC returns " + String(adc));
-	calc = adc * adcConvert;
+	calc = adc * _adcConvert;
 	return int(calc);
 }
 
