@@ -4,10 +4,10 @@
 //
 // ASCOM Dome driver for PDM
 //
-// Description:	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam 
-//				nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam 
-//				erat, sed diam voluptua. At vero eos et accusam et justo duo 
-//				dolores et ea rebum. Stet clita kasd gubergren, no sea takimata 
+// Description:	Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+//				nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
+//				erat, sed diam voluptua. At vero eos et accusam et justo duo
+//				dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
 //				sanctus est Lorem ipsum dolor sit amet.
 //
 // Implements:	ASCOM Dome interface version: 2
@@ -144,7 +144,7 @@ namespace ASCOM.PDM
         internal const string RAIN_ROTATOR_CMD          = "f"; // Get rain sensor state
         internal const string RAIN_ROTATOR_TWICE_CMD    = "j"; // Get/Set rain sensor needs to positives to trigger
         internal const string SPEED_ROTATOR_CMD         = "r"; // Get/Set step rate (speed)
-        internal const string REVERSED_ROTATOR_CMD      = "y"; // Get/Set stepper reversed status 
+        internal const string REVERSED_ROTATOR_CMD      = "y"; // Get/Set stepper reversed status
         internal const string SEEKSTATE_GET             = "d"; // Get seek mode (homing, calibrating etc)
         internal const string SLEW_ROTATOR_STATUS       = "m"; // Get Slewing status/direction
         internal const string STEPSPER_ROTATOR_CMD      = "t"; // GetSteps per rotation
@@ -212,7 +212,7 @@ namespace ASCOM.PDM
             serialMessageList = new List<string>();
             StatusUpdateTimer = new System.Windows.Forms.Timer();
             StatusUpdateTimer.Tick += new EventHandler(OnStatusUpdateTimer);
-            StatusUpdateTimer.Interval = 1000;
+            StatusUpdateTimer.Interval = 15000;
             StatusUpdateTimer.Enabled = false;
         }
 
@@ -232,7 +232,7 @@ namespace ASCOM.PDM
         {
             get
             {
-                
+
                 return serialPort.IsOpen;
             }
             set
@@ -359,7 +359,7 @@ namespace ASCOM.PDM
             // you need something to ensure that only one command is in progress at a time
 
             throw new ASCOM.MethodNotImplementedException("CommandString");
-            
+
         }
 
         public void Dispose()
@@ -1173,7 +1173,7 @@ namespace ASCOM.PDM
         #region ASCOM Registration
 
         // Register or unregister driver for ASCOM. This is harmless if already
-        // registered or unregistered. 
+        // registered or unregistered.
         //
         /// <summary>
         /// Register or unregister the driver with the ASCOM Platform.
