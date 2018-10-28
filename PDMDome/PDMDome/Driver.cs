@@ -212,7 +212,7 @@ namespace ASCOM.PDM
             serialMessageList = new List<string>();
             StatusUpdateTimer = new System.Windows.Forms.Timer();
             StatusUpdateTimer.Tick += new EventHandler(OnStatusUpdateTimer);
-            StatusUpdateTimer.Interval = 15000;
+            StatusUpdateTimer.Interval = 1000;
             StatusUpdateTimer.Enabled = false;
         }
 
@@ -473,16 +473,14 @@ namespace ASCOM.PDM
             SendSerial(SEEKSTATE_GET);
             SendSerial(SLEW_ROTATOR_STATUS);
 
-            if (canSetShutter == true)
-            {
-                SendSerial(POSITION_SHUTTER_GET);
-                SendSerial(STATE_SHUTTER_GET);
-            }
-
             if (slowUpdateCounter >= 30)
             {
                 tl.LogMessage("Slow update","Get");
-
+					 if (canSetShutter == true)
+					 {
+						 SendSerial(POSITION_SHUTTER_GET);
+						 SendSerial(STATE_SHUTTER_GET);
+					 }
                 SendSerial(RAIN_ROTATOR_GET);
                 SendSerial(VOLTS_ROTATOR_CMD);
                 slowUpdateCounter = 0;
