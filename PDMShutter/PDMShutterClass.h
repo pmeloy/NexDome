@@ -43,7 +43,7 @@
 #endif // DEBUG
 #pragma endregion
 
-typedef struct Configuration {
+typedef struct _Configuration {
 		int			signature;
 		byte		sleepMode;
 		uint16_t	sleepPeriod;
@@ -57,7 +57,9 @@ typedef struct Configuration {
 		byte		voltsClose;
 		long int	rainCheckInterval;
 		bool		radioIsConfigured;
-}; Configuration config;
+} Configuration;
+
+Configuration config;
 
 
 #pragma region AccelStepper Setup
