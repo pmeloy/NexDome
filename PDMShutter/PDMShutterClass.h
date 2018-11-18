@@ -119,7 +119,7 @@ public:
 	void		DoButtons();
 	void		Open();
 	void		Close();
-	void		GotoPosition(long);
+	void		GotoPosition(unsigned long);
 	void		GotoAltitude(float);
 	void		MoveRelative(long);
 	void		SetRainInterval(int);
@@ -418,7 +418,7 @@ void		ShutterClass::Close()
 	_shutterState = CLOSING;
 	MoveRelative(1 - _stepsPerStroke * 1.2);
 }
-void		ShutterClass::GotoPosition(long newPos)
+void		ShutterClass::GotoPosition(unsigned long newPos)
 {
 	uint64_t currentPos = stepper.currentPosition();
 	bool doMove = false;
@@ -467,7 +467,7 @@ inline byte ShutterClass::GetVoltsClose()
 }
 void		ShutterClass::Run()
 {
-	static uint64_t nextBatteryCheck;
+	static uint64_t nextBatteryCheck = 0;
 	static bool hitSwitch = false, firstBatteryCheck = true, doSync = true;
 
 	stepper.run();

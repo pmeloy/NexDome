@@ -63,6 +63,7 @@ const int STEP_PIN = 12;			// Digital Output
 const int BUTTON_CCW = 5;				// Digital Input
 const int BUTTON_CW = 6;				// Digital Input
 const int RAIN_SENSOR_PIN = 7;		// Digital Input from RG11
+
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIRECTION_PIN);
 
 #define VOLTAGE_MONITOR_PIN A0
@@ -143,7 +144,7 @@ private:
 	// 3000 steps per rev, 6912mm travel
 	long		_maxSpeed;
 	long		_acceleration;
-
+	long		_savedMaxSpeed;
 	// Inputs
 	int			_btnCCWPin;
 	int			_btnCWpin;
@@ -250,6 +251,7 @@ bool RotatorClass::LoadFromEEProm()
 	else
 	{
 		_maxSpeed = cfg.maxSpeed;
+		_savedMaxSpeed = cfg.maxSpeed;
 		_acceleration = cfg.acceleration;
 		_stepsPerRotation = cfg.stepsPerRotation;
 		_reversed = cfg.reversed;
@@ -452,6 +454,10 @@ void RotatorClass::StartHoming()
 	long distance;
 
 	if (_isAtHome == true) return;
+	// reduce speed by half
+	_savedMaxSpeed = _maxSpeed;
+	SetMaxSpeed(_maxSpeed/2);
+
 	diff = GetAngularDistance(GetAzimuth(), GetHomeAzimuth());
 	_moveDirection = MOVE_POSITIVE;
 	if (diff < 0) _moveDirection = MOVE_NEGATIVE;
@@ -463,6 +469,9 @@ void RotatorClass::StartCalibrating()
 {
 	if (_isAtHome == false) return;
 	_seekMode = CALIBRATION_MOVEOFF;
+	// calibrate at half speed .. should increase precision
+	_savedMaxSpeed = _maxSpeed;
+	SetMaxSpeed(_maxSpeed/2);
 	stepper.setCurrentPosition(0);
 	_moveOffUntil = millis() + 5000;
 	_doStepsPerRotation = false;
@@ -470,7 +479,7 @@ void RotatorClass::StartCalibrating()
 }
 void RotatorClass::Calibrate()
 {
-	static long stopDelay, homePositionEnd, currentPosition;
+	static long stopDelay = 0, homePositionEnd = 0, currentPosition = 0;
 
 	if (_seekMode > HOMING_HOME)
 	{
@@ -486,11 +495,15 @@ void RotatorClass::Calibrate()
 			if (digitalRead(HOME_PIN) == 0)
 			{
 				stepper.stop();
+				// restore speed
+				SetMaxSpeed(_savedMaxSpeed);
 				_seekMode = HOMING_NONE;
 				_hasBeenHomed = true;
 				_SetToHomeAzimuth = true;
 				_doStepsPerRotation = true; // Once stopped, set SPR to stepper position and save to eeprom.
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -667,9 +680,9 @@ float RotatorClass::GetAzimuth()
 void RotatorClass::Run()
 {
 	static bool wasRunning = false;
-	static long nextPeriodicReading;
+	static unsigned long nextPeriodicReading = 0;
 	long stepsFromZero;
-	int nextCheck;
+	static unsigned int nextCheck = 0;
 
 	if (millis() > nextCheck)
 	{
@@ -694,6 +707,8 @@ void RotatorClass::Run()
 		if (_seekMode == HOMING_HOME && digitalRead(HOME_PIN) == 0) // We're looking for home and found it
 		{
 			Stop();
+			// restore max speed
+			SetMaxSpeed(_savedMaxSpeed);
 			_SetToHomeAzimuth = true; // Need to set current az to homeaz but not until rotator is stopped;
 			_seekMode = HOMING_NONE;
 			_hasBeenHomed = true;
@@ -754,6 +769,7 @@ void RotatorClass::Stop()
 	// few extra steps for getting to a full step position.
 
 	if (!stepper.run()) return;
+	SetMaxSpeed(_savedMaxSpeed);
 	_seekMode = HOMING_NONE;
 	stepper.stop();
 }

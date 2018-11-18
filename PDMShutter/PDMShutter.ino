@@ -157,7 +157,7 @@ void loop()
 
 void UpdateRotator()
 {
-	static bool sentState, sentPosition, runningAtaStart;
+	static bool sentState = false, sentPosition = false, runningAtaStart = false;
 
 	runningAtaStart = Shutter.sendUpdates; // Store motion state to comparison at end
 
