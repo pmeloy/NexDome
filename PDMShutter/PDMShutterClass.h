@@ -195,7 +195,7 @@ ShutterClass::ShutterClass()
 	SetMaxSpeed(_maxSpeed);
 	stepper.setEnablePin(STEPPER_ENABLE_PIN);
 	EnableOutputs(false);
-
+	GetEndSwitchStatus();
 }
 
 // EEPROM
@@ -487,14 +487,14 @@ void		ShutterClass::Run()
 			stepper.stop();
 			DBPrintln("Hit closed switch");
 
-		}
+	}
 
-		if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false) {
+	if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false) {
 			hitSwitch = true;
 			_shutterState = OPEN;
 			stepper.stop();
 			DBPrintln("Hit opened switch");
-		}
+	}
 
 	if (stepper.isRunning() == true) {
 		wasRunning = true;
