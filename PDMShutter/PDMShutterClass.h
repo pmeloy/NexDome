@@ -132,6 +132,8 @@ public:
 	void		ReadEEProm();
 	void		WriteEEProm();
 
+	static void		ClosedInterrupt();
+	static void		OpenInterrupt();
 
 private:
 
@@ -196,6 +198,23 @@ ShutterClass::ShutterClass()
 	stepper.setEnablePin(STEPPER_ENABLE_PIN);
 	EnableOutputs(false);
 	GetEndSwitchStatus();
+	attachInterrupt(digitalPinToInterrupt(CLOSED_PIN), ClosedInterrupt, FALLING);
+	attachInterrupt(digitalPinToInterrupt(OPENED_PIN), OpenInterrupt, FALLING);
+
+}
+
+static void ShutterClass::ClosedInterrupt()
+{
+	// debounce
+	if (digitalRead(CLOSED_PIN) == 0)
+		stepper.stop();
+}
+
+static void ShutterClass::OpenInterrupt()
+{
+	// debounce
+	if (digitalRead(OPENED_PIN) == 0)
+		stepper.stop();
 }
 
 // EEPROM
@@ -480,6 +499,7 @@ void		ShutterClass::Run()
 	// is opened.
 	// Make both switches effectively one circuit so DIYers can use just one circuit
 	// Determines opened or closed by the direction of travel before a switch was hit
+
 	if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING && hitSwitch == false) {
 			hitSwitch = true;
 			doSync = true;
