@@ -33,7 +33,7 @@
 
 #pragma region Debug Printing
 // Debug printing, uncomment #define DEBUG to enable
-#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define DBPrint(x) Serial.print(x)
 #define DBPrintln(x) Serial.println(x)
