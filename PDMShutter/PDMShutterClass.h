@@ -203,14 +203,14 @@ ShutterClass::ShutterClass()
 
 }
 
-static void ShutterClass::ClosedInterrupt()
+void ShutterClass::ClosedInterrupt()
 {
 	// debounce
 	if (digitalRead(CLOSED_PIN) == 0)
 		stepper.stop();
 }
 
-static void ShutterClass::OpenInterrupt()
+void ShutterClass::OpenInterrupt()
 {
 	// debounce
 	if (digitalRead(OPENED_PIN) == 0)

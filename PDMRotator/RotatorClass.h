@@ -112,6 +112,8 @@ public:
 	void		SetHomeAzimuth(float);
 	void		SetRainAction(byte);
 	void		SetCheckRainTwice(bool);
+	void 		SetHomingCalibratingSpeed(long newSpeed);
+	void 		RestoreNormalSpeed();
 
 	// Movers
 	void		MoveRelative(long steps);
@@ -144,7 +146,6 @@ private:
 	// 3000 steps per rev, 6912mm travel
 	long		_maxSpeed;
 	long		_acceleration;
-	long		_savedMaxSpeed;
 	// Inputs
 	int			_btnCCWPin;
 	int			_btnCWpin;
@@ -251,7 +252,6 @@ bool RotatorClass::LoadFromEEProm()
 	else
 	{
 		_maxSpeed = cfg.maxSpeed;
-		_savedMaxSpeed = cfg.maxSpeed;
 		_acceleration = cfg.acceleration;
 		_stepsPerRotation = cfg.stepsPerRotation;
 		_reversed = cfg.reversed;
@@ -403,6 +403,17 @@ void RotatorClass::SetMaxSpeed(long newSpeed)
 	stepper.setMaxSpeed(newSpeed);
 	SaveToEEProm();
 }
+
+void RotatorClass::SetHomingCalibratingSpeed(long newSpeed)
+{
+	stepper.setMaxSpeed(newSpeed);
+}
+
+void RotatorClass::RestoreNormalSpeed()
+{
+	stepper.setMaxSpeed(_maxSpeed);
+}
+
 long RotatorClass::GetAcceleration()
 {
 	return _acceleration;
@@ -455,8 +466,7 @@ void RotatorClass::StartHoming()
 
 	if (_isAtHome == true) return;
 	// reduce speed by half
-	_savedMaxSpeed = _maxSpeed;
-	SetMaxSpeed(_maxSpeed/2);
+	SetHomingCalibratingSpeed(_maxSpeed/2);
 
 	diff = GetAngularDistance(GetAzimuth(), GetHomeAzimuth());
 	_moveDirection = MOVE_POSITIVE;
@@ -470,8 +480,7 @@ void RotatorClass::StartCalibrating()
 	if (_isAtHome == false) return;
 	_seekMode = CALIBRATION_MOVEOFF;
 	// calibrate at half speed .. should increase precision
-	_savedMaxSpeed = _maxSpeed;
-	SetMaxSpeed(_maxSpeed/2);
+	SetHomingCalibratingSpeed(_maxSpeed/2);
 	stepper.setCurrentPosition(0);
 	_moveOffUntil = millis() + 5000;
 	_doStepsPerRotation = false;
@@ -496,7 +505,7 @@ void RotatorClass::Calibrate()
 			{
 				stepper.stop();
 				// restore speed
-				SetMaxSpeed(_savedMaxSpeed);
+				RestoreNormalSpeed();
 				_seekMode = HOMING_NONE;
 				_hasBeenHomed = true;
 				_SetToHomeAzimuth = true;
@@ -708,7 +717,7 @@ void RotatorClass::Run()
 		{
 			Stop();
 			// restore max speed
-			SetMaxSpeed(_savedMaxSpeed);
+			RestoreNormalSpeed();
 			_SetToHomeAzimuth = true; // Need to set current az to homeaz but not until rotator is stopped;
 			_seekMode = HOMING_NONE;
 			_hasBeenHomed = true;
@@ -769,7 +778,7 @@ void RotatorClass::Stop()
 	// few extra steps for getting to a full step position.
 
 	if (!stepper.run()) return;
-	SetMaxSpeed(_savedMaxSpeed);
+	RestoreNormalSpeed();
 	_seekMode = HOMING_NONE;
 	stepper.stop();
 }
