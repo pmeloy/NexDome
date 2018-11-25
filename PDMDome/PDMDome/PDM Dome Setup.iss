@@ -6,7 +6,7 @@
 AppID=PDM NexDome Driver
 AppName=ASCOM PDM Dome Driver
 AppVerName=ASCOM PDM Dome Driver
-AppVersion=0.5.2.3
+AppVersion=2.0
 AppPublisher=Patrick Meloy <pat.meloy@netbistro.com>
 AppPublisherURL=mailto:pat.meloy@netbistro.com
 AppSupportURL=http://tech.groups.yahoo.com/group/ASCOM-Talk/
@@ -35,9 +35,9 @@ Name: "{app}\Resources"
 ; TODO: Add subfolders below {app} as needed (e.g. Name: "{app}\MyFolder")
 
 [Files]
-Source: "D:\Programming\NexDomeGit\NexDome\PDMDome\PDMDome\bin\Debug\ASCOM.PDM.Dome.dll"; DestDir: "{app}"
+Source: "bin\Release\ASCOM.PDM.Dome.dll"; DestDir: "{app}"
 ; Require a read-me HTML to appear after installation, maybe driver's Help doc
-Source: "D:\Programming\NexDomeGit\NexDome\PDMDome\PDMDome\ReadMe.txt"; DestDir: "{app}"; Flags: isreadme
+Source: "ReadMe.txt"; DestDir: "{app}"; Flags: isreadme
 ; TODO: Add other files needed by your driver here (add subfolders above)
 
 

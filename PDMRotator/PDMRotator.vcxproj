@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C5F80730-F44F-4478-BDAE-6634EFC2CA88}</ProjectGuid>
+    <ProjectGuid>{E599E55A-45FC-4B39-9156-1609172305DF}</ProjectGuid>
     <RootNamespace>
     </RootNamespace>
     <ProjectName>PDMRotator</ProjectName>

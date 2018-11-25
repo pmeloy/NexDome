@@ -350,7 +350,7 @@ void ProcessMessages(String buffer)
 	case CLOSE_SHUTTER_CMD:
 		// Rotator update will be through UpdateRotator
 		DBPrintln("Close shutter");
-		if (Shutter.GetState() != Shutter.CLOSED)
+		if (Shutter.GetState() != CLOSED)
 		{
 			Shutter.Close();
 		}
@@ -376,7 +376,7 @@ void ProcessMessages(String buffer)
 		}
 		else
 		{
-			if (Shutter.GetState() != Shutter.OPEN) Shutter.Open();
+			if (Shutter.GetState() != OPEN) Shutter.Open();
 		}
 
 		break;
@@ -402,7 +402,7 @@ void ProcessMessages(String buffer)
 		{
 			if (isRaining == false)
 			{
-				if (Shutter.GetState() != Shutter.CLOSED && Shutter.GetState() != Shutter.CLOSING) Shutter.Close();
+				if (Shutter.GetState() != CLOSED && Shutter.GetState() != CLOSING) Shutter.Close();
 				isRaining = true;
 				DBPrintln("It's raining! (" + value + ")");
 			}

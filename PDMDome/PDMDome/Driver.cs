@@ -170,6 +170,13 @@ namespace ASCOM.PDM
         internal const string LOWCLOSE_SHUTTER_CMD = "B"; // Get/Set close shutter on low voltage setting
         #endregion
 
+        internal enum HomeStatus
+        {
+            NEVER_HOMED,
+            HOMED,
+            ATHOME
+        };
+
         List<string> serialMessageList;
 
         SerialPort  serialPort = new SerialPort();
@@ -282,6 +289,7 @@ namespace ASCOM.PDM
                 }
             }
         }
+
         public void SetupDialog()
         {
             // consider only showing the setup dialog if not connected
@@ -488,6 +496,7 @@ namespace ASCOM.PDM
             }
             slowUpdateCounter++;
         }
+
         private void OnSerialTimer(Object source, EventArgs e)
         {
             string message = "", command = "", value = "";
@@ -813,6 +822,7 @@ namespace ASCOM.PDM
         internal void GetSetupInfo()
         {
             LogMessage("Rotator Get", "Setup Info");
+				SendSerial(HELLO_CMD);		// send hello to shutter, if it's present it'll reply
             SendSerial(VERSION_ROTATOR_GET);
             SendSerial(VOLTS_ROTATOR_CMD);
             SendSerial(STEPSPER_ROTATOR_CMD);
@@ -855,6 +865,7 @@ namespace ASCOM.PDM
                 return canFindHome;
             }
         }
+
         public bool CanPark
         {
             get
@@ -862,6 +873,7 @@ namespace ASCOM.PDM
                 return canPark;
             }
         }
+
         public bool CanSetAltitude
         {
             get
@@ -869,6 +881,7 @@ namespace ASCOM.PDM
                 return canSetAltitude;
             }
         }
+
         public bool CanSetAzimuth
         {
             get
@@ -876,6 +889,7 @@ namespace ASCOM.PDM
                 return canSetAzimuth;
             }
         }
+
         public bool CanSetPark
         {
             get
@@ -883,6 +897,7 @@ namespace ASCOM.PDM
                 return canSetPark;
             }
         }
+
         public bool CanSetShutter
         {
             get
@@ -890,13 +905,16 @@ namespace ASCOM.PDM
                 return canSetShutter;
             }
         }
+
         public bool CanSlave
         {
             get
             {
-                return true;
+                canSlave = true;
+                return canSlave;
             }
         }
+
         public bool CanSyncAzimuth
         {
             get
@@ -923,6 +941,7 @@ namespace ASCOM.PDM
                 }
             }
         }
+
         public double Altitude
         {
             get
@@ -938,21 +957,32 @@ namespace ASCOM.PDM
                 }
             }
         }
+
         public bool AtHome
         {
             get
             {
                 if (CanFindHome == true)
                 {
-                    return atHome;
+                    if ( (HomeStatus)rotatorHomedStatus == HomeStatus.ATHOME )
+                    {
+	                      atHome = true;
+	                }
+	                else
+	                {
+	                      atHome = false;
+	                }
                 }
                 else
                 {
+                    atHome = false;
                     tl.LogMessage("AtHome Get", "Not implemented");
                     throw new ASCOM.PropertyNotImplementedException("AtHome", false);
                 }
+            return atHome;
             }
         }
+
         public bool AtPark
         {
             get
@@ -982,6 +1012,7 @@ namespace ASCOM.PDM
                 }
             }
         }
+
         public double Azimuth
         {
             get
@@ -997,6 +1028,7 @@ namespace ASCOM.PDM
                 }
             }
         }
+
         public bool Slaved
         {
             get
@@ -1024,6 +1056,7 @@ namespace ASCOM.PDM
                 }
             }
         }
+
         public bool Slewing
         {
             get
@@ -1046,6 +1079,7 @@ namespace ASCOM.PDM
             SendSerial(ABORT_MOVE_CMD);
             tl.LogMessage("Movement","Aborted");
         }
+
         public void CloseShutter()
         {
             if (canSetShutter ==true)
@@ -1059,6 +1093,7 @@ namespace ASCOM.PDM
                 throw new MethodNotImplementedException("Close Shutter");
             }
         }
+
         public void FindHome()
         {
             if (canFindHome == true)
@@ -1072,6 +1107,7 @@ namespace ASCOM.PDM
                 throw new ASCOM.MethodNotImplementedException("FindHome");
             }
         }
+
         public void OpenShutter()
         {
             if (canSetShutter == true)
@@ -1096,6 +1132,7 @@ namespace ASCOM.PDM
                 throw new MethodNotImplementedException("Open Shutter");
             }
         }
+
         public void Park()
         {
             if (canPark == true)
@@ -1109,6 +1146,7 @@ namespace ASCOM.PDM
                 throw new ASCOM.MethodNotImplementedException("Park");
             }
         }
+
         public void SetPark()
         {
             if (canSetPark == true)
@@ -1122,11 +1160,13 @@ namespace ASCOM.PDM
                 throw new ASCOM.MethodNotImplementedException("SetPark");
             }
         }
+
         public void SlewToAltitude(double Altitude)
         {
             tl.LogMessage("SlewToAltitude", "Not implemented");
             throw new ASCOM.MethodNotImplementedException("SlewToAltitude");
         }
+
         public void SlewToAzimuth(double Azimuth)
         {
             if (CanSetAzimuth == true)
@@ -1148,6 +1188,7 @@ namespace ASCOM.PDM
                 throw new ASCOM.MethodNotImplementedException("SlewToAzimuth");
             }
         }
+
         public void SyncToAzimuth(double Azimuth)
         {
             if (CanSyncAzimuth == true)

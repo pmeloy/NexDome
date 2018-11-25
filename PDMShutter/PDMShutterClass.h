@@ -75,11 +75,15 @@ const uint8_t	BUTTON_CLOSE = 6;
 AccelStepper stepper(AccelStepper::DRIVER, STEPPER_STEP_PIN, STEPPER_DIRECTION_PIN);
 #pragma endregion
 
+// need to make this global so we can access it in the interrupt
+enum ShutterStates { OPEN, CLOSED, OPENING, CLOSING, ERROR };
+ShutterStates	shutterState = ERROR;
+
+
 #pragma region Shutter Header
 class ShutterClass
 {
 public:
-	enum ShutterStates { OPEN, CLOSED, OPENING, CLOSING, ERROR };
 
 	// Constructor
 	ShutterClass();
@@ -161,7 +165,6 @@ private:
 
 	uint8_t			_lastButtonPressed;
 
-	ShutterStates	_shutterState = ERROR;
 	uint64_t		_stepsPerStroke;
 //	uint8_t			_stepMode;
 
@@ -206,14 +209,14 @@ ShutterClass::ShutterClass()
 void ShutterClass::ClosedInterrupt()
 {
 	// debounce
-	if (digitalRead(CLOSED_PIN) == 0)
+	if (digitalRead(CLOSED_PIN) == 0 && shutterState == CLOSING)
 		stepper.stop();
 }
 
 void ShutterClass::OpenInterrupt()
 {
 	// debounce
-	if (digitalRead(OPENED_PIN) == 0)
+	if (digitalRead(OPENED_PIN) == 0 && shutterState == OPENING)
 		stepper.stop();
 }
 
@@ -288,7 +291,7 @@ void		ShutterClass::DoButtons()
 	{
 		DBPrintln("Button Open Shutter");
 		whichButtonPressed = BUTTON_OPEN;
-		_shutterState = OPENING;
+		shutterState = OPENING;
 		MoveRelative(_stepsPerStroke);
 		lastButtonPressed = BUTTON_OPEN;
 	}
@@ -296,7 +299,7 @@ void		ShutterClass::DoButtons()
 	{
 		DBPrintln("Button Close Shutter");
 		whichButtonPressed = BUTTON_CLOSE;
-		_shutterState = CLOSING;
+		shutterState = CLOSING;
 		MoveRelative(1 - _stepsPerStroke);
 		lastButtonPressed = BUTTON_CLOSE;
 	}
@@ -366,7 +369,7 @@ bool		ShutterClass::GetReversed()
 }
 short		ShutterClass::GetState()
 {
-	return (short)_shutterState;
+	return (short)shutterState;
 }
 uint32_t	ShutterClass::GetStepsPerStroke()
 {
@@ -429,12 +432,12 @@ void		ShutterClass::SetVoltsFromString(String value)
 // Movers
 void		ShutterClass::Open()
 {
-	_shutterState = OPENING;
+	shutterState = OPENING;
 	MoveRelative(_stepsPerStroke * 1.2);
 }
 void		ShutterClass::Close()
 {
-	_shutterState = CLOSING;
+	shutterState = CLOSING;
 	MoveRelative(1 - _stepsPerStroke * 1.2);
 }
 void		ShutterClass::GotoPosition(unsigned long newPos)
@@ -445,12 +448,12 @@ void		ShutterClass::GotoPosition(unsigned long newPos)
 	// Check if this actually changes position, then move if necessary.
 	if (newPos > currentPos)
 	{
-		_shutterState = OPENING;
+		shutterState = OPENING;
 		doMove = true;
 	}
 	else if (newPos < currentPos)
 	{
-		_shutterState = CLOSING;
+		shutterState = CLOSING;
 		doMove = true;
 	}
 	if (doMove == true)
@@ -500,18 +503,18 @@ void		ShutterClass::Run()
 	// Make both switches effectively one circuit so DIYers can use just one circuit
 	// Determines opened or closed by the direction of travel before a switch was hit
 
-	if (digitalRead(CLOSED_PIN) == 0 && _shutterState != OPENING && hitSwitch == false) {
+	if (digitalRead(CLOSED_PIN) == 0 && shutterState != OPENING && hitSwitch == false) {
 			hitSwitch = true;
 			doSync = true;
-			_shutterState = CLOSED;
+			shutterState = CLOSED;
 			stepper.stop();
 			DBPrintln("Hit closed switch");
 
 	}
 
-	if (digitalRead(OPENED_PIN) == 0 && _shutterState != CLOSING && hitSwitch == false) {
+	if (digitalRead(OPENED_PIN) == 0 && shutterState != CLOSING && hitSwitch == false) {
 			hitSwitch = true;
-			_shutterState = OPEN;
+			shutterState = OPEN;
 			stepper.stop();
 			DBPrintln("Hit opened switch");
 	}
@@ -521,7 +524,7 @@ void		ShutterClass::Run()
 		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
 	}
 
-	if (stepper.isRunning() == false && _shutterState != CLOSED && _shutterState != OPEN) _shutterState = ERROR;
+	if (stepper.isRunning() == false && shutterState != CLOSED && shutterState != OPEN) shutterState = ERROR;
 
 	if (nextBatteryCheck < millis() && isConfiguringWireless == false)
 	{
@@ -550,7 +553,7 @@ void		ShutterClass::Run()
 
 	if (wasRunning == true) // So this bit only runs once after stopping.
 	{
-		DBPrintln("WasRunning " + String(_shutterState) + " Hitswitch " + String(hitSwitch));
+		DBPrintln("WasRunning " + String(shutterState) + " Hitswitch " + String(hitSwitch));
 		_lastButtonPressed = 0;
 		wasRunning = false;
 		hitSwitch = false;
