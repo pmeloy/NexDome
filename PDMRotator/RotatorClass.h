@@ -26,6 +26,9 @@
 #include "WProgram.h"
 #endif
 
+// set this to match the type of steps configured on the
+// stepper controller
+#define STEP_TYPE 8
 
 // #define DEBUG
 #ifdef DEBUG
@@ -645,24 +648,32 @@ float RotatorClass::GetAngularDistance(float fromAngle, float toAngle)
 long RotatorClass::GetPositionalDistance(long fromPosition, long toPosition)
 {
 	long delta;
+	int adjust;
 	delta = toPosition - fromPosition;
 	if (delta == 0) return 0; //  we are already there
 
 	if (delta > _stepsPerRotation / 2) delta -= _stepsPerRotation;
 	if (delta < -_stepsPerRotation / 2) delta += _stepsPerRotation;
+	delta = delta + int(delta) % STEP_TYPE;
 	return delta;
 
 }
+
 void RotatorClass::SetAzimuth(float newHeading)
 {
 	// Set movement tarGet by compass azimuth
 	float currentHeading, tarGetPosition;
 	float delta;
-	float newdelta;
+	int adjust;
 	currentHeading = GetAzimuth();
 	delta = GetAngularDistance(currentHeading, newHeading) * _stepsPerDegree;
+	delta = delta + int(delta) % STEP_TYPE;
+	if(delta == 0)
+		return;
+
 	MoveRelative(delta);
 }
+
 float RotatorClass::GetAzimuth()
 {
 	/* floating point math for Get azimuth
@@ -721,8 +732,8 @@ void RotatorClass::Run()
 			_SetToHomeAzimuth = true; // Need to set current az to homeaz but not until rotator is stopped;
 			_seekMode = HOMING_NONE;
 			_hasBeenHomed = true;
+			return;
 		}
-		return;
 	}
 
 	if (stepper.isRunning()) return;
