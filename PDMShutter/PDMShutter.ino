@@ -104,40 +104,33 @@ void setup()
 
 void loop()
 {
+	if (millis() < delayUntil)
+		return;
 
-	//if (XbeeStarted == true && SentHello == false) SendHello();
-	if (millis() < delayUntil) return;
-	if (Computer.available() > 0) ReceiveSerial();
+	if (Computer.available() > 0)
+		ReceiveSerial();
 
-	if (Wireless.available()) ReceiveWireless();
+	if (Wireless.available())
+		ReceiveWireless();
 
-	if (XbeeStarted == false)
-	{
-		if (Shutter.radioIsConfigured == false && Shutter.isConfiguringWireless == false)
-		{
+	if (!XbeeStarted) {
+		if (!Shutter.radioIsConfigured  && !Shutter.isConfiguringWireless) {
 			DBPrintln("Wait for serial devices to start");
 			StartWirelessConfig();
 			delay(2000);
 		}
-		else if (Shutter.radioIsConfigured == true)
-		{
+		else if (Shutter.radioIsConfigured) {
 			XbeeStarted = true;
 			SendHello();
 			DBPrintln("Radio started");
 		}
 	}
 
+	if (millis() > nextUpdateTime && (Shutter.sendUpdates  || doFinalUpdate ))
+		UpdateRotator();
 
-	if (millis() > nextUpdateTime && (Shutter.sendUpdates == true || doFinalUpdate == true)) UpdateRotator();
-
-	if (Shutter.isConfiguringWireless == false && SentHello == true)
-	{
-		if (Shutter.rainCheckInterval > 0)
-		{
+	if (!Shutter.isConfiguringWireless && SentHello  && Shutter.rainCheckInterval > 0)
 			RainCheck();
-		}
-	}
-
 
 	Shutter.DoButtons();
 	Shutter.Run();
@@ -161,16 +154,15 @@ void UpdateRotator()
 
 	runningAtaStart = Shutter.sendUpdates; // Store motion state to comparison at end
 
-	if (nextVoltageUpdate < millis())
-	{
+	if (nextVoltageUpdate < millis()) {
 		Wireless.print(VOLTS_SHUTTER_CMD + Shutter.GetVoltString());
 		nextVoltageUpdate = millis() + voltUpdateInterval;
 	}
 
-	if (nextStepTime > millis()) return;
+	if (nextStepTime > millis())
+		return;
 
-	if (sentState == false)
-	{
+	if (!sentState) {
 		Wireless.print(String(STATE_SHUTTER_GET) + String(Shutter.GetState()) + "#");
 		sentState = true;
 		nextStepTime = millis() + stepInterval;
@@ -178,16 +170,14 @@ void UpdateRotator()
 	}
 
 	//TODO: Not ready yet - when handbox is done finish this up
-	//if (sentElevation == false)
-	//{
+	//if (!sentElevation) {
 	//	Wireless.print(String(ELEVATION_SHUTTER_CMD) + String(Shutter.GetElevation()) + "#");
 	//	sentElevation = true;
 	//	nextStepTime = millis() + stepInterval;
 	//	return;
 	//}
 
-	if (sentPosition == false)
-	{
+	if (!sentPosition) {
 		Wireless.print(String(POSITION_SHUTTER_GET) + String(Shutter.GetPosition()) + "#");
 		sentPosition = true;
 		nextStepTime = millis() + stepInterval;
@@ -199,13 +189,9 @@ void UpdateRotator()
 	sentState = sentPosition = false; // Reset the bools for the next cycle
 	Shutter.sendUpdates = false;
 	if (runningAtaStart != Shutter.sendUpdates) // See if motor stopped after update steps started
-	{
 		doFinalUpdate = true; // Motor stopped after starting the update steps so do one more update to catch those up.
-	}
 	else
-	{
 		doFinalUpdate = false;
-	}
 }
 
 #pragma region XBeeRoutines
@@ -219,17 +205,17 @@ void StartWirelessConfig()
 }
 inline void ConfigXBee(String result)
 {
-	if (configStep == 0)
-	{
+	if (configStep == 0) {
 		// ATString = "ATCE0,ID7734,AP0,SM0,RO0,WR,CN";
 		//  CE0 for end device, shutter MY is 1
 		ATString = "ATCE0,ID7734,CH0C,MY1,DH0,DL0,AP0,SM0,WR,BD7,CN";
 		DBPrintln("AT String " + ATString);
 		Wireless.println(ATString);
 	}
+
 	DBPrintln("Result " + String(configStep) + ":" + result);
-	if (configStep > 5)
-	{
+
+	if (configStep > 5) {
 		// switch to 115200
 		Wireless.begin(115200);
 		Shutter.isConfiguringWireless = false;
@@ -254,8 +240,7 @@ void SendHello()
 #pragma endregion
 void RainCheck()
 {
-	if (millis() > nextRainCheck)
-	{
+	if (millis() > nextRainCheck) {
 		DBPrintln("Asking for rain status");
 		Wireless.print(String(RAIN_ROTATOR_GET) + "#");
 		nextRainCheck = millis() + Shutter.rainCheckInterval;
@@ -266,19 +251,15 @@ void ReceiveSerial()
 {
 	char character = Computer.read();
 
-	if (character == '\r' || character == '\n')
-	{
+	if (character == '\r' || character == '\n') {
 		// End of message
-		if (serialBuffer.length() > 0)
-		{
+		if (serialBuffer.length() > 0) {
 			ProcessMessages(serialBuffer);
 			serialBuffer = "";
 		}
 	}
 	else
-	{
 		serialBuffer += String(character);
-	}
 }
 
 void ReceiveWireless()
@@ -288,26 +269,20 @@ void ReceiveWireless()
 	while(Wireless.available()) {
 		character = Wireless.read();
 
-		if (character == '\r' || character == '\n' || character == '#')
-		{
-			if (wirelessBuffer.length() > 0)
-			{
-				if (Shutter.isConfiguringWireless == true)
-				{
+		if (character == '\r' || character == '\n' || character == '#') {
+			if (wirelessBuffer.length() > 0) {
+				if (Shutter.isConfiguringWireless) {
 					DBPrint("Configuring");
 					ConfigXBee(wirelessBuffer);
 				}
 				else
-				{
 					ProcessMessages(wirelessBuffer);
-				}
+
 				wirelessBuffer = "";
 			}
 		}
 		else
-		{
 			wirelessBuffer += String(character);
-		}
 	}
 
 }
@@ -321,7 +296,7 @@ void ProcessMessages(String buffer)
 	char command;
 
 
-	if (buffer.equals("OK") == true)
+	if (buffer.equals("OK"))
 	{
 		DBPrint("Buffer == OK");
 		return;
@@ -332,154 +307,150 @@ void ProcessMessages(String buffer)
 
 	switch (command)
 	{
-	case ACCELERATION_SHUTTER_CMD:
-		if (value.length() > 0)
-		{
-			DBPrintln("Set acceleration to " + value);
-			local32 = value.toInt();
-			Shutter.SetAcceleration(local32);
-		}
-		wirelessMessage = String(ACCELERATION_SHUTTER_CMD) + String(Shutter.GetAcceleration());
-		DBPrintln("Acceleration is " + String(Shutter.GetAcceleration()));
-		break;
-	case ABORT_CMD:
-		// Rotator update will be through UpdateRotator
-		DBPrintln("STOP!");
-		Shutter.Stop();
-		break;
-	case CLOSE_SHUTTER_CMD:
-		// Rotator update will be through UpdateRotator
-		DBPrintln("Close shutter");
-		if (Shutter.GetState() != CLOSED)
-		{
-			Shutter.Close();
-		}
-		wirelessMessage = String(STATE_SHUTTER_GET) + String(Shutter.GetState());
-		break;
-	case HELLO_CMD:
-		DBPrintln("Rotator says hello!");
-		SendHello();
-		DBPrintln("Sent hello back");
-		break;
-	case OPEN_SHUTTER_CMD:
-		// Rotator update will be through UpdateRotator
-		DBPrintln("Received Open Shutter Command");
-		if (isRaining == true)
-		{
-			wirelessMessage = "OR"; // (O)pen command (R)ain cancel
-			DBPrintln("Raining");
-		}
-		else if (Shutter.GetVoltsAreLow() == true)
-		{
-			wirelessMessage = "OL"; // (O)pen command (L)ow voltage cancel
-			DBPrintln("Voltage Low");
-		}
-		else
-		{
-			if (Shutter.GetState() != OPEN) Shutter.Open();
-		}
-
-		break;
-	case POSITION_SHUTTER_GET:
-		 //Rotator update will be through UpdateRotator
-		wirelessMessage = String(POSITION_SHUTTER_GET) + String(Shutter.GetPosition());
-		DBPrintln(wirelessMessage);
-		break;
-	case RAIN_INTERVAL_SET:
-		if (value.length() > 0)
-		{
-			Shutter.SetRainInterval(value.toInt());
-			DBPrintln("Rain check interval set to " + value);
-		}
-		else
-		{
-			DBPrintln("Rain check interval " + String(Shutter.rainCheckInterval));
-		}
-		break;
-	case RAIN_ROTATOR_GET:
-		local16 = value.toInt();
-		if (local16 == 1)
-		{
-			if (isRaining == false)
-			{
-				if (Shutter.GetState() != CLOSED && Shutter.GetState() != CLOSING) Shutter.Close();
-				isRaining = true;
-				DBPrintln("It's raining! (" + value + ")");
+		case ACCELERATION_SHUTTER_CMD:
+			if (value.length() > 0) {
+				DBPrintln("Set acceleration to " + value);
+				local32 = value.toInt();
+				Shutter.SetAcceleration(local32);
 			}
-		}
-		else
-		{
-			isRaining = false;
-			DBPrintln("It's not raining");
-		}
-		break;
-	case REVERSED_SHUTTER_CMD:
-		if (value.length() > 0)
-		{
-			Shutter.SetReversed(value.equals("1"));
-			DBPrintln("Set Reversed to " + value);
-		}
-		wirelessMessage = String(REVERSED_SHUTTER_CMD) + String(Shutter.GetReversed());
-		DBPrintln(wirelessMessage);
-		break;
-	case SPEED_SHUTTER_CMD:
-		if (value.length() > 0) {
-			local32 = value.toInt();
-			DBPrintln("Set speed to " + value);
-			if (local32 > 0) Shutter.SetMaxSpeed(value.toInt());
-		}
-		wirelessMessage = String(SPEED_SHUTTER_CMD) + String(Shutter.GetMaxSpeed());
-		DBPrintln(wirelessMessage);
-		break;
-	case STATE_SHUTTER_GET:
-		wirelessMessage = String(STATE_SHUTTER_GET) + String(Shutter.GetState());
-		DBPrintln(wirelessMessage);
-		break;
-	case STEPSPER_SHUTTER_CMD:
-		if (value.length() > 0) {
-			local32 = value.toInt();
-			if (local32 > 0)
-			{
-				Shutter.SetStepsPerStroke(local32);
-			}
-		}
-		else
-		{
-			DBPrintln("Get Steps " + String(Shutter.GetStepsPerStroke()));
-		}
-		wirelessMessage = String(STEPSPER_SHUTTER_CMD) + String(Shutter.GetStepsPerStroke());
-		break;
-	case VERSION_SHUTTER_GET:
-		wirelessMessage = "V" + version;
-		DBPrintln(wirelessMessage);
-		break;
-	case VOLTS_SHUTTER_CMD:
-		if (value.length() > 0)
-		{
-			Shutter.SetVoltsFromString(value);
-			DBPrintln("Set volts to " + value);
-		}
-		wirelessMessage = "K" + Shutter.GetVoltString();
-		DBPrintln(wirelessMessage);
-		break;
-	case VOLTSCLOSE_SHUTTER_CMD:
-		if (value.length() > 0)
-		{
-			Shutter.SetVoltsClose(value.toInt());
-		}
-		else
-		{
-			wirelessMessage = String(VOLTSCLOSE_SHUTTER_CMD) + String(Shutter.GetVoltsClose());
-			DBPrintln("Close on low voltage " + String(Shutter.GetVoltsClose()));
-		}
-		break;
-	default:
-		DBPrintln("Unknown command " + String(command));
-		break;
-	}
+			wirelessMessage = String(ACCELERATION_SHUTTER_CMD) + String(Shutter.GetAcceleration());
+			DBPrintln("Acceleration is " + String(Shutter.GetAcceleration()));
+			break;
 
-	if (wirelessMessage.length() > 0)
-	{
+		case ABORT_CMD:
+			// Rotator update will be through UpdateRotator
+			DBPrintln("STOP!");
+			Shutter.Stop();
+			break;
+
+		case CLOSE_SHUTTER_CMD:
+			// Rotator update will be through UpdateRotator
+			DBPrintln("Close shutter");
+			if (Shutter.GetState() != CLOSED)
+				Shutter.Close();
+			wirelessMessage = String(STATE_SHUTTER_GET) + String(Shutter.GetState());
+			break;
+
+		case HELLO_CMD:
+			DBPrintln("Rotator says hello!");
+			SendHello();
+			DBPrintln("Sent hello back");
+			break;
+
+		case OPEN_SHUTTER_CMD:
+			// Rotator update will be through UpdateRotator
+			DBPrintln("Received Open Shutter Command");
+			if (isRaining) {
+				wirelessMessage = "OR"; // (O)pen command (R)ain cancel
+				DBPrintln("Raining");
+			}
+			else if (Shutter.GetVoltsAreLow()) {
+				wirelessMessage = "OL"; // (O)pen command (L)ow voltage cancel
+				DBPrintln("Voltage Low");
+			}
+			else
+				if (Shutter.GetState() != OPEN) Shutter.Open();
+
+			break;
+
+		case POSITION_SHUTTER_GET:
+			 //Rotator update will be through UpdateRotator
+			wirelessMessage = String(POSITION_SHUTTER_GET) + String(Shutter.GetPosition());
+			DBPrintln(wirelessMessage);
+			break;
+
+		case RAIN_INTERVAL_SET:
+			if (value.length() > 0) {
+				Shutter.SetRainInterval(value.toInt());
+				DBPrintln("Rain check interval set to " + value);
+			}
+			else
+				DBPrintln("Rain check interval " + String(Shutter.rainCheckInterval));
+
+			break;
+
+		case RAIN_ROTATOR_GET:
+			local16 = value.toInt();
+			if (local16 == 1) {
+				if (!isRaining && Shutter.GetState() != CLOSED && Shutter.GetState() != CLOSING)
+						Shutter.Close();
+
+					isRaining = true;
+					DBPrintln("It's raining! (" + value + ")");
+			}
+			else {
+				isRaining = false;
+				DBPrintln("It's not raining");
+			}
+			break;
+
+		case REVERSED_SHUTTER_CMD:
+			if (value.length() > 0) {
+				Shutter.SetReversed(value.equals("1"));
+				DBPrintln("Set Reversed to " + value);
+			}
+			wirelessMessage = String(REVERSED_SHUTTER_CMD) + String(Shutter.GetReversed());
+			DBPrintln(wirelessMessage);
+			break;
+
+		case SPEED_SHUTTER_CMD:
+			if (value.length() > 0) {
+				local32 = value.toInt();
+				DBPrintln("Set speed to " + value);
+				if (local32 > 0)
+					Shutter.SetMaxSpeed(value.toInt());
+			}
+			wirelessMessage = String(SPEED_SHUTTER_CMD) + String(Shutter.GetMaxSpeed());
+			DBPrintln(wirelessMessage);
+			break;
+
+		case STATE_SHUTTER_GET:
+			wirelessMessage = String(STATE_SHUTTER_GET) + String(Shutter.GetState());
+			DBPrintln(wirelessMessage);
+			break;
+
+		case STEPSPER_SHUTTER_CMD:
+			if (value.length() > 0) {
+				local32 = value.toInt();
+				if (local32 > 0)
+					Shutter.SetStepsPerStroke(local32);
+			}
+			else
+				DBPrintln("Get Steps " + String(Shutter.GetStepsPerStroke()));
+
+			wirelessMessage = String(STEPSPER_SHUTTER_CMD) + String(Shutter.GetStepsPerStroke());
+			break;
+
+		case VERSION_SHUTTER_GET:
+			wirelessMessage = "V" + version;
+			DBPrintln(wirelessMessage);
+			break;
+
+		case VOLTS_SHUTTER_CMD:
+			if (value.length() > 0) {
+				Shutter.SetVoltsFromString(value);
+				DBPrintln("Set volts to " + value);
+			}
+			wirelessMessage = "K" + Shutter.GetVoltString();
+			DBPrintln(wirelessMessage);
+			break;
+
+		case VOLTSCLOSE_SHUTTER_CMD:
+			if (value.length() > 0)
+				Shutter.SetVoltsClose(value.toInt());
+			else
+			{
+				wirelessMessage = String(VOLTSCLOSE_SHUTTER_CMD) + String(Shutter.GetVoltsClose());
+				DBPrintln("Close on low voltage " + String(Shutter.GetVoltsClose()));
+			}
+			break;
+
+		default:
+			DBPrintln("Unknown command " + String(command));
+			break;
+	} // end switch
+
+	if (wirelessMessage.length() > 0) {
 		DBPrintln(">>> Sending " + wirelessMessage);
 		Wireless.println(wirelessMessage +"#");
 	}
