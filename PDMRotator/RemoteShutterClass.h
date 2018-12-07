@@ -30,8 +30,6 @@
 class RemoteShutterClass
 {
 public:
-	// Todo: remove this if state becomes a string
-	enum ShutterStates { OPEN, CLOSED, OPENING, CLOSING, ERROR };
 
 	// TODO: See if these can all be strings
 	// These have to be real data for communications reasos
@@ -53,14 +51,9 @@ public:
 	String voltsClose = "";
 
 	RemoteShutterClass();
-	void SetState(int);
 };
 
 RemoteShutterClass::RemoteShutterClass()
 {
 
-}
-void RemoteShutterClass::SetState(int newState)
-{
-	state = (ShutterStates)newState;
 }
