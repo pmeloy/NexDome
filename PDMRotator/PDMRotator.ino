@@ -35,7 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-const String VERSION = "2.0.0.0";
+#define VERSION "2.0.0.0"
 
 #define Computer Serial
 String computerBuffer;
@@ -284,7 +284,7 @@ void ReceiveComputer()
 		}
 	}
 	else {
-		computerBuffer += String(computerCharacter);
+		computerBuffer += computerCharacter;
 	}
 }
 
@@ -616,7 +616,7 @@ void ReceiveWireless()
 			}
 		}
 		else
-			wirelessBuffer += String(wirelessCharacter);
+			wirelessBuffer += wirelessCharacter;
 	}
 }
 

@@ -50,7 +50,7 @@ String serialBuffer;
 #define Wireless Serial1
 String wirelessBuffer;
 
-const String version = "2.0.0.0";
+#define VERSION "2.0.0.0"
 
 #pragma endregion
 
@@ -259,7 +259,7 @@ void ReceiveSerial()
 		}
 	}
 	else
-		serialBuffer += String(character);
+		serialBuffer += character;
 }
 
 void ReceiveWireless()
@@ -282,7 +282,7 @@ void ReceiveWireless()
 			}
 		}
 		else
-			wirelessBuffer += String(character);
+			wirelessBuffer += character;
 	}
 
 }
@@ -422,7 +422,7 @@ void ProcessMessages(String buffer)
 			break;
 
 		case VERSION_SHUTTER_GET:
-			wirelessMessage = "V" + version;
+			wirelessMessage = String("V") + VERSION;
 			DBPrintln(wirelessMessage);
 			break;
 
