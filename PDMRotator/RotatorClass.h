@@ -351,8 +351,7 @@ bool RotatorClass::GetRainStatus()
 {
 	static int rainCount = 0;
 	bool isRaining = false;
-	if (!_rainCheckTwice)
-		rainCount = 1;
+	if (_rainCheckTwice == false) rainCount = 1;
 
 	if (digitalRead(RAIN_SENSOR_PIN) == 1) {
 		rainCount = 0;
@@ -386,7 +385,7 @@ inline void RotatorClass::SetCheckRainTwice(const bool &state)
 #pragma region "Stepper Related"
 void RotatorClass::enableMotor(const bool &newState)
 {
-	if (!newState) {
+	if (newState == false) {
 		digitalWrite(STEPPER_ENABLE_PIN, 1);
 	}
 	else {
@@ -475,8 +474,7 @@ void RotatorClass::StartHoming()
 	float diff;
 	long distance;
 
-	if (_isAtHome)
-		return;
+	if (_isAtHome == true) return;
 	// reduce speed by half
 	SetHomingCalibratingSpeed(_maxSpeed/2);
 
@@ -490,8 +488,7 @@ void RotatorClass::StartHoming()
 
 void RotatorClass::StartCalibrating()
 {
-	if (!_isAtHome)
-		return;
+	if (_isAtHome == false) return;
 	_seekMode = CALIBRATION_MOVEOFF;
 	// calibrate at half speed .. should increase precision
 	SetHomingCalibratingSpeed(_maxSpeed/2);
@@ -564,11 +561,8 @@ int RotatorClass::GetHomeStatus()
 {
 	int status = NEVER_HOMED;
 
-	if (_hasBeenHomed)
-		status = HOMED;
-
-	if (_isAtHome)
-		status = ATHOME;
+	if (_hasBeenHomed == true) status = HOMED;
+	if (_isAtHome == true) status = ATHOME;
 	return status;
 }
 
@@ -751,7 +745,7 @@ void RotatorClass::Run()
 	if (_seekMode > HOMING_HOME)
 		 Calibrate();
 
-	if (stepper.run()) {
+	if (stepper.run() == true) {
 		wasRunning = true;
 		if (_seekMode == HOMING_HOME && digitalRead(HOME_PIN) == 0) { // We're looking for home and found it
 			Stop();
@@ -770,17 +764,17 @@ void RotatorClass::Run()
 	// Won't get here if stepper is moving
 	if (digitalRead(HOME_PIN) == 0 ) { // Not moving but we're at home
 		_isAtHome = true;
-		if (!_hasBeenHomed) { // Just started up rotator so tell rotator its at home.
+		if (_hasBeenHomed == false) { // Just started up rotator so tell rotator its at home.
 			SyncPosition(_homeAzimuth); // Set the Azimuth to the home position
 			_hasBeenHomed = true; // We've been homed
 		}
 	}
 
-	if (wasRunning)
+	if (wasRunning == true)
 	{
 		_moveDirection = MOVE_NONE;
 
-		if (_doStepsPerRotation) {
+		if (_doStepsPerRotation == true) {
 			_stepsPerRotation = stepper.currentPosition();
 			SyncHome(_homeAzimuth);
 			SaveToEEProm();
@@ -798,7 +792,7 @@ void RotatorClass::Run()
 			stepper.setCurrentPosition(stepsFromZero);
 		}
 
-		if (_SetToHomeAzimuth) {
+		if (_SetToHomeAzimuth == true) {
 			SyncPosition(_homeAzimuth);
 			_SetToHomeAzimuth = false;
 		}

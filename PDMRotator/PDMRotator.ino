@@ -160,15 +160,15 @@ void loop()
 {
 
 	if (millis() < delayUntil) return;
-	if (!XbeeStarted)
+	if (XbeeStarted == false)
 	{
-		if (!Rotator.radioIsConfigured && !isConfiguringWireless)
+		if (Rotator.radioIsConfigured == false && isConfiguringWireless == false)
 		{
 			DBPrint("Initializing Radio");
 			StartWirelessConfig();
 			delay(3000);
 		}
-		else if (Rotator.radioIsConfigured)
+		else if (Rotator.radioIsConfigured == true)
 		{
 			DBPrint("Radio already initialized");
 			XbeeStarted = true;
@@ -247,7 +247,7 @@ void CheckForRain()
 	// Disable by setting rain check interval to 0;
 	if (millis() > nextRainCheck) {
 		currentRainStatus = Rotator.GetRainStatus();
-		if (currentRainStatus) {
+		if (currentRainStatus == true) {
 
 			if (Rotator.GetRainAction() == 1)
 				Rotator.SetAzimuth(Rotator.GetHomeAzimuth());
@@ -370,7 +370,7 @@ void ProcessSerialCommand()
 
 		case MOVE_RELATIVE_ROTATOR_CMD:
 			if (hasValue) {
-				if (!Rotator.GetVoltsAreLow()) {
+				if (Rotator.GetVoltsAreLow() == false) {
 					localLong = value.toInt();
 					Rotator.MoveRelative(localLong);
 				}
@@ -396,7 +396,7 @@ void ProcessSerialCommand()
 
 		case POSITION_ROTATOR_CMD:
 			if (value.length() > 0) {
-				if (!Rotator.GetVoltsAreLow()) {
+				if (Rotator.GetVoltsAreLow() == false) {
 					Rotator.SetPosition(value.toInt());
 					serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
 				}
@@ -516,7 +516,7 @@ void ProcessSerialCommand()
 				break;
 
 		case RAIN_SHUTTER_GET:
-			serialMessage = String(RAIN_SHUTTER_GET) + String(currentRainStatus ? "1" : "0");
+			serialMessage = String(RAIN_SHUTTER_GET) + String((currentRainStatus == true) ? "1" : "0");
 			break;
 
 		case REVERSED_SHUTTER_CMD:
@@ -669,7 +669,7 @@ void ProcessWireless()
 			break;
 
 		case RAIN_SHUTTER_GET:
-			wirelessMessage = String(RAIN_SHUTTER_GET) + String( Rotator.GetRainStatus() ? "1" : "0" );
+			wirelessMessage = String(RAIN_SHUTTER_GET) + String( Rotator.GetRainStatus()? "1" : "0" );
 			DBPrint("Shutter rain " + value);
 			break;
 
