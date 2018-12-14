@@ -59,17 +59,25 @@ enum Seeks { HOMING_NONE, // Not homing or calibrating
 				CALIBRATION_MEASURE // Measuring dome until home hit again.
 };
 
-const int HOME_PIN = 2;					// Also used for Shutter open status
-const int STEPPER_ENABLE_PIN = 10;		// Digital Output
-const int DIRECTION_PIN = 11;	// Digital Output
-const int STEP_PIN = 12;			// Digital Output
-const int BUTTON_CCW = 5;				// Digital Input
-const int BUTTON_CW = 6;				// Digital Input
-const int RAIN_SENSOR_PIN = 7;		// Digital Input from RG11
+#define HOME_PIN				 2	// Also used for Shutter open status
+#define STEPPER_ENABLE_PIN 10	// Digital Output
+#define DIRECTION_PIN		11	// Digital Output
+#define STEP_PIN				12	// Digital Output
+#define BUTTON_CCW 			 5	// Digital Input
+#define BUTTON_CW				 6	// Digital Input
+#define RAIN_SENSOR_PIN		 7	// Digital Input from RG11
 
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIRECTION_PIN);
 
 #define VOLTAGE_MONITOR_PIN A0
+
+#define SIGNATURE				822 // convert to #define to save space
+#define EEPROM_LOCATION 	10
+#define STEPSFORROTATION	55100
+
+#define MOVE_NEGATIVE	-1
+#define MOVE_NONE			0
+#define MOVE_POSITIVE	1
 
 
 class RotatorClass
@@ -135,9 +143,6 @@ public:
 
 private:
 
-	const int	_signature = 822; // convert to #define to save space
-	const int	_eepromLocation = 10;
-	const long	_STEPSFORROTATION = 55100;
 
 	int			_rainCheckInterval; // in seconds, function  multiplies by 1000
 	bool		_rainCheckTwice;
@@ -172,10 +177,6 @@ private:
 	unsigned long	_moveOffUntil;
 
 
-	// movement => convert to #define to save space
-	const int	MOVE_NEGATIVE = -1;
-	const int	MOVE_NONE = 0;
-	const int	MOVE_POSITIVE = 1;
 	int			_moveDirection;
 
 	// Power values
@@ -222,7 +223,7 @@ void RotatorClass::SaveToEEProm()
 
 	memset(&cfg, 0, sizeof(cfg));
 
-	cfg.signature = _signature;
+	cfg.signature = SIGNATURE;
 	cfg.maxSpeed = _maxSpeed;
 	cfg.acceleration = _acceleration;
 	cfg.stepsPerRotation = _stepsPerRotation;
@@ -234,7 +235,7 @@ void RotatorClass::SaveToEEProm()
 	cfg.rainCheckTwice = _rainCheckTwice;
 	cfg.rainAction = _rainAction;
 	cfg.radioIsConfigured = radioIsConfigured;
-	EEPROM.put(_eepromLocation, cfg);
+	EEPROM.put(EEPROM_LOCATION, cfg);
 
 }
 
@@ -247,8 +248,8 @@ bool RotatorClass::LoadFromEEProm()
 	//  dont end up loaded with random garbage
 	memset(&cfg, 0, sizeof(cfg));
 
-	EEPROM.get(_eepromLocation, cfg);
-	if (cfg.signature != _signature) {
+	EEPROM.get(EEPROM_LOCATION, cfg);
+	if (cfg.signature != SIGNATURE) {
 		SetDefaultConfig();
 		response = false;
 	}

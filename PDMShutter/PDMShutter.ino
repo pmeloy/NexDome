@@ -104,12 +104,14 @@ void setup()
 
 void loop()
 {
+	if (millis() < delayUntil)
+		return;
 
-	//if (XbeeStarted == true && SentHello == false) SendHello();
-	if (millis() < delayUntil) return;
-	if (Computer.available() > 0) ReceiveSerial();
+	if (Computer.available() > 0)
+		ReceiveSerial();
 
-	if (Wireless.available()) ReceiveWireless();
+	if (Wireless.available())
+		ReceiveWireless();
 
 	if (XbeeStarted == false) {
 		if (Shutter.radioIsConfigured == false && Shutter.isConfiguringWireless == false) {

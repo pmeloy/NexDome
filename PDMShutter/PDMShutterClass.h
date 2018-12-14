@@ -63,15 +63,18 @@ Configuration config;
 
 
 #pragma region AccelStepper Setup
-// all of this should be #define, no good reason to use memory space for static value
-const uint8_t	STEPPER_ENABLE_PIN = 10;
-const uint8_t	STEPPER_DIRECTION_PIN = 11;
-const uint8_t	STEPPER_STEP_PIN = 12;
 
-const int		CLOSED_PIN = 2;
-const int		OPENED_PIN = 3;
-const uint8_t	BUTTON_OPEN = 5;
-const uint8_t	BUTTON_CLOSE = 6;
+#define STEPPER_ENABLE_PIN			10
+#define 	STEPPER_DIRECTION_PIN 	11
+#define 	STEPPER_STEP_PIN			12
+
+#define 	CLOSED_PIN		2
+#define 	OPENED_PIN		3
+#define 	BUTTON_OPEN		5
+#define 	BUTTON_CLOSE	6
+
+#define 	EEPROM_LOCATION   100
+#define 	EEPROM_SIGNATURE 2000
 
 AccelStepper stepper(AccelStepper::DRIVER, STEPPER_STEP_PIN, STEPPER_DIRECTION_PIN);
 #pragma endregion
@@ -142,10 +145,6 @@ public:
 
 private:
 
-	// change these to #define .. const int takes ROM space
-	const int		_eepromLocation = 100;
-	const int		_eePromSignature = 2000;
-
 	byte			_sleepMode = 0;
 	uint16_t		_sleepPeriod = 300;
 	uint16_t		_sleepDelay = 30000;
@@ -185,8 +184,6 @@ ShutterClass::ShutterClass()
 {
 	_adcConvert = 3.0 * (5.0 / 1023.0) * 100;
 	ReadEEProm();
-	//_openedPin = OPENED_PIN;
-	//_closedPin = CLOSED_PIN;
 
 	pinMode(CLOSED_PIN, INPUT_PULLUP);
 	pinMode(OPENED_PIN, INPUT_PULLUP);
@@ -242,9 +239,9 @@ void ShutterClass::ReadEEProm()
 {
 	Configuration cfg;
 	//memset(&cfg, 0, sizeof(cfg));
-	EEPROM.get(_eepromLocation, cfg);
-	if (cfg.signature != _eePromSignature) {
-		DBPrintln("Shutter invalid sig, defaults " + String(cfg.signature) + " = " + String(_eePromSignature));
+	EEPROM.get(EEPROM_LOCATION, cfg);
+	if (cfg.signature != EEPROM_SIGNATURE) {
+		DBPrintln("Shutter invalid sig, defaults " + String(cfg.signature) + " = " + String(EEPROM_SIGNATURE));
 		DefaultEEProm();
 		WriteEEProm();
 		return;
@@ -266,22 +263,21 @@ void ShutterClass::ReadEEProm()
 void ShutterClass::WriteEEProm()
 {
 	Configuration cfg;
-	//memset(&cfg, 0, sizeof(cfg));
-	DBPrintln("Signature is " + String(_eePromSignature));
-	cfg.signature		= _eePromSignature;
+
+	DBPrintln("Signature is " + String(EEPROM_SIGNATURE));
+	cfg.signature		= EEPROM_SIGNATURE;
 	cfg.sleepMode		= _sleepMode;
 	cfg.sleepPeriod		= _sleepPeriod;
 	cfg.sleepDelay		= _sleepDelay;
 	cfg.stepsPerStroke	= _stepsPerStroke;
 	cfg.acceleration	= _acceleration;
 	cfg.maxSpeed		= _maxSpeed;
-//	cfg.stepMode		= _stepMode;
 	cfg.cutoffVolts		= _cutoffVolts;
 	cfg.voltsClose		= _voltsClose;
 	cfg.rainCheckInterval = rainCheckInterval;
 	cfg.radioIsConfigured = radioIsConfigured;
 
-	EEPROM.put(_eepromLocation, cfg);
+	EEPROM.put(EEPROM_LOCATION, cfg);
 	DBPrintln("Wrote sig of " + String(cfg.signature));
 }
 
