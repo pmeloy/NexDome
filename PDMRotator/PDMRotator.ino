@@ -35,7 +35,7 @@ RotatorClass Rotator  = RotatorClass();
 RemoteShutterClass RemoteShutter = RemoteShutterClass();
 //XBeeClass XBee = XBeeClass();
 
-const String VERSION = "2.0.0.0";
+#define VERSION "2.0.0.0"
 
 #define Computer Serial
 String computerBuffer;
@@ -154,36 +154,27 @@ void setup()
 	Computer.begin(9600);
 	Wireless.begin(9600);
 	delayUntil = millis() + 25000;
-	//delay(20000);
-
-
 }
+
 void loop()
 {
 
 	if (millis() < delayUntil) return;
-	if (XbeeStarted == false)
-	{
-		if (Rotator.radioIsConfigured == false && isConfiguringWireless == false)
-		{
+	if (XbeeStarted == false) {
+		if (Rotator.radioIsConfigured == false && isConfiguringWireless == false) {
 			DBPrint("Initializing Radio");
 			StartWirelessConfig();
 			delay(3000);
 		}
-		else if (Rotator.radioIsConfigured == true)
-		{
+		else if (Rotator.radioIsConfigured == true) {
 			DBPrint("Radio already initialized");
 			XbeeStarted = true;
 			SendHello();
 		}
 	}
-	//if (XbeeStarted == true && SentHello == false) SendHello();
-
 
 	Rotator.Run();
-
 	CheckForCommands();
-
 	CheckForRain();
 }
 #pragma endregion
@@ -201,8 +192,7 @@ void StartWirelessConfig()
 
 void ConfigXBee(String result)
 {
-	if (configStep == 0)
-	{
+	if (configStep == 0) {
 		// ATString = "ATCE1,ID7734,AP0,SM0,RO0,WR,CN";
 		// CE1 for coordinator, rotation MY is 0,
 		ATString = "ATCE1,ID7734,CH0C,MY0,DH0,DLFFFF,AP0,SM0,WR,BD7,CN";
@@ -211,8 +201,7 @@ void ConfigXBee(String result)
 	}
 	DBPrint("Result " + String(configStep) + ":" + result);
 
-	if (configStep > 5)
-	{
+	if (configStep > 5) {
 		// switch to 115200
 		Wireless.begin(115200);
 		DBPrint("Config finished");
@@ -237,12 +226,11 @@ void SendHello()
 //<SUMMARY>Check for Serial and Wireless data</SUMMARY>
 void CheckForCommands()
 {
-	if (Computer.available())
-	{
+	if (Computer.available()) {
 		ReceiveComputer();
 	}
-	if (Wireless.available())
-	{
+
+	if (Wireless.available()) {
 		ReceiveWireless();
 	}
 }
@@ -252,11 +240,9 @@ void CheckForRain()
 {
 	// Only check periodically (fast reads seem to mess it up)
 	// Disable by setting rain check interval to 0;
-	if (millis() > nextRainCheck)
-	{
+	if (millis() > nextRainCheck) {
 		currentRainStatus = Rotator.GetRainStatus();
-		if (currentRainStatus == true)
-		{
+		if (currentRainStatus == true) {
 			if (Rotator.GetRainAction() == 1) Rotator.SetAzimuth(Rotator.GetHomeAzimuth());
 			if (Rotator.GetRainAction() == 2) Rotator.SetAzimuth(Rotator.GetParkAzimuth());
 		}
@@ -281,20 +267,18 @@ void ReceiveComputer()
 {
 	char computerCharacter = Computer.read();
 
-	if (computerCharacter == '\r' || computerCharacter == '\n' || computerCharacter == '#')
-	{
+	if (computerCharacter == '\r' || computerCharacter == '\n' || computerCharacter == '#') {
 		// End of message
-		if (computerBuffer.length() > 0)
-		{
+		if (computerBuffer.length() > 0) {
 			ProcessSerialCommand();
 			computerBuffer = "";
 		}
 	}
-	else
-	{
+	else {
 		computerBuffer += String(computerCharacter);
 	}
 }
+
 void ProcessSerialCommand()
 {
 	float localFloat;
@@ -318,287 +302,297 @@ void ProcessSerialCommand()
 	wirelessMessage = "";
 
 	// Grouped by Rotator and Shutter then put in alphabetical order
-	switch (command)
-	{
+	switch (command) {
 #pragma region Rotator commands
-	case ABORT_MOVE_CMD:
-		localString = String(ABORT_MOVE_CMD);
-		serialMessage = localString;
-		wirelessMessage = localString;
-		Rotator.Stop();
-		break;
-	case ACCELERATION_ROTATOR_CMD:
-		if (hasValue == true)
-		{
-			Rotator.SetAcceleration(value.toInt());
-		}
-		serialMessage = String(ACCELERATION_ROTATOR_CMD) + String(Rotator.GetAcceleration());
-		break;
-	case CALIBRATE_ROTATOR_CMD:
-		Rotator.StartCalibrating();
-		serialMessage = String(CALIBRATE_ROTATOR_CMD);
-		break;
-	case ERROR_AZ_ROTATOR_GET:
-		// todo: See if azimuth error is needed (when passing home switch check to see if the
-		// actual position matches where the stepper thinks it is.
-		serialMessage = String(ERROR_AZ_ROTATOR_GET) + "0";
-		break;
-	case GOTO_ROTATOR_CMD:
-		if (hasValue == true)
-		{
-			localFloat = value.toFloat();
-			if ((localFloat >= 0.0) && (localFloat <= 360.0))
-			{
-				Rotator.SetAzimuth(localFloat);
+		case ABORT_MOVE_CMD:
+			localString = String(ABORT_MOVE_CMD);
+			serialMessage = localString;
+			wirelessMessage = localString;
+			Rotator.Stop();
+			break;
+
+		case ACCELERATION_ROTATOR_CMD:
+			if (hasValue == true) {
+				Rotator.SetAcceleration(value.toInt());
 			}
-		}
-		serialMessage = String(GOTO_ROTATOR_CMD) + String(Rotator.GetAzimuth());
-		break;
-	case HELLO_CMD:
-		SendHello();
-		serialMessage = String(HELLO_CMD);
-		break;
-	case HOME_ROTATOR_CMD:
-		Rotator.StartHoming();
-		serialMessage = String(HOME_ROTATOR_CMD);
-		break;
-	case HOMEAZ_ROTATOR_CMD:
-		if (hasValue == true)
-		{
-			localFloat = value.toFloat();
-			if ((localFloat >= 0) && (localFloat < 360)) Rotator.SetHomeAzimuth(localFloat);
-		}
-		serialMessage = String(HOMEAZ_ROTATOR_CMD) + String(Rotator.GetHomeAzimuth());
-		break;
-	case HOMESTATUS_ROTATOR_GET:
-		serialMessage = String(HOMESTATUS_ROTATOR_GET) + String(Rotator.GetHomeStatus());
-		break;
-	case MOVE_RELATIVE_ROTATOR_CMD:
-		if (hasValue == true)
-		{
-			if (Rotator.GetVoltsAreLow() == false)
-			{
-				localLong = value.toInt();
-				Rotator.MoveRelative(localLong);
+			serialMessage = String(ACCELERATION_ROTATOR_CMD) + String(Rotator.GetAcceleration());
+			break;
+
+		case CALIBRATE_ROTATOR_CMD:
+			Rotator.StartCalibrating();
+			serialMessage = String(CALIBRATE_ROTATOR_CMD);
+			break;
+
+		case ERROR_AZ_ROTATOR_GET:
+			// todo: See if azimuth error is needed (when passing home switch check to see if the
+			// actual position matches where the stepper thinks it is.
+			serialMessage = String(ERROR_AZ_ROTATOR_GET) + "0";
+			break;
+
+		case GOTO_ROTATOR_CMD:
+			if (hasValue == true) {
+				localFloat = value.toFloat();
+				if ((localFloat >= 0.0) && (localFloat <= 360.0)) {
+					Rotator.SetAzimuth(localFloat);
+				}
 			}
-			else
-			{
-				serialMessage = String(MOVE_RELATIVE_ROTATOR_CMD) + "L";
+			serialMessage = String(GOTO_ROTATOR_CMD) + String(Rotator.GetAzimuth());
+			break;
+
+		case HELLO_CMD:
+			SendHello();
+			serialMessage = String(HELLO_CMD);
+			break;
+
+		case HOME_ROTATOR_CMD:
+			Rotator.StartHoming();
+			serialMessage = String(HOME_ROTATOR_CMD);
+			break;
+
+		case HOMEAZ_ROTATOR_CMD:
+			if (hasValue == true) {
+				localFloat = value.toFloat();
+				if ((localFloat >= 0) && (localFloat < 360)) Rotator.SetHomeAzimuth(localFloat);
 			}
-		}
-		break;
-	case PARKAZ_ROTATOR_CMD:
-		// Get/Set Park Azumith
-		serialMessage = String("");
-		localString = String(PARKAZ_ROTATOR_CMD);
-		if (hasValue == true)
-		{
-			localFloat = value.toFloat();
-			if ((localFloat >= 0) && (localFloat < 360)) {
-				Rotator.SetParkAzimuth(localFloat);
+			serialMessage = String(HOMEAZ_ROTATOR_CMD) + String(Rotator.GetHomeAzimuth());
+			break;
+
+		case HOMESTATUS_ROTATOR_GET:
+			serialMessage = String(HOMESTATUS_ROTATOR_GET) + String(Rotator.GetHomeStatus());
+			break;
+
+		case MOVE_RELATIVE_ROTATOR_CMD:
+			if (hasValue == true) {
+				if (Rotator.GetVoltsAreLow() == false) {
+					localLong = value.toInt();
+					Rotator.MoveRelative(localLong);
+				}
+				else {
+					serialMessage = String(MOVE_RELATIVE_ROTATOR_CMD) + "L";
+				}
+			}
+			break;
+
+		case PARKAZ_ROTATOR_CMD:
+			// Get/Set Park Azumith
+			serialMessage = String("");
+			localString = String(PARKAZ_ROTATOR_CMD);
+			if (hasValue == true) {
+				localFloat = value.toFloat();
+				if ((localFloat >= 0) && (localFloat < 360)) {
+					Rotator.SetParkAzimuth(localFloat);
+				}
+				else {
+					serialMessage = localString + "E";
+				}
+			}
+			if (serialMessage.length() == 0) {
+				serialMessage = localString + String(Rotator.GetParkAzimuth());
+			}
+			break;
+
+		case POSITION_ROTATOR_CMD:
+			if (value.length() > 0)
+			{
+				if (Rotator.GetVoltsAreLow() == false) {
+					Rotator.SetPosition(value.toInt());
+					serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
+				}
+				else {
+					serialMessage = String(POSITION_ROTATOR_CMD) + "L";
+				}
 			}
 			else {
-				serialMessage = localString + "E";
-			}
-		}
-		if (serialMessage.length() == 0) {
-			serialMessage = localString + String(Rotator.GetParkAzimuth());
-		}
-		break;
-	case POSITION_ROTATOR_CMD:
-		if (value.length() > 0)
-		{
-			if (Rotator.GetVoltsAreLow() == false)
-			{
-				Rotator.SetPosition(value.toInt());
 				serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
 			}
-			else
-			{
-				serialMessage = String(POSITION_ROTATOR_CMD) + "L";
+			break;
+
+		case RAIN_ROTATOR_ACTION:
+			if (value.length() > 0) {
+				Rotator.SetRainAction(value.toInt());
 			}
-		}
-		else
-		{
-			serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
-		}
-		break;
-	case RAIN_ROTATOR_ACTION:
-		if (value.length() > 0)
-		{
-			Rotator.SetRainAction(value.toInt());
-		}
-		serialMessage = String(RAIN_ROTATOR_ACTION) + String(Rotator.GetRainAction());
-		break;
-	case RAIN_ROTATOR_TWICE_CMD:
-		if (value.length() > 0)
-		{
-			Rotator.SetCheckRainTwice(value.equals("1"));
-		}
-		serialMessage = String(RAIN_ROTATOR_TWICE_CMD) + String(Rotator.GetRainCheckTwice());
-		break;
-	case RAIN_ROTATOR_CMD:
-		if (hasValue == true)
-		{
-			localInt = value.toInt();
-			if (localInt < 0) localInt = 0;
-			Rotator.SetRainInterval(localInt);
-			wirelessMessage = String(RAIN_INTERVAL_SET) + String(localInt);
-		}
-		serialMessage = String(RAIN_ROTATOR_CMD) + String(Rotator.GetRainCheckInterval());
-		break;
-	case SPEED_ROTATOR_CMD:
-		if (hasValue == true) Rotator.SetMaxSpeed(value.toInt());
-		serialMessage = String(SPEED_ROTATOR_CMD) + String(Rotator.GetMaxSpeed());
-		break;
-	case REVERSED_ROTATOR_CMD:
-		if (hasValue == true) Rotator.SetReversed(value.toInt());
-		serialMessage = String(REVERSED_ROTATOR_CMD) + String(Rotator.GetReversed());
-		break;
-	case SEEKSTATE_GET:
-		serialMessage = String(SEEKSTATE_GET) + String(Rotator.GetSeekMode());
-		break;
-	case SLEW_ROTATOR_GET: // TODO: See if it's better for ASCOM to figure this out
-		serialMessage = String(SLEW_ROTATOR_GET) + String(Rotator.GetDirection());
-		break;
-	case STEPSPER_ROTATOR_CMD:
-		if (hasValue == true) Rotator.SetStepsPerRotation(value.toInt());
-		serialMessage = String(STEPSPER_ROTATOR_CMD) + String(Rotator.GetStepsPerRotation());
-		break;
-	case SYNC_ROTATOR_CMD:
-		localFloat = value.toFloat();
-		if (localFloat >= 0 && localFloat < 360)
-		{
-			Rotator.SyncHome(localFloat);
-			Rotator.SyncPosition(localFloat);
-			serialMessage = String(SYNC_ROTATOR_CMD) + String(Rotator.GetPosition());
-		}
-		break;
-	case VERSION_ROTATOR_GET:
-		serialMessage = String(VERSION_ROTATOR_GET) + VERSION;
-		break;
-	case VOLTS_ROTATOR_CMD:
-		// value only needs infrequent updating.
-		if (hasValue == true)
-		{
-			Rotator.SetLowVoltageCutoff(value.toInt());
-		}
-		serialMessage = String(VOLTS_ROTATOR_CMD) + String(Rotator.GetVoltString());
-		break;
-#pragma endregion
-
-#pragma region Shutter Commands
-	case ACCELERATION_SHUTTER_CMD:
-		localString = String(ACCELERATION_SHUTTER_CMD);
-		DBPrint("Shutter Acceleration value " + value);
-		if (hasValue == true)
-		{
-			RemoteShutter.acceleration = value;
-			wirelessMessage = localString + RemoteShutter.acceleration;
-		}
-		serialMessage = localString + RemoteShutter.acceleration;
-		break;
-	case CLOSE_SHUTTER_CMD:
-		localString = String(CLOSE_SHUTTER_CMD);
-		wirelessMessage = localString;
-		serialMessage = localString;
-		break;
-	//case ELEVATION_SHUTTER_CMD:
-	//		localString = String(ELEVATION_SHUTTER_CMD);
-	//		if (hasValue == true) wirelessMessage = localString + value;
-	//		serialMessage = localString + RemoteShutter.elevation;
-	//		break;
-	case HOMESTATUS_SHUTTER_GET: // TODO: Figure this out if it's necessary
-			// todo: Create shutter calibration and get that status here
-			serialMessage = String(HOMESTATUS_SHUTTER_GET) + String(RemoteShutter.homedStatus);
+			serialMessage = String(RAIN_ROTATOR_ACTION) + String(Rotator.GetRainAction());
 			break;
-	case OPEN_SHUTTER_CMD:
-		localString = String(OPEN_SHUTTER_CMD);
-		wirelessMessage = localString;
-		//RemoteShutter.state = RemoteShutter.OPENING;
-		serialMessage = localString;
-		break;
-	case POSITION_SHUTTER_GET:
-			serialMessage = String(POSITION_SHUTTER_GET) + String(RemoteShutter.position);
+
+		case RAIN_ROTATOR_TWICE_CMD:
+			if (value.length() > 0) {
+				Rotator.SetCheckRainTwice(value.equals("1"));
+			}
+			serialMessage = String(RAIN_ROTATOR_TWICE_CMD) + String(Rotator.GetRainCheckTwice());
 			break;
-	case RAIN_SHUTTER_GET:
-		serialMessage = String(RAIN_SHUTTER_GET) + String((currentRainStatus == true) ? "1" : "0");
-		break;
-	case REVERSED_SHUTTER_CMD:
-		localString = String(REVERSED_SHUTTER_CMD);
-		if (hasValue == true)
-		{
-			RemoteShutter.reversed = value;
-			wirelessMessage = localString + value;
-		}
-		serialMessage = localString + RemoteShutter.reversed;
-		break;
-	case SLEEP_SHUTTER_CMD:
-		localString = String(SLEEP_SHUTTER_CMD);
-		if (hasValue == true)
-		{
-			RemoteShutter.sleepSettings = value;
-			wirelessMessage = localString + value;
-		}
-		serialMessage = localString + RemoteShutter.sleepSettings;
-		break;
-	case SPEED_SHUTTER_CMD:
-		localString = String(SPEED_SHUTTER_CMD);
-		if (hasValue == true)
-		{
-			RemoteShutter.speed = value;
-			wirelessMessage = localString + String(value.toInt());
-		}
-		serialMessage = localString + RemoteShutter.speed;
-		break;
-	case STATE_SHUTTER_GET:
-		serialMessage = String(STATE_SHUTTER_GET) + RemoteShutter.state;
-		break;
-	case STEPSPER_SHUTTER_CMD:
-		localString = String(STEPSPER_SHUTTER_CMD);
-		if (hasValue == true)
-		{
-			RemoteShutter.stepsPerStroke = value;
-			wirelessMessage = localString + value;
-		}
-		serialMessage = localString + RemoteShutter.stepsPerStroke;
-		break;
-	case VERSION_SHUTTER_GET:
-		// Rotator gets this upon Hello and it's not going to change so don't ask for it wirelessly
-		serialMessage = String(VERSION_SHUTTER_GET) + RemoteShutter.version;
-		break;
-	case VOLTS_SHUTTER_CMD:
-		localString = String(VOLTS_SHUTTER_CMD);
-		if (hasValue == true) wirelessMessage = localString + value;
-		serialMessage = localString + RemoteShutter.volts;
-		break;
-	case VOLTSCLOSE_SHUTTER_CMD:
-		if (value.length() > 0)
-		{
-			RemoteShutter.voltsClose = value;
-			wirelessMessage = String(VOLTSCLOSE_SHUTTER_CMD) + value;
-		}
-		else
-		{
-			serialMessage = String(VOLTSCLOSE_SHUTTER_CMD) + RemoteShutter.voltsClose;
-		}
-		break;
 
-#pragma endregion
+		case RAIN_ROTATOR_CMD:
+			if (hasValue == true) {
+				localInt = value.toInt();
+				if (localInt < 0) localInt = 0;
+				Rotator.SetRainInterval(localInt);
+				wirelessMessage = String(RAIN_INTERVAL_SET) + String(localInt);
+			}
+			serialMessage = String(RAIN_ROTATOR_CMD) + String(Rotator.GetRainCheckInterval());
+			break;
 
-	default:
-		serialMessage = "Unknown command:" + command;
-		break;
+		case SPEED_ROTATOR_CMD:
+			if (hasValue == true) Rotator.SetMaxSpeed(value.toInt());
+			serialMessage = String(SPEED_ROTATOR_CMD) + String(Rotator.GetMaxSpeed());
+			break;
+
+		case REVERSED_ROTATOR_CMD:
+			if (hasValue == true) Rotator.SetReversed(value.toInt());
+			serialMessage = String(REVERSED_ROTATOR_CMD) + String(Rotator.GetReversed());
+			break;
+
+		case SEEKSTATE_GET:
+			serialMessage = String(SEEKSTATE_GET) + String(Rotator.GetSeekMode());
+			break;
+
+		case SLEW_ROTATOR_GET: // TODO: See if it's better for ASCOM to figure this out
+			serialMessage = String(SLEW_ROTATOR_GET) + String(Rotator.GetDirection());
+			break;
+
+		case STEPSPER_ROTATOR_CMD:
+			if (hasValue == true) Rotator.SetStepsPerRotation(value.toInt());
+			serialMessage = String(STEPSPER_ROTATOR_CMD) + String(Rotator.GetStepsPerRotation());
+			break;
+
+		case SYNC_ROTATOR_CMD:
+			localFloat = value.toFloat();
+			if (localFloat >= 0 && localFloat < 360) {
+				Rotator.SyncHome(localFloat);
+				Rotator.SyncPosition(localFloat);
+				serialMessage = String(SYNC_ROTATOR_CMD) + String(Rotator.GetPosition());
+			}
+			break;
+
+		case VERSION_ROTATOR_GET:
+			serialMessage = String(VERSION_ROTATOR_GET) + VERSION;
+			break;
+
+		case VOLTS_ROTATOR_CMD:
+			// value only needs infrequent updating.
+			if (hasValue == true) {
+				Rotator.SetLowVoltageCutoff(value.toInt());
+			}
+			serialMessage = String(VOLTS_ROTATOR_CMD) + String(Rotator.GetVoltString());
+			break;
+	#pragma endregion
+
+	#pragma region Shutter Commands
+		case ACCELERATION_SHUTTER_CMD:
+			localString = String(ACCELERATION_SHUTTER_CMD);
+			DBPrint("Shutter Acceleration value " + value);
+			if (hasValue == true) {
+				RemoteShutter.acceleration = value;
+				wirelessMessage = localString + RemoteShutter.acceleration;
+			}
+			serialMessage = localString + RemoteShutter.acceleration;
+			break;
+
+		case CLOSE_SHUTTER_CMD:
+			localString = String(CLOSE_SHUTTER_CMD);
+			wirelessMessage = localString;
+			serialMessage = localString;
+			break;
+
+		//case ELEVATION_SHUTTER_CMD:
+		//		localString = String(ELEVATION_SHUTTER_CMD);
+		//		if (hasValue == true) wirelessMessage = localString + value;
+		//		serialMessage = localString + RemoteShutter.elevation;
+		//		break;
+
+		case HOMESTATUS_SHUTTER_GET: // TODO: Figure this out if it's necessary
+				// todo: Create shutter calibration and get that status here
+				serialMessage = String(HOMESTATUS_SHUTTER_GET) + String(RemoteShutter.homedStatus);
+				break;
+
+		case OPEN_SHUTTER_CMD:
+			localString = String(OPEN_SHUTTER_CMD);
+			wirelessMessage = localString;
+			//RemoteShutter.state = RemoteShutter.OPENING;
+			serialMessage = localString;
+			break;
+
+		case POSITION_SHUTTER_GET:
+				serialMessage = String(POSITION_SHUTTER_GET) + String(RemoteShutter.position);
+				break;
+
+		case RAIN_SHUTTER_GET:
+			serialMessage = String(RAIN_SHUTTER_GET) + String((currentRainStatus == true) ? "1" : "0");
+			break;
+
+		case REVERSED_SHUTTER_CMD:
+			localString = String(REVERSED_SHUTTER_CMD);
+			if (hasValue == true) {
+				RemoteShutter.reversed = value;
+				wirelessMessage = localString + value;
+			}
+			serialMessage = localString + RemoteShutter.reversed;
+			break;
+
+		case SLEEP_SHUTTER_CMD:
+			localString = String(SLEEP_SHUTTER_CMD);
+			if (hasValue == true) {
+				RemoteShutter.sleepSettings = value;
+				wirelessMessage = localString + value;
+			}
+			serialMessage = localString + RemoteShutter.sleepSettings;
+			break;
+
+		case SPEED_SHUTTER_CMD:
+			localString = String(SPEED_SHUTTER_CMD);
+			if (hasValue == true) {
+				RemoteShutter.speed = value;
+				wirelessMessage = localString + String(value.toInt());
+			}
+			serialMessage = localString + RemoteShutter.speed;
+			break;
+
+		case STATE_SHUTTER_GET:
+			serialMessage = String(STATE_SHUTTER_GET) + RemoteShutter.state;
+			break;
+
+		case STEPSPER_SHUTTER_CMD:
+			localString = String(STEPSPER_SHUTTER_CMD);
+			if (hasValue == true) {
+				RemoteShutter.stepsPerStroke = value;
+				wirelessMessage = localString + value;
+			}
+			serialMessage = localString + RemoteShutter.stepsPerStroke;
+			break;
+
+		case VERSION_SHUTTER_GET:
+			// Rotator gets this upon Hello and it's not going to change so don't ask for it wirelessly
+			serialMessage = String(VERSION_SHUTTER_GET) + RemoteShutter.version;
+			break;
+
+		case VOLTS_SHUTTER_CMD:
+			localString = String(VOLTS_SHUTTER_CMD);
+			if (hasValue == true) wirelessMessage = localString + value;
+			serialMessage = localString + RemoteShutter.volts;
+			break;
+
+		case VOLTSCLOSE_SHUTTER_CMD:
+			if (value.length() > 0) {
+				RemoteShutter.voltsClose = value;
+				wirelessMessage = String(VOLTSCLOSE_SHUTTER_CMD) + value;
+			}
+			else {
+				serialMessage = String(VOLTSCLOSE_SHUTTER_CMD) + RemoteShutter.voltsClose;
+			}
+			break;
+
+	#pragma endregion
+
+		default:
+			serialMessage = "Unknown command:" + command;
+			break;
 	}
 
 	// Send messages if they aren't empty.
-	if (serialMessage.length() > 0)
-	{
+	if (serialMessage.length() > 0) {
 		Computer.print(serialMessage + "#");
 	}
 
-	if (wirelessMessage.length() > 0)
-	{
+	if (wirelessMessage.length() > 0) {
 
 		Wireless.print(wirelessMessage + "#");
 	}
@@ -614,27 +608,23 @@ void ReceiveWireless()
 	while(Wireless.available()) {
 		wirelessCharacter= Wireless.read();
 
-		if (wirelessCharacter == '\r' || wirelessCharacter == '\n' || wirelessCharacter == '#')
-		{
-			if (wirelessBuffer.length() > 0)
-			{
-				if (isConfiguringWireless == true)
-				{
+		if (wirelessCharacter == '\r' || wirelessCharacter == '\n' || wirelessCharacter == '#') {
+			if (wirelessBuffer.length() > 0) {
+				if (isConfiguringWireless == true) {
 					ConfigXBee(wirelessBuffer);
 				}
-				else
-				{
+				else {
 					ProcessWireless();
 				}
 				wirelessBuffer = "";
 			}
 		}
-		else
-		{
+		else {
 			wirelessBuffer += String(wirelessCharacter);
 		}
 	}
 }
+
 void ProcessWireless()
 {
 	char sender, command, localChar;
@@ -652,72 +642,82 @@ void ProcessWireless()
 	serialMessage = "";
 	wirelessMessage = "";
 
-	switch (command)
-	{
-	case ACCELERATION_SHUTTER_CMD:
-		RemoteShutter.acceleration = value;
-		DBPrint("Shutter acceleration " + value);
-		break;
-	case HELLO_CMD:
-		DBPrint("Hello received from shutter");
-		Wireless.print(String(STATE_SHUTTER_GET) + "#");
-		Wireless.print(String(STATE_SHUTTER_GET) + "#");
-		Wireless.print(String(STATE_SHUTTER_GET) + "#");
-		Wireless.print(String(VERSION_SHUTTER_GET) + "#");
-		Wireless.print(String(REVERSED_SHUTTER_CMD) + "#");
-		Wireless.print(String(STEPSPER_SHUTTER_CMD) + "#");
-		Wireless.print(String(SPEED_SHUTTER_CMD) + "#");
-		Wireless.print(String(ACCELERATION_SHUTTER_CMD) + "#");
-		Wireless.print(String(POSITION_SHUTTER_GET) + "#");
-		Wireless.print(String(VOLTS_SHUTTER_CMD) + "#");
-		Wireless.print(String(VOLTSCLOSE_SHUTTER_CMD) + "#");
-		break;
-	case POSITION_SHUTTER_GET:
-		RemoteShutter.position = value;
-		DBPrint("Shutter position " + value);
-		break;
-	case SPEED_SHUTTER_CMD:
-		RemoteShutter.speed = value;
-		DBPrint("Shutter speed " + value);
-		break;
-	case RAIN_SHUTTER_GET:
-		wirelessMessage = String(RAIN_SHUTTER_GET) + String((Rotator.GetRainStatus() == true) ? "1" : "0");
-		DBPrint("Shutter rain " + value);
-		break;
-	case REVERSED_SHUTTER_CMD:
-		RemoteShutter.reversed = value;
-		DBPrint("Shutter reversed " + value);
-		break;
-	case SLEEP_SHUTTER_CMD: // Sleep settings mode,period,delay
-		RemoteShutter.sleepSettings = value;
-		DBPrint("Shutter sleep " + value);
-		break;
-	case STATE_SHUTTER_GET: // Dome status
-		RemoteShutter.state = value;
-		DBPrint("Shutter state " + value);
-		break;
-	case STEPSPER_SHUTTER_CMD:
-		RemoteShutter.stepsPerStroke = value;
-		DBPrint("Shutter SPS " + value);
-		break;
-	case VERSION_SHUTTER_GET:
-		RemoteShutter.version = value;
-		DBPrint("Shutter Version " + value);
-		break;
-	case VOLTS_SHUTTER_CMD: // Sending battery voltage and cutoff
-		DBPrint("Volts received from shutter");
-		RemoteShutter.volts = value;
-		break;
-	case VOLTSCLOSE_SHUTTER_CMD:
-		RemoteShutter.voltsClose = value;
-		DBPrint("Shutter Close Voltage " + value);
-		break;
-	default:
-		break;
+	switch (command) {
+		case ACCELERATION_SHUTTER_CMD:
+			RemoteShutter.acceleration = value;
+			DBPrint("Shutter acceleration " + value);
+			break;
+
+		case HELLO_CMD:
+			DBPrint("Hello received from shutter");
+			Wireless.print(String(STATE_SHUTTER_GET) + "#");
+			Wireless.print(String(STATE_SHUTTER_GET) + "#");
+			Wireless.print(String(STATE_SHUTTER_GET) + "#");
+			Wireless.print(String(VERSION_SHUTTER_GET) + "#");
+			Wireless.print(String(REVERSED_SHUTTER_CMD) + "#");
+			Wireless.print(String(STEPSPER_SHUTTER_CMD) + "#");
+			Wireless.print(String(SPEED_SHUTTER_CMD) + "#");
+			Wireless.print(String(ACCELERATION_SHUTTER_CMD) + "#");
+			Wireless.print(String(POSITION_SHUTTER_GET) + "#");
+			Wireless.print(String(VOLTS_SHUTTER_CMD) + "#");
+			Wireless.print(String(VOLTSCLOSE_SHUTTER_CMD) + "#");
+			break;
+
+		case POSITION_SHUTTER_GET:
+			RemoteShutter.position = value;
+			DBPrint("Shutter position " + value);
+			break;
+
+		case SPEED_SHUTTER_CMD:
+			RemoteShutter.speed = value;
+			DBPrint("Shutter speed " + value);
+			break;
+
+		case RAIN_SHUTTER_GET:
+			wirelessMessage = String(RAIN_SHUTTER_GET) + String((Rotator.GetRainStatus() == true) ? "1" : "0");
+			DBPrint("Shutter rain " + value);
+			break;
+
+		case REVERSED_SHUTTER_CMD:
+			RemoteShutter.reversed = value;
+			DBPrint("Shutter reversed " + value);
+			break;
+
+		case SLEEP_SHUTTER_CMD: // Sleep settings mode,period,delay
+			RemoteShutter.sleepSettings = value;
+			DBPrint("Shutter sleep " + value);
+			break;
+
+		case STATE_SHUTTER_GET: // Dome status
+			RemoteShutter.state = value;
+			DBPrint("Shutter state " + value);
+			break;
+
+		case STEPSPER_SHUTTER_CMD:
+			RemoteShutter.stepsPerStroke = value;
+			DBPrint("Shutter SPS " + value);
+			break;
+
+		case VERSION_SHUTTER_GET:
+			RemoteShutter.version = value;
+			DBPrint("Shutter Version " + value);
+			break;
+
+		case VOLTS_SHUTTER_CMD: // Sending battery voltage and cutoff
+			DBPrint("Volts received from shutter");
+			RemoteShutter.volts = value;
+			break;
+
+		case VOLTSCLOSE_SHUTTER_CMD:
+			RemoteShutter.voltsClose = value;
+			DBPrint("Shutter Close Voltage " + value);
+			break;
+
+		default:
+			break;
 	}
 
-	if (wirelessMessage.length() > 0)
-	{
+	if (wirelessMessage.length() > 0) {
 		DBPrint(">>> Sending " + wirelessMessage);
 		Wireless.print(wirelessMessage + "#");
 	}
