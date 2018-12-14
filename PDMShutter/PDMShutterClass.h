@@ -63,6 +63,7 @@ Configuration config;
 
 
 #pragma region AccelStepper Setup
+// all of this should be #define, no good reason to use memory space for static value
 const uint8_t	STEPPER_ENABLE_PIN = 10;
 const uint8_t	STEPPER_DIRECTION_PIN = 11;
 const uint8_t	STEPPER_STEP_PIN = 12;
@@ -141,6 +142,7 @@ public:
 
 private:
 
+	// change these to #define .. const int takes ROM space
 	const int		_eepromLocation = 100;
 	const int		_eePromSignature = 2000;
 
@@ -221,7 +223,7 @@ void ShutterClass::OpenInterrupt()
 }
 
 // EEPROM
-void		ShutterClass::DefaultEEProm()
+void ShutterClass::DefaultEEProm()
 {
 	_sleepMode = 0;
 	_sleepPeriod = 300;
@@ -235,18 +237,19 @@ void		ShutterClass::DefaultEEProm()
 	rainCheckInterval = 30000;
 	radioIsConfigured = false;
 }
-void		ShutterClass::ReadEEProm()
+
+void ShutterClass::ReadEEProm()
 {
 	Configuration cfg;
 	//memset(&cfg, 0, sizeof(cfg));
 	EEPROM.get(_eepromLocation, cfg);
-	if (cfg.signature != _eePromSignature)
-	{
+	if (cfg.signature != _eePromSignature) {
 		DBPrintln("Shutter invalid sig, defaults " + String(cfg.signature) + " = " + String(_eePromSignature));
 		DefaultEEProm();
 		WriteEEProm();
 		return;
 	}
+
 	DBPrintln("Shutter good sig");
 	_sleepMode		= cfg.sleepMode;
 	_sleepPeriod	= cfg.sleepPeriod;
@@ -259,7 +262,8 @@ void		ShutterClass::ReadEEProm()
 	rainCheckInterval = cfg.rainCheckInterval;
 	radioIsConfigured = cfg.radioIsConfigured;
 }
-void		ShutterClass::WriteEEProm()
+
+void ShutterClass::WriteEEProm()
 {
 	Configuration cfg;
 	//memset(&cfg, 0, sizeof(cfg));
@@ -282,21 +286,19 @@ void		ShutterClass::WriteEEProm()
 }
 
 // INPUTS
-void		ShutterClass::DoButtons()
+void ShutterClass::DoButtons()
 {
 	int PRESSED = 0;
 	static int whichButtonPressed = 0, lastButtonPressed = 0;
 
-	if (digitalRead(BUTTON_OPEN) == PRESSED && whichButtonPressed == 0 && GetEndSwitchStatus() != OPEN)
-	{
+	if (digitalRead(BUTTON_OPEN) == PRESSED && whichButtonPressed == 0 && GetEndSwitchStatus() != OPEN) {
 		DBPrintln("Button Open Shutter");
 		whichButtonPressed = BUTTON_OPEN;
 		shutterState = OPENING;
 		MoveRelative(_stepsPerStroke);
 		lastButtonPressed = BUTTON_OPEN;
 	}
-	else if (digitalRead(BUTTON_CLOSE) == PRESSED && whichButtonPressed == 0 && GetEndSwitchStatus() != CLOSED)
-	{
+	else if (digitalRead(BUTTON_CLOSE) == PRESSED && whichButtonPressed == 0 && GetEndSwitchStatus() != CLOSED) {
 		DBPrintln("Button Close Shutter");
 		whichButtonPressed = BUTTON_CLOSE;
 		shutterState = CLOSING;
@@ -304,14 +306,13 @@ void		ShutterClass::DoButtons()
 		lastButtonPressed = BUTTON_CLOSE;
 	}
 
-	if (digitalRead(whichButtonPressed) == !PRESSED && lastButtonPressed > 0)
-	{
+	if (digitalRead(whichButtonPressed) == !PRESSED && lastButtonPressed > 0) {
 		Stop();
 		lastButtonPressed = whichButtonPressed = 0;
 	}
 }
 
-int  ShutterClass::MeasureVoltage()
+int ShutterClass::MeasureVoltage()
 {
 	int adc;
 	float calc;
@@ -323,14 +324,15 @@ int  ShutterClass::MeasureVoltage()
 }
 
 // Helper functions
-long		ShutterClass::AltitudeToPosition(float alt)
+long ShutterClass::AltitudeToPosition(float alt)
 {
 	long result;
 
 	result = (long)(_stepsPerStroke * alt / 90.0);
 	return result;
 }
-float		ShutterClass::PositionToAltitude(long pos)
+
+float ShutterClass::PositionToAltitude(long pos)
 {
 	float result = (float)pos;
 	result = result / _stepsPerStroke * 90.0;
@@ -340,154 +342,174 @@ float		ShutterClass::PositionToAltitude(long pos)
 // Wireless Functions
 
 // Getters
-int32_t		ShutterClass::GetAcceleration()
+int32_t ShutterClass::GetAcceleration()
 {
 	return _acceleration;
 }
-int			ShutterClass::GetEndSwitchStatus()
+
+int ShutterClass::GetEndSwitchStatus()
 {
 	int result= ERROR;
-	if (digitalRead(CLOSED_PIN) == 0) result = CLOSED;
-	if (digitalRead(OPENED_PIN) == 0) result = OPEN;
+
+	if (digitalRead(CLOSED_PIN) == 0)
+		result = CLOSED;
+
+	if (digitalRead(OPENED_PIN) == 0)
+		result = OPEN;
 	return result;
 }
-float		ShutterClass::GetElevation()
+
+float ShutterClass::GetElevation()
 {
 	return PositionToAltitude(stepper.currentPosition());
 }
+
 uint32_t	ShutterClass::GetMaxSpeed()
 {
 	return stepper.maxSpeed();
 }
+
 long		ShutterClass::GetPosition()
 {
 	return stepper.currentPosition();
 }
+
 bool		ShutterClass::GetReversed()
 {
 	return _reversed;
 }
+
 short		ShutterClass::GetState()
 {
 	return (short)shutterState;
 }
+
 uint32_t	ShutterClass::GetStepsPerStroke()
 {
 	return _stepsPerStroke;
 }
+
 inline bool ShutterClass::GetVoltsAreLow()
 {
 	bool low = (_volts <= _cutoffVolts);
 	return low;
 }
-String		ShutterClass::GetVoltString()
+
+String ShutterClass::GetVoltString()
 {
 	return String(_volts) + "," + String(_cutoffVolts);
 }
 
 // Setters
-void		ShutterClass::EnableOutputs(bool newState)
+void ShutterClass::EnableOutputs(bool newState)
 {
-	if (newState == false)
-	{
+	if (newState == false) {
 		digitalWrite(STEPPER_ENABLE_PIN, 1);
 		DBPrintln("Outputs disabled");
 	}
-	else
-	{
+	else {
 		digitalWrite(STEPPER_ENABLE_PIN, 0);
 		DBPrintln("Outputs Enabled");
 	}
 }
-void		ShutterClass::SetAcceleration(uint16_t accel)
+
+void ShutterClass::SetAcceleration(uint16_t accel)
 {
 	_acceleration = accel;
 	stepper.setAcceleration(accel);
 	WriteEEProm();
 }
 
-void		ShutterClass::SetMaxSpeed(uint16_t speed)
+void ShutterClass::SetMaxSpeed(uint16_t speed)
 {
 	_maxSpeed = speed;
 	stepper.setMaxSpeed(speed);
 	WriteEEProm();
 }
-void		ShutterClass::SetReversed(bool reversed)
+
+void ShutterClass::SetReversed(bool reversed)
 {
 	_reversed = reversed;
 	stepper.setPinsInverted(reversed, reversed, reversed);
 	WriteEEProm();
 }
-void		ShutterClass::SetStepsPerStroke(uint32_t newSteps)
+
+void ShutterClass::SetStepsPerStroke(uint32_t newSteps)
 {
 	_stepsPerStroke = newSteps;
 	WriteEEProm();
 }
-void		ShutterClass::SetVoltsFromString(String value)
+
+void ShutterClass::SetVoltsFromString(String value)
 {
 	_cutoffVolts = value.toInt();
 	WriteEEProm();
 }
 
 // Movers
-void		ShutterClass::Open()
+void ShutterClass::Open()
 {
 	shutterState = OPENING;
 	MoveRelative(_stepsPerStroke * 1.2);
 }
-void		ShutterClass::Close()
+
+void ShutterClass::Close()
 {
 	shutterState = CLOSING;
 	MoveRelative(1 - _stepsPerStroke * 1.2);
 }
-void		ShutterClass::GotoPosition(unsigned long newPos)
+
+void ShutterClass::GotoPosition(unsigned long newPos)
 {
 	uint64_t currentPos = stepper.currentPosition();
 	bool doMove = false;
 
 	// Check if this actually changes position, then move if necessary.
-	if (newPos > currentPos)
-	{
+	if (newPos > currentPos) {
 		shutterState = OPENING;
 		doMove = true;
 	}
-	else if (newPos < currentPos)
-	{
+	else if (newPos < currentPos) {
 		shutterState = CLOSING;
 		doMove = true;
 	}
-	if (doMove == true)
-	{
 
+	if (doMove == true) {
 		EnableOutputs(true);
 		stepper.moveTo(newPos);
 	}
 }
-void		ShutterClass::GotoAltitude(float newAlt)
+
+void ShutterClass::GotoAltitude(float newAlt)
 {
 
 	GotoPosition(AltitudeToPosition(newAlt));
 }
-void		ShutterClass::MoveRelative(long amount)
+
+void ShutterClass::MoveRelative(long amount)
 {
 	EnableOutputs(true);
 	stepper.move(amount);
 }
+
 inline void ShutterClass::SetRainInterval(int newInterval)
 {
 	rainCheckInterval = newInterval;
 	WriteEEProm();
 }
+
 inline void ShutterClass::SetVoltsClose(byte value)
 {
 	_voltsClose = value;
 	WriteEEProm();
 }
+
 inline byte ShutterClass::GetVoltsClose()
 {
 	return _voltsClose;
 }
-void		ShutterClass::Run()
+
+void ShutterClass::Run()
 {
 	static uint64_t nextBatteryCheck = 0;
 	static bool hitSwitch = false, firstBatteryCheck = true, doSync = true;
@@ -524,35 +546,32 @@ void		ShutterClass::Run()
 		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
 	}
 
-	if (stepper.isRunning() == false && shutterState != CLOSED && shutterState != OPEN) shutterState = ERROR;
+	if (stepper.isRunning() == false && shutterState != CLOSED && shutterState != OPEN)
+		shutterState = ERROR;
 
-	if (nextBatteryCheck < millis() && isConfiguringWireless == false)
-	{
+	if (nextBatteryCheck < millis() && isConfiguringWireless == false) {
 		DBPrintln("Measuring Battery");
 		_volts = MeasureVoltage();
 		Wireless.println("K" + GetVoltString());
-		if (firstBatteryCheck == true)
-		{
+		if (firstBatteryCheck == true) {
 			nextBatteryCheck = millis() + 5000;
 			firstBatteryCheck = false;
 		}
-		else
-		{
+		else {
 			nextBatteryCheck = millis() + _batteryCheckInterval;
 		}
 	}
 
-	if (stepper.isRunning() == true) return;
+	if (stepper.isRunning() == true)
+		return;
 
-	if (doSync == true && digitalRead(CLOSED_PIN) == 0)
-	{
+	if (doSync == true && digitalRead(CLOSED_PIN) == 0) {
 			stepper.setCurrentPosition(0);
 			doSync = false;
 			DBPrintln("Stopped at closed position");
 	}
 
-	if (wasRunning == true) // So this bit only runs once after stopping.
-	{
+	if (wasRunning == true) { // So this bit only runs once after stopping.
 		DBPrintln("WasRunning " + String(shutterState) + " Hitswitch " + String(hitSwitch));
 		_lastButtonPressed = 0;
 		wasRunning = false;
@@ -560,8 +579,10 @@ void		ShutterClass::Run()
 		EnableOutputs(false);
 	}
 }
+
 void		ShutterClass::Stop()
 {
 	stepper.stop();
 }
+
 #pragma endregion
