@@ -470,7 +470,7 @@ void ShutterClass::GotoPosition(const unsigned long newPos)
 		doMove = true;
 	}
 
-	if (doMove == true) {
+	if (doMove) {
 		EnableOutputs(true);
 		stepper.moveTo(newPos);
 	}
@@ -537,7 +537,7 @@ void ShutterClass::Run()
 			DBPrintln("Hit opened switch");
 	}
 
-	if (stepper.isRunning() == true) {
+	if (stepper.isRunning()) {
 		wasRunning = true;
 		sendUpdates = true; // Set to false at the end of the rotator update steps. If running it'll get set back to true.
 	}
@@ -549,7 +549,7 @@ void ShutterClass::Run()
 		DBPrintln("Measuring Battery");
 		_volts = MeasureVoltage();
 		Wireless.println("K" + GetVoltString());
-		if (firstBatteryCheck == true) {
+		if (firstBatteryCheck) {
 			nextBatteryCheck = millis() + 5000;
 			firstBatteryCheck = false;
 		}
@@ -558,16 +558,16 @@ void ShutterClass::Run()
 		}
 	}
 
-	if (stepper.isRunning() == true)
+	if (stepper.isRunning())
 		return;
 
-	if (doSync == true && digitalRead(CLOSED_PIN) == 0) {
+	if (doSync && digitalRead(CLOSED_PIN) == 0) {
 			stepper.setCurrentPosition(0);
 			doSync = false;
 			DBPrintln("Stopped at closed position");
 	}
 
-	if (wasRunning == true) { // So this bit only runs once after stopping.
+	if (wasRunning) { // So this bit only runs once after stopping.
 		DBPrintln("WasRunning " + String(shutterState) + " Hitswitch " + String(hitSwitch));
 		_lastButtonPressed = 0;
 		wasRunning = false;

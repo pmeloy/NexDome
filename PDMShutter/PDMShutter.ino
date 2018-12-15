@@ -119,7 +119,7 @@ void loop()
 			StartWirelessConfig();
 			delay(2000);
 		}
-		else if (Shutter.radioIsConfigured == true) {
+		else if (Shutter.radioIsConfigured) {
 			XbeeStarted = true;
 			SendHello();
 			DBPrintln("Radio started");
@@ -127,10 +127,10 @@ void loop()
 	}
 
 
-	if (millis() > nextUpdateTime && (Shutter.sendUpdates == true || doFinalUpdate == true))
+	if (millis() > nextUpdateTime && (Shutter.sendUpdates || doFinalUpdate))
 		UpdateRotator();
 
-	if (Shutter.isConfiguringWireless == false && SentHello == true) {
+	if (Shutter.isConfiguringWireless == false && SentHello) {
 		if (Shutter.rainCheckInterval > 0) {
 			RainCheck();
 		}
@@ -277,7 +277,7 @@ void ReceiveWireless()
 
 		if (character == '\r' || character == '\n' || character == '#') {
 			if (wirelessBuffer.length() > 0) {
-				if (Shutter.isConfiguringWireless == true) {
+				if (Shutter.isConfiguringWireless) {
 					DBPrint("Configuring");
 					ConfigXBee(wirelessBuffer);
 				}
@@ -303,7 +303,7 @@ void ProcessMessages(String buffer)
 	char command;
 
 
-	if (buffer.equals("OK") == true) {
+	if (buffer.equals("OK")) {
 		DBPrint("Buffer == OK");
 		return;
 	}
@@ -346,11 +346,11 @@ void ProcessMessages(String buffer)
 		case OPEN_SHUTTER_CMD:
 			// Rotator update will be through UpdateRotator
 			DBPrintln("Received Open Shutter Command");
-			if (isRaining == true) {
+			if (isRaining) {
 				wirelessMessage = "OR"; // (O)pen command (R)ain cancel
 				DBPrintln("Raining");
 			}
-			else if (Shutter.GetVoltsAreLow() == true) {
+			else if (Shutter.GetVoltsAreLow()) {
 				wirelessMessage = "OL"; // (O)pen command (L)ow voltage cancel
 				DBPrintln("Voltage Low");
 			}
