@@ -295,7 +295,7 @@ void ReceiveWireless()
 
 void ProcessMessages(String buffer)
 {
-	float localFloat;
+	// float localFloat;
 	int32_t local32;
 	int16_t local16;
 
