@@ -117,24 +117,24 @@ public:
 	String		GetVoltString();
 
 	// Setters
-	void		SetAcceleration(uint16_t);
-	void		SetMaxSpeed(uint16_t);
-	void		SetReversed(bool);
-	void		SetStepsPerStroke(uint32_t);
-	void		SetVoltsFromString(String);
+	void		SetAcceleration(const uint16_t);
+	void		SetMaxSpeed(const uint16_t);
+	void		SetReversed(const bool);
+	void		SetStepsPerStroke(const uint32_t);
+	void		SetVoltsFromString(const String);
 
 	// Movers
 	void		DoButtons();
 	void		Open();
 	void		Close();
-	void		GotoPosition(unsigned long);
-	void		GotoAltitude(float);
-	void		MoveRelative(long);
-	void		SetRainInterval(int);
+	void		GotoPosition(const unsigned long);
+	void		GotoAltitude(const float);
+	void		MoveRelative(const long);
+	void		SetRainInterval(const int);
 	byte		GetVoltsClose();
-	void		SetVoltsClose(byte);
+	void		SetVoltsClose(const byte);
 
-	void		EnableOutputs(bool);
+	void		EnableOutputs(const bool);
 	void		Run();
 	void		Stop();
 	void		ReadEEProm();
@@ -320,7 +320,7 @@ int ShutterClass::MeasureVoltage()
 }
 
 // Helper functions
-long ShutterClass::AltitudeToPosition(float alt)
+long ShutterClass::AltitudeToPosition(const float alt)
 {
 	long result;
 
@@ -328,7 +328,7 @@ long ShutterClass::AltitudeToPosition(float alt)
 	return result;
 }
 
-float ShutterClass::PositionToAltitude(long pos)
+float ShutterClass::PositionToAltitude(const long pos)
 {
 	float result = (float)pos;
 	result = result / _stepsPerStroke * 90.0;
@@ -397,7 +397,7 @@ String ShutterClass::GetVoltString()
 }
 
 // Setters
-void ShutterClass::EnableOutputs(bool newState)
+void ShutterClass::EnableOutputs(const bool newState)
 {
 	if (newState == false) {
 		digitalWrite(STEPPER_ENABLE_PIN, 1);
@@ -409,34 +409,34 @@ void ShutterClass::EnableOutputs(bool newState)
 	}
 }
 
-void ShutterClass::SetAcceleration(uint16_t accel)
+void ShutterClass::SetAcceleration(const uint16_t accel)
 {
 	_acceleration = accel;
 	stepper.setAcceleration(accel);
 	WriteEEProm();
 }
 
-void ShutterClass::SetMaxSpeed(uint16_t speed)
+void ShutterClass::SetMaxSpeed(const uint16_t speed)
 {
 	_maxSpeed = speed;
 	stepper.setMaxSpeed(speed);
 	WriteEEProm();
 }
 
-void ShutterClass::SetReversed(bool reversed)
+void ShutterClass::SetReversed(const bool reversed)
 {
 	_reversed = reversed;
 	stepper.setPinsInverted(reversed, reversed, reversed);
 	WriteEEProm();
 }
 
-void ShutterClass::SetStepsPerStroke(uint32_t newSteps)
+void ShutterClass::SetStepsPerStroke(const uint32_t newSteps)
 {
 	_stepsPerStroke = newSteps;
 	WriteEEProm();
 }
 
-void ShutterClass::SetVoltsFromString(String value)
+void ShutterClass::SetVoltsFromString(const String value)
 {
 	_cutoffVolts = value.toInt();
 	WriteEEProm();
@@ -455,7 +455,7 @@ void ShutterClass::Close()
 	MoveRelative(1 - _stepsPerStroke * 1.2);
 }
 
-void ShutterClass::GotoPosition(unsigned long newPos)
+void ShutterClass::GotoPosition(const unsigned long newPos)
 {
 	uint64_t currentPos = stepper.currentPosition();
 	bool doMove = false;
@@ -476,25 +476,25 @@ void ShutterClass::GotoPosition(unsigned long newPos)
 	}
 }
 
-void ShutterClass::GotoAltitude(float newAlt)
+void ShutterClass::GotoAltitude(const float newAlt)
 {
 
 	GotoPosition(AltitudeToPosition(newAlt));
 }
 
-void ShutterClass::MoveRelative(long amount)
+void ShutterClass::MoveRelative(const long amount)
 {
 	EnableOutputs(true);
 	stepper.move(amount);
 }
 
-inline void ShutterClass::SetRainInterval(int newInterval)
+inline void ShutterClass::SetRainInterval(const int newInterval)
 {
 	rainCheckInterval = newInterval;
 	WriteEEProm();
 }
 
-inline void ShutterClass::SetVoltsClose(byte value)
+inline void ShutterClass::SetVoltsClose(const byte value)
 {
 	_voltsClose = value;
 	WriteEEProm();
