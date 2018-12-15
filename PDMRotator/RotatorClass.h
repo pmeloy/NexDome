@@ -477,7 +477,7 @@ void RotatorClass::StartHoming()
 	float diff;
 	long distance;
 
-	if (_isAtHome == true)
+	if (_isAtHome)
 		return;
 
 	// reduce speed by half
@@ -574,10 +574,10 @@ int	RotatorClass::GetHomeStatus()
 {
 	int status = NEVER_HOMED;
 
-	if (_hasBeenHomed == true)
+	if (_hasBeenHomed)
 		status = HOMED;
 
-	if (_isAtHome == true)
+	if (_isAtHome)
 		status = ATHOME;
 	return status;
 }
@@ -772,7 +772,7 @@ void RotatorClass::Run()
 	if (_seekMode > HOMING_HOME)
 		Calibrate();
 
-	if (stepper.run() == true) {
+	if (stepper.run()) {
 
 		wasRunning = true;
 		if (_seekMode == HOMING_HOME && digitalRead(HOME_PIN) == 0) { // We're looking for home and found it
@@ -798,11 +798,11 @@ void RotatorClass::Run()
 		}
 	}
 
-	if (wasRunning == true)
+	if (wasRunning)
 	{
 		_moveDirection = MOVE_NONE;
 
-		if (_doStepsPerRotation == true) {
+		if (_doStepsPerRotation) {
 			_stepsPerRotation = stepper.currentPosition();
 			SyncHome(_homeAzimuth);
 			SaveToEEProm();
@@ -824,14 +824,14 @@ void RotatorClass::Run()
 			stepper.setCurrentPosition(stepsFromZero);
 		}
 
-		if (_SetToHomeAzimuth == true) {
+		if (_SetToHomeAzimuth) {
 			SyncPosition(_homeAzimuth);
 			_SetToHomeAzimuth = false;
 		}
 
 		enableMotor(false);
 		wasRunning = false;
-	} // end if (wasRunning == true)
+	} // end if (wasRunning)
 }
 
 void RotatorClass::Stop()
