@@ -113,8 +113,8 @@ void loop()
 	if (Wireless.available())
 		ReceiveWireless();
 
-	if (XbeeStarted == false) {
-		if (Shutter.radioIsConfigured == false && Shutter.isConfiguringWireless == false) {
+	if (!XbeeStarted) {
+		if (!Shutter.radioIsConfigured  && !Shutter.isConfiguringWireless) {
 			DBPrintln("Wait for serial devices to start");
 			StartWirelessConfig();
 			delay(2000);
@@ -130,7 +130,7 @@ void loop()
 	if (millis() > nextUpdateTime && (Shutter.sendUpdates || doFinalUpdate))
 		UpdateRotator();
 
-	if (Shutter.isConfiguringWireless == false && SentHello) {
+	if (!Shutter.isConfiguringWireless && SentHello) {
 		if (Shutter.rainCheckInterval > 0) {
 			RainCheck();
 		}
@@ -166,7 +166,7 @@ void UpdateRotator()
 	if (nextStepTime > millis())
 		return;
 
-	if (sentState == false) {
+	if (!sentState) {
 		Wireless.print(String(STATE_SHUTTER_GET) + String(Shutter.GetState()) + "#");
 		sentState = true;
 		nextStepTime = millis() + stepInterval;
@@ -174,14 +174,14 @@ void UpdateRotator()
 	}
 
 	//TODO: Not ready yet - when handbox is done finish this up
-	//if (sentElevation == false) {
+	//if (!sentElevation) {
 	//	Wireless.print(String(ELEVATION_SHUTTER_CMD) + String(Shutter.GetElevation()) + "#");
 	//	sentElevation = true;
 	//	nextStepTime = millis() + stepInterval;
 	//	return;
 	//}
 
-	if (sentPosition == false) {
+	if (!sentPosition) {
 		Wireless.print(String(POSITION_SHUTTER_GET) + String(Shutter.GetPosition()) + "#");
 		sentPosition = true;
 		nextStepTime = millis() + stepInterval;
@@ -379,7 +379,7 @@ void ProcessMessages(String buffer)
 		case RAIN_ROTATOR_GET:
 			local16 = value.toInt();
 			if (local16 == 1) {
-				if (isRaining == false) {
+				if (!isRaining) {
 					if (Shutter.GetState() != CLOSED && Shutter.GetState() != CLOSING) Shutter.Close();
 					isRaining = true;
 					DBPrintln("It's raining! (" + value + ")");
