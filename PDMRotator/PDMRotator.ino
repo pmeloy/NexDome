@@ -282,11 +282,11 @@ void ReceiveComputer()
 void ProcessSerialCommand()
 {
 	float localFloat;
-	char command, localChar;
+	char command; //, localChar;
 	String value, wirelessMessage;
 	int localInt;
 	String serialMessage, localString;
-	bool hasValue = false, localBool = false;
+	bool hasValue = false; //, localBool = false;
 	long localLong;
 
 	// Split the buffer into command char and value
@@ -627,17 +627,19 @@ void ReceiveWireless()
 
 void ProcessWireless()
 {
-	char sender, command, localChar;
+	// char sender;
+	char command; // , localChar;
 	String value, serialMessage, wirelessMessage;
-	int localInt;
-	long localLong;
-	float localFloat;
-	bool hasValue = false;
+	// int localInt;
+	// long localLong;
+	// float localFloat;
+	// bool hasValue = false;
 
 	DBPrint("<<< Received: " + wirelessBuffer);
 	command = wirelessBuffer.charAt(0);
 	value = wirelessBuffer.substring(1);
-	if (value.length() > 0) hasValue = true;
+	//if (value.length() > 0)
+	//	hasValue = true;
 	//DBPrint("<<< Received:" + String(command) + " Value: " + value);
 	serialMessage = "";
 	wirelessMessage = "";

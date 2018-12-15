@@ -509,7 +509,7 @@ void RotatorClass::StartCalibrating()
 
 void RotatorClass::Calibrate()
 {
-	static long stopDelay = 0, homePositionEnd = 0, currentPosition = 0;
+//	static long stopDelay = 0, homePositionEnd = 0, currentPosition = 0;
 
 	if (_seekMode > HOMING_HOME) {
 		switch (_seekMode) {
@@ -556,7 +556,7 @@ float RotatorClass::GetHomeAzimuth()
 
 void RotatorClass::SyncHome(float newAzimuth)
 {
-	float delta, currentAzimuth;
+	float delta; // , currentAzimuth;
 
 	delta = GetAngularDistance(GetAzimuth(), newAzimuth);
 	delta = delta + _homeAzimuth;
@@ -692,7 +692,7 @@ float RotatorClass::GetAngularDistance(float fromAngle, float toAngle)
 long RotatorClass::GetPositionalDistance(long fromPosition, long toPosition)
 {
 	long delta;
-	int adjust;
+
 	delta = toPosition - fromPosition;
 	if (delta == 0)
 		return 0; //  we are already there
@@ -703,7 +703,7 @@ long RotatorClass::GetPositionalDistance(long fromPosition, long toPosition)
 	if (delta < -_stepsPerRotation / 2)
 		delta += _stepsPerRotation;
 
-	delta = delta + int(delta) % STEP_TYPE;
+	delta = delta - int(delta) % STEP_TYPE;
 	return delta;
 
 }
@@ -711,9 +711,9 @@ long RotatorClass::GetPositionalDistance(long fromPosition, long toPosition)
 void RotatorClass::SetAzimuth(float newHeading)
 {
 	// Set movement tarGet by compass azimuth
-	float currentHeading, tarGetPosition;
+	float currentHeading; // , tarGetPosition;
 	float delta;
-	int adjust;
+
 	currentHeading = GetAzimuth();
 	delta = GetAngularDistance(currentHeading, newHeading) * _stepsPerDegree;
 	delta = delta - int(delta) % STEP_TYPE;
