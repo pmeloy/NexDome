@@ -53,14 +53,14 @@ public:
 	String voltsClose = "";
 
 	RemoteShutterClass();
-	void SetState(int);
+	// void SetState(int);
 };
 
 RemoteShutterClass::RemoteShutterClass()
 {
 
 }
-void RemoteShutterClass::SetState(int newState)
-{
-	state = (ShutterStates)newState;
-}
+//void RemoteShutterClass::SetState(int newState)
+//{
+//	state = (ShutterStates)newState;
+//}

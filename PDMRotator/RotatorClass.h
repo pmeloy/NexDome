@@ -108,26 +108,26 @@ public:
 	int			GetHomeStatus();
 
 	float		GetParkAzimuth();
-	long		GetAzimuthToPosition(float);
+	long		GetAzimuthToPosition(const float);
 
 	// Setters
-	void		SetLowVoltageCutoff(int);
-	void		SetPosition(long);
-	void		SetMaxSpeed(long);
-	void		SetAcceleration(long);
-	void		SetAzimuth(float);
-	void		SetParkAzimuth(float);
-	void		SetStepsPerRotation(long);
-	void		SetRainInterval(uint16_t);
-	void		SetReversed(bool reversed);
-	void		SetHomeAzimuth(float);
-	void		SetRainAction(byte);
-	void		SetCheckRainTwice(bool);
-	void 		SetHomingCalibratingSpeed(long newSpeed);
+	void		SetLowVoltageCutoff(const int);
+	void		SetPosition(const long);
+	void		SetMaxSpeed(const long);
+	void		SetAcceleration(const long);
+	void		SetAzimuth(const float);
+	void		SetParkAzimuth(const float);
+	void		SetStepsPerRotation(const long);
+	void		SetRainInterval(const uint16_t);
+	void		SetReversed(const bool reversed);
+	void		SetHomeAzimuth(const float);
+	void		SetRainAction(const byte);
+	void		SetCheckRainTwice(const bool);
+	void 		SetHomingCalibratingSpeed(const long newSpeed);
 	void 		RestoreNormalSpeed();
 
 	// Movers
-	void		MoveRelative(long steps);
+	void		MoveRelative(const long steps);
 	void		Stop();
 	void		Run();
 
@@ -136,8 +136,8 @@ public:
 	void		StartHoming();
 	void		StartCalibrating();
 	void		Calibrate();
-	void		SyncPosition(float);
-	void		SyncHome(float);
+	void		SyncPosition(const float);
+	void		SyncHome(const float);
 	void		SaveToEEProm();
 
 
@@ -186,7 +186,7 @@ private:
 	int			ReadVolts();
 
 	// Utility
-	long		GetPositionalDistance(long, long);
+	long		GetPositionalDistance(const long, const long);
 
 	void		ButtonCheck();
 
@@ -194,8 +194,8 @@ private:
 	void		SetDefaultConfig();
 	void		WipeConfig();
 
-	void		enableMotor(bool);
-	float		GetAngularDistance(float fromAngle, float toAngle);
+	void		enableMotor(const bool);
+	float		GetAngularDistance(const float fromAngle, const float toAngle);
 
 };
 
@@ -300,7 +300,7 @@ int	RotatorClass::ReadVolts()
 	return int(calc);
 }
 
-void RotatorClass::SetLowVoltageCutoff(int lowVolts)
+void RotatorClass::SetLowVoltageCutoff(const int lowVolts)
 {
 	_cutOffVolts = lowVolts;
 	SaveToEEProm();
@@ -372,13 +372,13 @@ bool RotatorClass::GetRainStatus()
 	return isRaining;
 }
 
-inline void RotatorClass::SetRainInterval(uint16_t interval)
+inline void RotatorClass::SetRainInterval(const uint16_t interval)
 {
 	_rainCheckInterval = interval;
 	SaveToEEProm();
 }
 
-inline void RotatorClass::SetCheckRainTwice(bool state)
+inline void RotatorClass::SetCheckRainTwice(const bool state)
 {
 	_rainCheckTwice = state;
 	SaveToEEProm();
@@ -386,7 +386,7 @@ inline void RotatorClass::SetCheckRainTwice(bool state)
 #pragma endregion
 
 #pragma region "Stepper Related"
-void RotatorClass::enableMotor(bool newState)
+void RotatorClass::enableMotor(const bool newState)
 {
 	if (newState == false) {
 		digitalWrite(STEPPER_ENABLE_PIN, 1);
@@ -402,14 +402,14 @@ long RotatorClass::GetMaxSpeed()
 	return _maxSpeed;
 }
 
-void RotatorClass::SetMaxSpeed(long newSpeed)
+void RotatorClass::SetMaxSpeed(const long newSpeed)
 {
 	_maxSpeed = newSpeed;
 	stepper.setMaxSpeed(newSpeed);
 	SaveToEEProm();
 }
 
-void RotatorClass::SetHomingCalibratingSpeed(long newSpeed)
+void RotatorClass::SetHomingCalibratingSpeed(const long newSpeed)
 {
 	stepper.setMaxSpeed(newSpeed);
 }
@@ -424,7 +424,7 @@ long RotatorClass::GetAcceleration()
 	return _acceleration;
 }
 
-void RotatorClass::SetAcceleration(long newAccel)
+void RotatorClass::SetAcceleration(const long newAccel)
 {
 	_acceleration = newAccel;
 	stepper.setAcceleration(newAccel);
@@ -436,7 +436,7 @@ bool RotatorClass::GetReversed()
 	return _reversed;
 }
 
-void RotatorClass::SetReversed(bool isReversed)
+void RotatorClass::SetReversed(const bool isReversed)
 {
 	_reversed = isReversed;
 	stepper.setPinsInverted(isReversed, isReversed, isReversed);
@@ -463,7 +463,7 @@ inline bool RotatorClass::GetRainCheckTwice()
 	return _rainCheckTwice;
 }
 
-void RotatorClass::SetStepsPerRotation(long newCount)
+void RotatorClass::SetStepsPerRotation(const long newCount)
 {
 	_stepsPerDegree = (float)newCount / 360.0;
 	_stepsPerRotation = newCount;
@@ -537,13 +537,13 @@ void RotatorClass::Calibrate()
 	}
 }
 
-void RotatorClass::SetHomeAzimuth(float newHome)
+void RotatorClass::SetHomeAzimuth(const float newHome)
 {
 	_homeAzimuth = newHome;
 	SaveToEEProm();
 }
 
-inline void RotatorClass::SetRainAction(byte value)
+inline void RotatorClass::SetRainAction(const byte value)
 {
 	_rainAction = value;
 	SaveToEEProm();
@@ -554,7 +554,7 @@ float RotatorClass::GetHomeAzimuth()
 	return _homeAzimuth;
 }
 
-void RotatorClass::SyncHome(float newAzimuth)
+void RotatorClass::SyncHome(const float newAzimuth)
 {
 	float delta; // , currentAzimuth;
 
@@ -582,7 +582,7 @@ int	RotatorClass::GetHomeStatus()
 	return status;
 }
 
-void RotatorClass::SetParkAzimuth(float newPark)
+void RotatorClass::SetParkAzimuth(const float newPark)
 {
 	_parkAzimuth = newPark;
 	SaveToEEProm();
@@ -600,7 +600,7 @@ int	RotatorClass::GetSeekMode()
 #pragma endregion
 
 #pragma region "Positioning"
-long RotatorClass::GetAzimuthToPosition(float azimuth)
+long RotatorClass::GetAzimuthToPosition(const float azimuth)
 {
 	long newPosition;
 
@@ -609,7 +609,7 @@ long RotatorClass::GetAzimuthToPosition(float azimuth)
 	return newPosition;
 }
 
-void RotatorClass::SyncPosition(float newAzimuth)
+void RotatorClass::SyncPosition(const float newAzimuth)
 {
 	long newPosition;
 
@@ -635,7 +635,7 @@ long RotatorClass::GetPosition()
 	return position;
 }
 
-void RotatorClass::SetPosition(long newPosition)
+void RotatorClass::SetPosition(const long newPosition)
 {
 	/// Set movement tarGet by step position
 
@@ -654,7 +654,7 @@ void RotatorClass::SetPosition(long newPosition)
 	stepper.moveTo(newPosition);
 }
 
-void RotatorClass::MoveRelative(long howFar)
+void RotatorClass::MoveRelative(const long howFar)
 {
 	// Use by Home and Calibrate
 	// Tells dome to rotate more than 360 degrees
@@ -673,7 +673,7 @@ int	RotatorClass::GetDirection()
 	return _moveDirection;
 }
 
-float RotatorClass::GetAngularDistance(float fromAngle, float toAngle)
+float RotatorClass::GetAngularDistance(const float fromAngle, const float toAngle)
 {
 	float delta;
 	delta = toAngle - fromAngle;
@@ -689,7 +689,7 @@ float RotatorClass::GetAngularDistance(float fromAngle, float toAngle)
 	return delta;
 }
 
-long RotatorClass::GetPositionalDistance(long fromPosition, long toPosition)
+long RotatorClass::GetPositionalDistance(const long fromPosition, const long toPosition)
 {
 	long delta;
 
@@ -708,7 +708,7 @@ long RotatorClass::GetPositionalDistance(long fromPosition, long toPosition)
 
 }
 
-void RotatorClass::SetAzimuth(float newHeading)
+void RotatorClass::SetAzimuth(const float newHeading)
 {
 	// Set movement tarGet by compass azimuth
 	float currentHeading; // , tarGetPosition;
