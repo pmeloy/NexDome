@@ -160,8 +160,8 @@ void loop()
 {
 
 	if (millis() < delayUntil) return;
-	if (XbeeStarted == false) {
-		if (Rotator.radioIsConfigured == false && isConfiguringWireless == false) {
+	if (!XbeeStarted) {
+		if (!Rotator.radioIsConfigured && !isConfiguringWireless) {
 			DBPrint("Initializing Radio");
 			StartWirelessConfig();
 			delay(3000);
@@ -367,7 +367,7 @@ void ProcessSerialCommand()
 
 		case MOVE_RELATIVE_ROTATOR_CMD:
 			if (hasValue) {
-				if (Rotator.GetVoltsAreLow() == false) {
+				if (!Rotator.GetVoltsAreLow()) {
 					localLong = value.toInt();
 					Rotator.MoveRelative(localLong);
 				}
@@ -398,7 +398,7 @@ void ProcessSerialCommand()
 		case POSITION_ROTATOR_CMD:
 			if (value.length() > 0)
 			{
-				if (Rotator.GetVoltsAreLow() == false) {
+				if (!Rotator.GetVoltsAreLow()) {
 					Rotator.SetPosition(value.toInt());
 					serialMessage = String(POSITION_ROTATOR_CMD) + String(Rotator.GetPosition());
 				}

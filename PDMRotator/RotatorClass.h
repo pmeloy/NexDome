@@ -353,7 +353,7 @@ bool RotatorClass::GetRainStatus()
 {
 	static int rainCount = 0;
 	bool isRaining = false;
-	if (_rainCheckTwice == false)
+	if (!_rainCheckTwice)
 		rainCount = 1;
 
 	if (digitalRead(RAIN_SENSOR_PIN) == 1) {
@@ -388,7 +388,7 @@ inline void RotatorClass::SetCheckRainTwice(const bool state)
 #pragma region "Stepper Related"
 void RotatorClass::enableMotor(const bool newState)
 {
-	if (newState == false) {
+	if (!newState) {
 		digitalWrite(STEPPER_ENABLE_PIN, 1);
 	}
 	else {
@@ -495,7 +495,7 @@ void RotatorClass::StartHoming()
 
 void RotatorClass::StartCalibrating()
 {
-	if (_isAtHome == false)
+	if (!_isAtHome)
 		return;
 
 	_seekMode = CALIBRATION_MOVEOFF;
@@ -792,7 +792,7 @@ void RotatorClass::Run()
 	// Won't get here if stepper is moving
 	if (digitalRead(HOME_PIN) == 0 ) { // Not moving but we're at home
 		_isAtHome = true;
-		if (_hasBeenHomed == false) { // Just started up rotator so tell rotator its at home.
+		if (!_hasBeenHomed) { // Just started up rotator so tell rotator its at home.
 			SyncPosition(_homeAzimuth); // Set the Azimuth to the home position
 			_hasBeenHomed = true; // We've been homed
 		}
