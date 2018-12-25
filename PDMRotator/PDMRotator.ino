@@ -52,7 +52,7 @@ String wirelessBuffer;
 // to make sure the XBee has started and configured itself before
 // trying to send any wireless messages.
 
-bool XbeeStarted = false, sentHello = false, isConfiguringWireless = false;
+bool XbeeStarted = false, sentHello = false, isConfiguringWireless = false, gotHelloFromShutter = false;
 int configStep;
 int sleepMode = 0, sleepPeriod = 300, sleepDelay = 30000;
 String ATString="";
@@ -176,6 +176,11 @@ void loop()
 	Rotator.Run();
 	CheckForCommands();
 	CheckForRain();
+	if(gotHelloFromShutter) {
+		requestShutterData();
+		gotHelloFromShutter = false;
+	}
+
 }
 #pragma endregion
 
@@ -221,6 +226,51 @@ void SendHello()
 	delay(1000);
 	Wireless.println(String(HELLO_CMD) + "#");
 	SentHello = true;
+}
+
+void requestShutterData()
+{
+		Wireless.print(String(STATE_SHUTTER_GET) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(VERSION_SHUTTER_GET) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(REVERSED_SHUTTER_CMD) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(STEPSPER_SHUTTER_CMD) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(SPEED_SHUTTER_CMD) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(ACCELERATION_SHUTTER_CMD) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(POSITION_SHUTTER_GET) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(VOLTS_SHUTTER_CMD) + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+		Wireless.print(String(VOLTSCLOSE_SHUTTER_CMD) + "#");
 }
 
 //<SUMMARY>Check for Serial and Wireless data</SUMMARY>
@@ -660,18 +710,8 @@ void ProcessWireless()
 			break;
 
 		case HELLO_CMD:
+			gotHelloFromShutter = true;
 			DBPrint("Hello received from shutter");
-			Wireless.print(String(STATE_SHUTTER_GET) + "#");
-			Wireless.print(String(STATE_SHUTTER_GET) + "#");
-			Wireless.print(String(STATE_SHUTTER_GET) + "#");
-			Wireless.print(String(VERSION_SHUTTER_GET) + "#");
-			Wireless.print(String(REVERSED_SHUTTER_CMD) + "#");
-			Wireless.print(String(STEPSPER_SHUTTER_CMD) + "#");
-			Wireless.print(String(SPEED_SHUTTER_CMD) + "#");
-			Wireless.print(String(ACCELERATION_SHUTTER_CMD) + "#");
-			Wireless.print(String(POSITION_SHUTTER_GET) + "#");
-			Wireless.print(String(VOLTS_SHUTTER_CMD) + "#");
-			Wireless.print(String(VOLTSCLOSE_SHUTTER_CMD) + "#");
 			break;
 
 		case POSITION_SHUTTER_GET:
