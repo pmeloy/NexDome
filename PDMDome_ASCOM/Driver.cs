@@ -462,7 +462,11 @@ namespace ASCOM.PDM
                     where = serialBuffer.IndexOf("#");
                     part = serialBuffer.Substring(0, where);
                     serialBuffer = serialBuffer.Substring(where + 1);
-                    if (String.IsNullOrEmpty(part) == false) serialMessageList.Add(part);
+                    if (String.IsNullOrEmpty(part) == false)
+                    {
+                        serialMessageList.Add(part);
+                        tl.LogMessage("serialMessageList part", part);
+                    }
                 }
             }
             catch (Exception ex)

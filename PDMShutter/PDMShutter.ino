@@ -159,7 +159,7 @@ void UpdateRotator()
 	runningAtaStart = Shutter.sendUpdates; // Store motion state to comparison at end
 
 	if (nextVoltageUpdate < millis()) {
-		Wireless.print(VOLTS_SHUTTER_CMD + Shutter.GetVoltString());
+		Wireless.print(VOLTS_SHUTTER_CMD + Shutter.GetVoltString() + "#");
 		nextVoltageUpdate = millis() + voltUpdateInterval;
 	}
 
