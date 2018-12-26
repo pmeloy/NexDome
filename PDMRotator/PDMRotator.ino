@@ -654,6 +654,11 @@ void ProcessSerialCommand()
 	if (wirelessMessage.length() > 0) {
 
 		Wireless.print(wirelessMessage + "#");
+		if (Wireless.available()) { // read response to avoid buffer overrun
+			ReceiveWireless();
+			stepper.run(); // we don't want the stepper to stop
+		}
+
 	}
 
 }

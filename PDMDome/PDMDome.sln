@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDome", "PDome\PDome.csproj", "{64308775-BD4A-469C-BCAB-3ED830B811AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDMDome", "PDMDome.csproj", "{64308775-BD4A-469C-BCAB-3ED830B811AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDomeConsole", "PDomeConsole\PDomeConsole.csproj", "{D5207217-61C7-4E94-8097-91DBACE57D2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDMDomeRegister", "PDMDomeRegister\PDMDomeRegister.csproj", "{D5207217-61C7-4E94-8097-91DBACE57D2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

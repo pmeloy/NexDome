@@ -133,7 +133,6 @@ namespace ASCOM.PDM
         internal const string CALIBRATE_ROTATOR_CMD     = "c"; // Calibrate the dome
         internal const string ERROR_ROTATOR_AZ          = "o"; // Azimuth error when I finally implement it
         internal const string GOTO_ROTATOR_CMD          = "g"; // Get/set dome azimuth
-        internal const string HELLO_CMD                 = "H";
         internal const string HOME_ROTATOR_CMD          = "h"; // Home the dome
         internal const string HOMEAZ_ROTATOR_CMD        = "i"; // Get/Set home position
         internal const string HOMED_ROTATOR_STATUS      = "z"; // Get homed status
@@ -143,10 +142,10 @@ namespace ASCOM.PDM
         internal const string RAIN_ROTATOR_ACTION       = "n";
         internal const string RAIN_ROTATOR_CMD          = "f"; // Get rain sensor state
         internal const string RAIN_ROTATOR_TWICE_CMD    = "j"; // Get/Set rain sensor needs to positives to trigger
-        internal const string SPEED_ROTATOR_CMD         = "r"; // Get/Set step rate (speed)
         internal const string REVERSED_ROTATOR_CMD      = "y"; // Get/Set stepper reversed status
         internal const string SEEKSTATE_GET             = "d"; // Get seek mode (homing, calibrating etc)
         internal const string SLEW_ROTATOR_STATUS       = "m"; // Get Slewing status/direction
+        internal const string SPEED_ROTATOR_CMD         = "r"; // Get/Set step rate (speed)
         internal const string STEPSPER_ROTATOR_CMD      = "t"; // GetSteps per rotation
         internal const string SYNC_ROTATOR_CMD          = "s"; // Sync to telescope
         internal const string VERSION_ROTATOR_GET       = "v"; // Get Version string
@@ -156,6 +155,7 @@ namespace ASCOM.PDM
         internal const string CAL_SHUTTER_CMD = "L"; // Calibrate the shutter
         internal const string CLOSE_SHUTTER_CMD = "C"; // Close shutter
         internal const string ELEVATION_SHUTTER_CMD = "G"; // Get/Set altitude
+        internal const string HELLO_CMD = "H"; // Let shutter know we're here
         internal const string HOMED_SHUTTER_GET = "Z"; // Get homed status (has it been closed)
         internal const string OPEN_SHUTTER_CMD = "O"; // Open the shutter
         internal const string POSITION_SHUTTER_GET = "P"; // Get step position
@@ -822,7 +822,7 @@ namespace ASCOM.PDM
         internal void GetSetupInfo()
         {
             LogMessage("Rotator Get", "Setup Info");
-				SendSerial(HELLO_CMD);		// send hello to shutter, if it's present it'll reply
+			SendSerial(HELLO_CMD);		// send hello to shutter, if it's present it'll reply
             SendSerial(VERSION_ROTATOR_GET);
             SendSerial(VOLTS_ROTATOR_CMD);
             SendSerial(STEPSPER_ROTATOR_CMD);
