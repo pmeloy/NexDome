@@ -735,10 +735,15 @@ namespace ASCOM.PDM
                         }
                         break;
                     case STATE_SHUTTER_GET:
+                        tl.LogMessage("OnSerialTimer STATE_SHUTTER_GET value :", value);
                         if (int.TryParse(value, numberStyle, sourceCulture, out localInt) == true)
                         {
                             domeShutterState = (ShutterState)localInt;
-                            if (localInt < 0 || localInt > 4) LogMessage("Shutter Get", "State invalud ({0})", localInt);
+                            if (localInt < 0 || localInt > 4) {
+                                LogMessage("Shutter Get", "State invalid ({0})", localInt);
+                                tl.LogMessage("OnSerialTimer STATE_SHUTTER_GET State invalid", value);
+                            }
+                            
                         }
                         else
                         {
